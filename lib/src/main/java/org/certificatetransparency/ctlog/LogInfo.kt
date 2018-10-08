@@ -11,7 +11,9 @@ import java.util.Arrays
 /**
  * Holds information about the log: Mainly, its public key and log ID (which is calculated from the
  * Log ID). Ideally created from a file with the Log's public key in PEM encoding.
- * @property key C'tor. Public key of the log.
+ *
+ * @constructor C'tor.
+ * @property key Public key of the log.
  */
 class LogInfo(val key: PublicKey) {
 
