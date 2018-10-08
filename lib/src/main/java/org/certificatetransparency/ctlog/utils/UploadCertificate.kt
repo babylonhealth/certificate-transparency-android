@@ -34,7 +34,7 @@ object UploadCertificate {
         if (args.size >= 2) {
             val outputFile = args[1]
             //TODO(eranm): Binary encoding compatible with the C++ code.
-            Files.write(resp.toByteArray(), File(outputFile))
+            Files.write(resp?.toByteArray(), File(outputFile))
         }
     }
 }

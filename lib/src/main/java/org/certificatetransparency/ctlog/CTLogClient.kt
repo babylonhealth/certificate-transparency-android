@@ -19,7 +19,7 @@ class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
     class UploadResult(val sct: Ct.SignedCertificateTimestamp, val isVerified: Boolean)
 
     fun uploadCertificatesChain(chain: List<Certificate>): UploadResult {
-        val sct = httpClient.addCertificate(chain)
+        val sct = httpClient.addCertificate(chain)!!
         return UploadResult(sct, signatureVerifier.verifySignature(sct, chain[0]))
     }
 

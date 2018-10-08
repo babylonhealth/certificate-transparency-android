@@ -39,7 +39,6 @@ class HttpInvoker {
      * @param params query parameters.
      * @return Server's response body.
      */
-    @JvmOverloads
     fun makeGetRequest(url: String, params: List<NameValuePair>? = null): String {
         try {
             HttpClientBuilder.create().build().use { httpClient ->
