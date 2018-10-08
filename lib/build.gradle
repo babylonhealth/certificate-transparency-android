@@ -1,0 +1,59 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+apply plugin: 'com.google.protobuf'
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+sourceSets {
+    main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/javalite"
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.protobuf:protobuf-lite:3.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
+    //compile 'com.google.protobuf:protobuf-java:${protobuf.version}'
+    compile 'org.bouncycastle:bcpkix-jdk15on:1.56'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.56'
+    compile 'commons-codec:commons-codec:1.8'
+    compile 'commons-logging:commons-logging:1.1.3'
+    compile 'com.google.guava:guava:16.0.1'
+    //compile 'org.hamcrest:hamcrest-core:1.3'
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
+    compile 'org.apache.httpcomponents:httpcore:4.4.6'
+    compile('com.googlecode.json-simple:json-simple:1.1.1') {
+        exclude group: 'junit', module: 'junit'
+    }
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.9.5'
+}
+
+protobuf {
+    protoc {
+        // You still need protoc like in the non-Android case
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+    plugins {
+        javalite {
+            // The codegen for lite comes as a separate artifact
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                // In most cases you don't need the full Java output
+                // if you use the lite output.
+                remove java
+            }
+            task.plugins {
+                javalite {}
+            }
+        }
+    }
+}
