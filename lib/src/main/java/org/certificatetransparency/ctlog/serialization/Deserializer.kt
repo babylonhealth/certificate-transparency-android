@@ -13,7 +13,6 @@ import org.certificatetransparency.ctlog.SignedEntry
 import org.certificatetransparency.ctlog.TimestampedEntry
 import org.certificatetransparency.ctlog.X509ChainEntry
 import org.certificatetransparency.ctlog.proto.Ct
-import org.json.simple.JSONArray
 import java.io.IOException
 import java.io.InputStream
 
@@ -88,14 +87,9 @@ object Deserializer {
      * @return [ParsedLogEntryWithProof]
      */
     @JvmStatic
-    fun parseLogEntryWithProof(
-        entry: ParsedLogEntry, proof: JSONArray, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
-
+    fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         val auditProof = MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex)
-
-        for (node in proof) {
-            auditProof.pathNode.add(Base64.decodeBase64(node as String))
-        }
+        proof.asSequence().map(Base64::decodeBase64).forEach { node -> auditProof.pathNode.add(node) }
         return ParsedLogEntryWithProof.newInstance(entry, auditProof)
     }
 
@@ -109,10 +103,9 @@ object Deserializer {
      * @return [MerkleAuditProof]
      */
     @JvmStatic
-    fun parseAuditProof(proof: JSONArray, leafIndex: Long, treeSize: Long): MerkleAuditProof {
-
+    fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long): MerkleAuditProof {
         val auditProof = MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex)
-        proof.forEach { node -> auditProof.pathNode.add(Base64.decodeBase64(node as String)) }
+        proof.forEach { node -> auditProof.pathNode.add(Base64.decodeBase64(node)) }
         return auditProof
     }
 

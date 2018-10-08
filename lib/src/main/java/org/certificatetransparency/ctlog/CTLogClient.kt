@@ -1,16 +1,22 @@
 package org.certificatetransparency.ctlog
 
+import org.certificatetransparency.ctlog.comm.CtService
 import org.certificatetransparency.ctlog.comm.HttpLogClient
 import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.Serializer
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
 import java.security.cert.Certificate
 
 /** The main CT log client. Currently only knows how to upload certificate chains to the ctlog.  */
 class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
-    private val httpClient: HttpLogClient = HttpLogClient(baseLogUrl)
+    private val retrofit = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(baseLogUrl).build()
+
+    private val httpClient: HttpLogClient = HttpLogClient(baseLogUrl, ctService = retrofit.create(CtService::class.java))
+
     private val signatureVerifier: LogSignatureVerifier = LogSignatureVerifier(logInfo)
 
     /** Result of the certificate upload. Contains the SCT and verification result.  */

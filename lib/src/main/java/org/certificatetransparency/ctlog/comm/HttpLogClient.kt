@@ -32,7 +32,7 @@ class HttpLogClient
  * @param logUrl CT Log's full URL, e.g. "http://ct.googleapis.com/pilot/ct/v1/"
  * @param postInvoker HttpInvoker instance to use.
  */
-@JvmOverloads constructor(private val logUrl: String, private val postInvoker: HttpInvoker = HttpInvoker()) {
+@JvmOverloads constructor(private val logUrl: String, private val postInvoker: HttpInvoker = HttpInvoker(), private val ctService: CtService? = null) {
 
     /**
      * Retrieves Latest Signed Tree Head from the log. The signature of the Signed Tree Head component
@@ -153,21 +153,20 @@ class HttpLogClient
     /**
      * Retrieve Entry+Merkle Audit Proof from Log.
      *
-     * @param leafindex The index of the desired entry.
+     * @param leafIndex The index of the desired entry.
      * @param treeSize The tree_size of the tree for which the proof is desired.
      * @return ParsedLog entry object with proof.
      */
-    fun getLogEntryAndProof(leafindex: Long, treeSize: Long): ParsedLogEntryWithProof {
-        require(leafindex in 0..treeSize)
+    fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
+        require(leafIndex in 0..treeSize)
 
-        val params = createParamsList(
-            "leaf_index", "tree_size", java.lang.Long.toString(leafindex), java.lang.Long.toString(treeSize))
+        val response = ctService?.getEntryAndProof(leafIndex, treeSize)?.execute()?.body()!!
 
-        val response = postInvoker.makeGetRequest(logUrl + GET_ENTRY_AND_PROOF, params)
-        val entry = JSONValue.parse(response) as JSONObject
-        val auditPath = entry["audit_path"] as JSONArray
+        val logEntry = Deserializer.parseLogEntry(
+            ByteArrayInputStream(Base64.decodeBase64(response.leafInput)),
+            ByteArrayInputStream(Base64.decodeBase64(response.extraData)))
 
-        return Deserializer.parseLogEntryWithProof(jsonToLogEntry(entry), auditPath, leafindex, treeSize)
+        return Deserializer.parseLogEntryWithProof(logEntry, response.auditPath, leafIndex, treeSize)
     }
 
     /**
@@ -193,12 +192,8 @@ class HttpLogClient
      */
     fun getProofByEncodedHash(encodedMerkleLeafHash: String, treeSize: Long): MerkleAuditProof {
         require(encodedMerkleLeafHash.isNotEmpty())
-        val params = createParamsList("tree_size", "hash", java.lang.Long.toString(treeSize), encodedMerkleLeafHash)
-        val response = postInvoker.makeGetRequest(logUrl + GET_PROOF_BY_HASH, params)
-        val entry = JSONValue.parse(response) as JSONObject
-        val auditPath = entry["audit_path"] as JSONArray
-        val leafindex = java.lang.Long.valueOf(entry["leaf_index"].toString())
-        return Deserializer.parseAuditProof(auditPath, leafindex, treeSize)
+        val response = ctService?.getProofByHash(treeSize, encodedMerkleLeafHash)?.execute()?.body()!!
+        return Deserializer.parseAuditProof(response.auditPath, response.leafIndex, treeSize)
     }
 
     /**
@@ -328,8 +323,6 @@ class HttpLogClient
         private const val GET_ROOTS_PATH = "get-roots"
         private const val GET_ENTRIES = "get-entries"
         private const val GET_STH_CONSISTENCY = "get-sth-consistency"
-        private const val GET_ENTRY_AND_PROOF = "get-entry-and-proof"
-        private const val GET_PROOF_BY_HASH = "get-proof-by-hash"
 
         /**
          * Parses the CT Log's json response into a proper proto.

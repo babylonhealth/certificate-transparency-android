@@ -1,9 +1,16 @@
 package org.certificatetransparency.ctlog.comm
 
 import com.nhaarman.mockito_kotlin.anyOrNull
+import com.nhaarman.mockito_kotlin.argThat
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.NameValuePair
 import org.apache.http.message.BasicNameValuePair
@@ -24,6 +31,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.ArgumentMatchers.anyString
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -36,11 +45,32 @@ import java.util.ArrayList
 @RunWith(JUnit4::class)
 class HttpLogClientTest {
 
+    private val mockInterceptor = mock<Interceptor>()
+
+    private val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(mockInterceptor).build()
+    private val retrofit = Retrofit.Builder().client(client).addConverterFactory(GsonConverterFactory.create()).baseUrl("http://ctlog/").build()
+    private val ctService: CtService = retrofit.create(CtService::class.java)
+
+    private fun expectInterceptor(url: String, jsonResponse: String) {
+        whenever(mockInterceptor.intercept(argThat { request().url().toString() == url })).then {
+
+            val chain = it.arguments[0] as Interceptor.Chain
+
+            Response.Builder()
+                .body(ResponseBody.create(MediaType.parse("application/json"), jsonResponse))
+                .request(chain.request())
+                .protocol(Protocol.HTTP_2)
+                .code(200)
+                .message("")
+                .build()
+        }
+    }
+
     @Test
     @Throws(CertificateException::class, IOException::class)
     fun certificatesAreEncoded() {
         val inputCerts = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
-        val client = HttpLogClient("")
+        val client = HttpLogClient("", ctService = ctService)
 
         val encoded = client.encodeCertificates(inputCerts)
         assertTrue(encoded.containsKey("chain"))
@@ -74,7 +104,12 @@ class HttpLogClientTest {
         whenever(mockInvoker.makePostRequest(eq("http://ctlog/add-chain"), anyString()))
             .thenReturn(JSON_RESPONSE)
 
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        //TODO matt.dolan
+        expectInterceptor("http://ctlog/add-chain", JSON_RESPONSE)
+
+        //whenever(mockInterceptor.intercept(any())).then { jsonResponse(it.arguments[0] as Interceptor.Chain, JSON_RESPONSE) }
+
+        val client = HttpLogClient("http://ctlog/", mockInvoker, ctService = ctService)
         val certs = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
         val res = client.addCertificate(certs)
         assertNotNull("Should have a meaningful SCT", res)
@@ -245,15 +280,9 @@ class HttpLogClientTest {
 
     @Test
     fun getLogEntrieAndProof() {
-        val mockInvoker = mock<HttpInvoker>()
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair("leaf_index", java.lang.Long.toString(1)))
-        params.add(BasicNameValuePair("tree_size", java.lang.Long.toString(2)))
+        expectInterceptor("http://ctlog/get-entry-and-proof?leaf_index=1&tree_size=2", LOG_ENTRY_AND_PROOF)
 
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-entry-and-proof"), eq(params)))
-            .thenReturn(LOG_ENTRY_AND_PROOF)
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient("http://ctlog/", ctService = ctService)
         val testChainCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.ROOT_CA_CERT))[0] as X509Certificate
         val testCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.TEST_CERT))[0] as X509Certificate
         val entry = client.getLogEntryAndProof(1, 2)
@@ -283,14 +312,9 @@ class HttpLogClientTest {
     @Test
     @Throws(Exception::class)
     fun getLogProofByHash() {
-        val mockInvoker = mock<HttpInvoker>()
         val merkleLeafHash = "YWhhc2g="
-        val params2 = ArrayList<NameValuePair>()
-        params2.add(BasicNameValuePair("tree_size", java.lang.Long.toString(40183)))
-        params2.add(BasicNameValuePair("hash", merkleLeafHash))
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-proof-by-hash"), eq(params2)))
-            .thenReturn(MERKLE_AUDIT_PROOF)
-        val client2 = HttpLogClient("http://ctlog/", mockInvoker)
+        expectInterceptor("http://ctlog/get-proof-by-hash?tree_size=40183&hash=YWhhc2g%3D", MERKLE_AUDIT_PROOF)
+        val client2 = HttpLogClient("http://ctlog/", ctService = ctService)
         val auditProof = client2.getProofByEncodedHash(merkleLeafHash, 40183)
         assertTrue(auditProof.leafIndex == 198743L)
     }
