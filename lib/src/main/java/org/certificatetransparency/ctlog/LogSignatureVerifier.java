@@ -136,7 +136,7 @@ public class LogSignatureVerifier {
           String.format(
               "Log ID of SCT (%s) does not match this log's ID (%s).",
               Base64.toBase64String(sct.getId().getKeyId().toByteArray()),
-              Base64.toBase64String(logInfo.getID())));
+              Base64.toBase64String(logInfo.getId())));
     }
 
     X509Certificate leafCert = (X509Certificate) chain.get(0);

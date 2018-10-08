@@ -136,7 +136,7 @@ public class VerifySignature {
       File[] files = file.listFiles();
       for (File keyfile : files) {
         LogInfo logInfo = LogInfo.fromKeyFile(keyfile.getAbsolutePath());
-        String id = Base64.toBase64String(logInfo.getID());
+        String id = Base64.toBase64String(logInfo.getId());
         System.out.println("Log ID: " + id + ", " + keyfile.getAbsolutePath());
         if (logInfos.put(id, logInfo) != null) {
           System.out.println(
@@ -148,8 +148,8 @@ public class VerifySignature {
     } else {
       LogInfo logInfo = LogInfo.fromKeyFile(logPublicKeyFileorDir);
       System.out.println(
-          "Log ID: " + Base64.toBase64String(logInfo.getID()) + ", " + file.getAbsolutePath());
-      logInfos.put(Base64.toBase64String(logInfo.getID()), logInfo);
+          "Log ID: " + Base64.toBase64String(logInfo.getId()) + ", " + file.getAbsolutePath());
+      logInfos.put(Base64.toBase64String(logInfo.getId()), logInfo);
     }
     return logInfos;
   }

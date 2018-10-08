@@ -77,13 +77,13 @@ public class LogSignatureVerifierTest {
   private Map<String, LogInfo> getLogInfosGitHub() {
     Map<String, LogInfo> logInfos = new HashMap<>();
     LogInfo logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_PILOT));
-    String id = Base64.toBase64String(logInfo.getID());
+    String id = Base64.toBase64String(logInfo.getId());
     logInfos.put(id, logInfo);
     logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_SKYDIVER));
-    id = Base64.toBase64String(logInfo.getID());
+    id = Base64.toBase64String(logInfo.getId());
     logInfos.put(id, logInfo);
     logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_DIGICERT));
-    id = Base64.toBase64String(logInfo.getID());
+    id = Base64.toBase64String(logInfo.getId());
     logInfos.put(id, logInfo);
     return logInfos;
   }
