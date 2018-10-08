@@ -138,11 +138,11 @@ public class Deserializer {
 
     if (entryType == Ct.LogEntryType.X509_ENTRY) {
       X509ChainEntry x509EntryChain =
-          parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().x509);
+          parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().getX509());
       logEntry.x509Entry = x509EntryChain;
     } else if (entryType == Ct.LogEntryType.PRECERT_ENTRY) {
       PrecertChainEntry preCertChain =
-          parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().preCert);
+          parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().getPreCert());
       logEntry.precertEntry = preCertChain;
     } else {
       throw new SerializationException(String.format("Unknown entry type: %d", entryType));
@@ -190,17 +190,17 @@ public class Deserializer {
     SignedEntry signedEntry = new SignedEntry();
     if (entryType == Ct.LogEntryType.X509_ENTRY_VALUE) {
       int length = (int) readNumber(in, 3);
-      signedEntry.x509 = readFixedLength(in, length);
+      signedEntry.setX509(readFixedLength(in, length));
     } else if (entryType == Ct.LogEntryType.PRECERT_ENTRY_VALUE) {
       PreCert preCert = new PreCert();
 
-      preCert.issuerKeyHash = readFixedLength(in, 32);
+      preCert.setIssuerKeyHash(readFixedLength(in, 32));
 
       // set tbs certificate
       int length = (int) readNumber(in, 2);
-      preCert.tbsCertificate = readFixedLength(in, length);
+      preCert.setTbsCertificate(readFixedLength(in, length));
 
-      signedEntry.preCert = preCert;
+      signedEntry.setPreCert(preCert);
     } else {
       throw new SerializationException(String.format("Unknown entry type: %d", entryType));
     }
@@ -245,7 +245,7 @@ public class Deserializer {
    */
   public static PrecertChainEntry parsePrecertChainEntry(InputStream in, PreCert preCert) {
     PrecertChainEntry preCertChain = new PrecertChainEntry();
-    preCertChain.preCert = preCert;
+    preCertChain.setPreCert(preCert);
 
     try {
       if (readNumber(in, 3) != in.available()) {
@@ -253,7 +253,7 @@ public class Deserializer {
       }
       while (in.available() > 0) {
         int length = (int) readNumber(in, 3);
-        preCertChain.precertificateChain.add(readFixedLength(in, length));
+        preCertChain.getPrecertificateChain().add(readFixedLength(in, length));
       }
     } catch (IOException e) {
       throw new SerializationException("Cannot parse PrecertEntryChain." + e.getLocalizedMessage());
