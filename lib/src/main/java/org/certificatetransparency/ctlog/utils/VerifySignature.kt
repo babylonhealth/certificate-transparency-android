@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.utils
 
-import com.google.common.io.Files
 import com.google.protobuf.InvalidProtocolBufferException
 import org.bouncycastle.asn1.ASN1OctetString
 import org.bouncycastle.asn1.ASN1Primitive
@@ -53,12 +52,12 @@ object VerifySignature {
                 scts = parseSCTsFromCert(leafCert)
             }
         } else {
-            val sctBytes = Files.toByteArray(File(sctFile))
+            val sctBytes = File(sctFile).readBytes()
             try {
                 scts.add(Ct.SignedCertificateTimestamp.parseFrom(sctBytes))
             } catch (e: InvalidProtocolBufferException) {
                 println("Not a protocol buffer. Trying reading as binary")
-                scts.add(Deserializer.parseSCTFromBinary(ByteArrayInputStream(sctBytes!!)))
+                scts.add(Deserializer.parseSCTFromBinary(ByteArrayInputStream(sctBytes)))
             }
         }
         if (scts.isEmpty()) {

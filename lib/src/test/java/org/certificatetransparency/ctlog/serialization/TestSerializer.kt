@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.serialization
 
-import com.google.common.io.Files
 import com.google.protobuf.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.certificatetransparency.ctlog.TestData
@@ -37,7 +36,7 @@ class TestSerializer {
         builder.signature = signatureBuilder.build()
 
         val generatedBytes = Serializer.serializeSctToBinary(builder.build())
-        val readBytes = Files.toByteArray(TestData.file(TEST_CERT_SCT))
+        val readBytes = TestData.file(TEST_CERT_SCT).readBytes()
         assertArrayEquals(readBytes, generatedBytes)
     }
 

@@ -1,8 +1,5 @@
 package org.certificatetransparency.ctlog.comm
 
-import com.google.common.base.Function
-import com.google.common.base.Preconditions
-import com.google.common.collect.Lists
 import com.google.protobuf.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.NameValuePair
@@ -61,11 +58,11 @@ class HttpLogClient
             return parseRootCertsResponse(response)
         }
 
-    private val jsonToLogEntry = Function<JSONObject, ParsedLogEntry> { entry ->
-        val leaf = entry!!["leaf_input"] as String
-        val extra = entry["extra_data"] as String
+    private fun jsonToLogEntry(input: JSONObject): ParsedLogEntry {
+        val leaf = input["leaf_input"] as String
+        val extra = input["extra_data"] as String
 
-        Deserializer.parseLogEntry(
+        return Deserializer.parseLogEntry(
             ByteArrayInputStream(Base64.decodeBase64(leaf)),
             ByteArrayInputStream(Base64.decodeBase64(extra)))
     }
@@ -100,14 +97,13 @@ class HttpLogClient
      * @return SignedCertificateTimestamp if the log added the chain successfully.
      */
     fun addCertificate(certificatesChain: List<Certificate>): Ct.SignedCertificateTimestamp? {
-        Preconditions.checkArgument(
-            !certificatesChain.isEmpty(), "Must have at least one certificate to submit.")
+        require(!certificatesChain.isEmpty()) { "Must have at least one certificate to submit." }
 
         val isPreCertificate = certificatesChain[0].isPreCertificate()
         if (isPreCertificate && certificatesChain[1].isPreCertificateSigningCert()) {
-            Preconditions.checkArgument(
-                certificatesChain.size >= 3,
-                "When signing a PreCertificate with a PreCertificate Signing Cert," + " the issuer certificate must follow.")
+            require(certificatesChain.size >= 3) {
+                "When signing a PreCertificate with a PreCertificate Signing Cert," + " the issuer certificate must follow."
+            }
         }
 
         return addCertificate(certificatesChain, isPreCertificate)
@@ -130,7 +126,7 @@ class HttpLogClient
      * @return list of Log's entries.
      */
     fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry> {
-        Preconditions.checkArgument(start in 0..end)
+        require(start in 0..end)
 
         val params = createParamsList("start", "end", java.lang.Long.toString(start), java.lang.Long.toString(end))
 
@@ -146,7 +142,7 @@ class HttpLogClient
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
     fun getSTHConsistency(first: Long, second: Long): List<ByteString> {
-        Preconditions.checkArgument(first in 0..second)
+        require(first in 0..second)
 
         val params = createParamsList("first", "second", java.lang.Long.toString(first), java.lang.Long.toString(second))
 
@@ -162,7 +158,7 @@ class HttpLogClient
      * @return ParsedLog entry object with proof.
      */
     fun getLogEntryAndProof(leafindex: Long, treeSize: Long): ParsedLogEntryWithProof {
-        Preconditions.checkArgument(leafindex in 0..treeSize)
+        require(leafindex in 0..treeSize)
 
         val params = createParamsList(
             "leaf_index", "tree_size", java.lang.Long.toString(leafindex), java.lang.Long.toString(treeSize))
@@ -171,7 +167,7 @@ class HttpLogClient
         val entry = JSONValue.parse(response) as JSONObject
         val auditPath = entry["audit_path"] as JSONArray
 
-        return Deserializer.parseLogEntryWithProof(jsonToLogEntry.apply(entry)!!, auditPath, leafindex, treeSize)
+        return Deserializer.parseLogEntryWithProof(jsonToLogEntry(entry), auditPath, leafindex, treeSize)
     }
 
     /**
@@ -181,7 +177,7 @@ class HttpLogClient
      * @return MerkleAuditProof object.
      */
     fun getProofByHash(leafHash: ByteArray): MerkleAuditProof {
-        Preconditions.checkArgument(leafHash.isNotEmpty())
+        require(leafHash.isNotEmpty())
         val encodedMerkleLeafHash = Base64.encodeBase64String(leafHash)
         val sth = logSTH
         return getProofByEncodedHash(encodedMerkleLeafHash, sth.treeSize)
@@ -196,7 +192,7 @@ class HttpLogClient
      * @return MerkleAuditProof object.
      */
     fun getProofByEncodedHash(encodedMerkleLeafHash: String, treeSize: Long): MerkleAuditProof {
-        Preconditions.checkArgument(encodedMerkleLeafHash.isNotEmpty())
+        require(encodedMerkleLeafHash.isNotEmpty())
         val params = createParamsList("tree_size", "hash", java.lang.Long.toString(treeSize), encodedMerkleLeafHash)
         val response = postInvoker.makeGetRequest(logUrl + GET_PROOF_BY_HASH, params)
         val entry = JSONValue.parse(response) as JSONObject
@@ -232,14 +228,14 @@ class HttpLogClient
      * @return list of Log's entries.
      */
     private fun parseLogEntries(response: String): List<ParsedLogEntry> {
-        Preconditions.checkNotNull(response, "Log entries response from Log should not be null.")
+        requireNotNull(response) { "Log entries response from Log should not be null." }
 
         val responseJson = JSONValue.parse(response) as JSONObject
         val arr = responseJson["entries"] as JSONArray
 
         // JSONArray is guaranteed to be a list of JSONObjects
         @Suppress("UNCHECKED_CAST")
-        return Lists.transform<JSONObject, ParsedLogEntry>(arr as List<JSONObject>, jsonToLogEntry)
+        return (arr as List<JSONObject>).map(::jsonToLogEntry)
     }
 
     /**
@@ -249,7 +245,7 @@ class HttpLogClient
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
     private fun parseConsistencyProof(response: String): List<ByteString> {
-        Preconditions.checkNotNull(response, "Merkle Consistency response should not be null.")
+        requireNotNull(response) { "Merkle Consistency response should not be null." }
 
         val responseJson = JSONValue.parse(response) as JSONObject
         val arr = responseJson["consistency"] as JSONArray
@@ -268,8 +264,7 @@ class HttpLogClient
      * @return a proto object of SignedTreeHead type.
      */
     private fun parseSTHResponse(sthResponse: String): SignedTreeHead {
-        Preconditions.checkNotNull(
-            sthResponse, "Sign Tree Head response from a CT log should not be null")
+        requireNotNull(sthResponse) { "Sign Tree Head response from a CT log should not be null" }
 
         val response = JSONValue.parse(sthResponse) as JSONObject
         val treeSize = response["tree_size"] as Long

@@ -1,8 +1,5 @@
 package org.certificatetransparency.ctlog.serialization
 
-import com.google.common.base.Joiner
-import com.google.common.io.Files
-
 import org.apache.commons.codec.binary.Base64
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.bouncycastle.asn1.ASN1Sequence
@@ -10,7 +7,6 @@ import org.bouncycastle.asn1.DLSequence
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
 import org.certificatetransparency.ctlog.UnsupportedCryptoPrimitiveException
-
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -81,7 +77,7 @@ object CryptoDataLoader {
         }
 
         // The contents are PEM encoded - first and last lines are header and footer.
-        val b64string = Joiner.on("").join(pemLines.subList(1, pemLines.size - 1))
+        val b64string = pemLines.subList(1, pemLines.size - 1).joinToString("")
         // Extract public key
         val keyBytes = Base64.decodeBase64(b64string)
         val keyAlg = determineKeyAlg(keyBytes)
@@ -121,7 +117,7 @@ object CryptoDataLoader {
      */
     fun keyFromFile(pemFile: File): PublicKey {
         try {
-            return parsePublicKey(Files.readLines(pemFile, Charset.defaultCharset()))
+            return parsePublicKey(pemFile.readLines(Charset.defaultCharset()))
         } catch (e: IOException) {
             throw InvalidInputException(String.format("Error reading input file %s", pemFile), e)
         }

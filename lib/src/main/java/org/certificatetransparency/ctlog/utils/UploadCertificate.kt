@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.utils
 
-import com.google.common.io.Files
 import org.certificatetransparency.ctlog.comm.HttpLogClient
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import java.io.File
@@ -34,7 +33,7 @@ object UploadCertificate {
         if (args.size >= 2) {
             val outputFile = args[1]
             //TODO(eranm): Binary encoding compatible with the C++ code.
-            Files.write(resp?.toByteArray(), File(outputFile))
+            File(outputFile).writeBytes(resp?.toByteArray()!!)
         }
     }
 }

@@ -1,11 +1,9 @@
 package org.certificatetransparency.ctlog
 
-import com.google.common.io.Files
 import org.certificatetransparency.ctlog.comm.HttpLogClient
 import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.Serializer
-
 import java.io.File
 import java.io.IOException
 import java.security.cert.Certificate
@@ -50,7 +48,7 @@ class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
                 println("Upload successful ")
                 if (outputSctFile != null) {
                     val serialized = Serializer.serializeSctToBinary(result.sct)
-                    Files.write(serialized, File(outputSctFile))
+                    File(outputSctFile).writeBytes(serialized)
                 }
             } else {
                 println("Log signature verification FAILED.")

@@ -1,8 +1,6 @@
 package org.certificatetransparency.ctlog.serialization
 
-import com.google.common.base.Preconditions
 import org.certificatetransparency.ctlog.proto.Ct
-
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
@@ -18,9 +16,9 @@ object Serializer {
      */
     @JvmStatic
     fun writeUint(outputStream: OutputStream, value: Long, numBytes: Int) {
+        require(value >= 0)
+        require(value < Math.pow(256.0, numBytes.toDouble())) { "Value $value cannot be stored in $numBytes bytes" }
         var numBytes = numBytes
-        Preconditions.checkArgument(value >= 0)
-        Preconditions.checkArgument(value < Math.pow(256.0, numBytes.toDouble()), "Value $value cannot be stored in $numBytes bytes")
         try {
             while (numBytes > 0) {
                 // MSB first.
@@ -43,9 +41,8 @@ object Serializer {
      * store the length of the data.
      */
     @JvmStatic
-    fun writeVariableLength(
-        outputStream: OutputStream, data: ByteArray, maxDataLength: Int) {
-        Preconditions.checkArgument(data.size <= maxDataLength)
+    fun writeVariableLength(outputStream: OutputStream, data: ByteArray, maxDataLength: Int) {
+        require(data.size <= maxDataLength)
         val bytesForDataLength = Deserializer.bytesForDataLength(maxDataLength)
         writeUint(outputStream, data.size.toLong(), bytesForDataLength)
         try {

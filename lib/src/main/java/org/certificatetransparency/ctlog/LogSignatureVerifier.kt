@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog
 
-import com.google.common.base.Preconditions
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.bouncycastle.asn1.x500.X500Name
@@ -77,14 +76,14 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             val toVerify = serializeSignedSCTData(leafCert, sct)
             return verifySCTSignatureOverBytes(sct, toVerify)
         }
-        Preconditions.checkArgument(chain.size >= 2, "Chain with PreCertificate or Certificate must contain issuer.")
+        require(chain.size >= 2) { "Chain with PreCertificate or Certificate must contain issuer." }
         // PreCertificate or final certificate with embedded SCTs, we want the issuerInformation
         val issuerCert = chain[1]
         val issuerInformation = if (!issuerCert.isPreCertificateSigningCert()) {
             // If signed by the real issuing CA
             issuerInformationFromCertificateIssuer(issuerCert)
         } else {
-            Preconditions.checkArgument(chain.size >= 3, "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer.")
+            require(chain.size >= 3) { "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer." }
             issuerInformationFromPreCertificateSigningCert(issuerCert, getKeyHash(chain[2]))
         }
         return verifySCTOverPreCertificate(sct, leafCert, issuerInformation)
@@ -121,7 +120,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
         sct: Ct.SignedCertificateTimestamp?,
         certificate: X509Certificate,
         issuerInfo: IssuerInformation): Boolean {
-        Preconditions.checkNotNull(issuerInfo, "At the very least, the issuer key hash is needed.")
+        requireNotNull(issuerInfo) { "At the very least, the issuer key hash is needed." }
 
         val preCertificateTBS = createTbsForVerification(certificate, issuerInfo)
         try {
@@ -135,7 +134,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
 
     private fun createTbsForVerification(
         preCertificate: X509Certificate, issuerInformation: IssuerInformation): TBSCertificate {
-        Preconditions.checkArgument(preCertificate.version >= 3)
+        require(preCertificate.version >= 3)
         // We have to use bouncycastle's certificate parsing code because Java's X509 certificate
         // parsing discards the order of the extensions. The signature from SCT we're verifying
         // is over the TBSCertificate in its original form, including the order of the extensions.
@@ -147,7 +146,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
                 // The PreCertificate has this extension, AND:
                 // The PreCertificate was signed by a PreCertificate signing cert.
                 if (hasX509AuthorityKeyIdentifier(parsedPreCertificate) && issuerInformation.issuedByPreCertificateSigningCert()) {
-                    Preconditions.checkArgument(issuerInformation.x509authorityKeyIdentifier != null)
+                    require(issuerInformation.x509authorityKeyIdentifier != null)
                 }
 
                 val orderedExtensions = getExtensionsWithoutPoisonAndSCT(
@@ -297,7 +296,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
         }
 
         private fun serializeCommonSCTFields(sct: Ct.SignedCertificateTimestamp, bos: ByteArrayOutputStream) {
-            Preconditions.checkArgument(sct.version == Ct.Version.V1, "Can only serialize SCT v1 for now.")
+            require(sct.version == Ct.Version.V1) { "Can only serialize SCT v1 for now." }
             Serializer.writeUint(bos, sct.version.number.toLong(), VERSION_LENGTH) // ct::V1
             Serializer.writeUint(bos, 0, 1) // ct::CERTIFICATE_TIMESTAMP
             Serializer.writeUint(bos, sct.timestamp, TIMESTAMP_LENGTH) // Timestamp

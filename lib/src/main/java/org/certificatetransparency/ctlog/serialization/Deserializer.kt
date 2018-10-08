@@ -1,8 +1,6 @@
 package org.certificatetransparency.ctlog.serialization
 
-import com.google.common.base.Preconditions
 import com.google.protobuf.ByteString
-
 import org.apache.commons.codec.binary.Base64
 import org.certificatetransparency.ctlog.LogEntry
 import org.certificatetransparency.ctlog.MerkleAuditProof
@@ -16,7 +14,6 @@ import org.certificatetransparency.ctlog.TimestampedEntry
 import org.certificatetransparency.ctlog.X509ChainEntry
 import org.certificatetransparency.ctlog.proto.Ct
 import org.json.simple.JSONArray
-
 import java.io.IOException
 import java.io.InputStream
 
@@ -333,7 +330,7 @@ object Deserializer {
      * @return a number of at most 2^numBytes
      */
     private fun readNumber(inputStream: InputStream, numBytes: Int): Long {
-        Preconditions.checkArgument(numBytes <= 8, "Could not read a number of more than 8 bytes.")
+        require(numBytes <= 8) { "Could not read a number of more than 8 bytes." }
 
         var toReturn: Long = 0
         try {
