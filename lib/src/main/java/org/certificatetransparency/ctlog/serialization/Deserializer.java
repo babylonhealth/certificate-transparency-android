@@ -134,15 +134,15 @@ public class Deserializer {
     MerkleTreeLeaf treeLeaf = parseMerkleTreeLeaf(merkleTreeLeaf);
     LogEntry logEntry = new LogEntry();
 
-    Ct.LogEntryType entryType = treeLeaf.timestampedEntry.entryType;
+    Ct.LogEntryType entryType = treeLeaf.timestampedEntry.getEntryType();
 
     if (entryType == Ct.LogEntryType.X509_ENTRY) {
       X509ChainEntry x509EntryChain =
-          parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.x509);
+          parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().x509);
       logEntry.x509Entry = x509EntryChain;
     } else if (entryType == Ct.LogEntryType.PRECERT_ENTRY) {
       PrecertChainEntry preCertChain =
-          parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.preCert);
+          parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().preCert);
       logEntry.precertEntry = preCertChain;
     } else {
       throw new SerializationException(String.format("Unknown entry type: %d", entryType));
@@ -182,10 +182,10 @@ public class Deserializer {
   public static TimestampedEntry parseTimestampedEntry(InputStream in) {
     TimestampedEntry timestampedEntry = new TimestampedEntry();
 
-    timestampedEntry.timestamp = readNumber(in, CTConstants.TIMESTAMP_LENGTH);
+    timestampedEntry.setTimestamp(readNumber(in, CTConstants.TIMESTAMP_LENGTH));
 
     int entryType = (int) readNumber(in, CTConstants.LOG_ENTRY_TYPE_LENGTH);
-    timestampedEntry.entryType = Ct.LogEntryType.valueOf(entryType);
+    timestampedEntry.setEntryType(Ct.LogEntryType.valueOf(entryType));
 
     SignedEntry signedEntry = new SignedEntry();
     if (entryType == Ct.LogEntryType.X509_ENTRY_VALUE) {
@@ -204,7 +204,7 @@ public class Deserializer {
     } else {
       throw new SerializationException(String.format("Unknown entry type: %d", entryType));
     }
-    timestampedEntry.signedEntry = signedEntry;
+    timestampedEntry.setSignedEntry(signedEntry);
 
     return timestampedEntry;
   }
