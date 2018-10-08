@@ -139,11 +139,11 @@ public class Deserializer {
     if (entryType == Ct.LogEntryType.X509_ENTRY) {
       X509ChainEntry x509EntryChain =
           parseX509ChainEntry(extraData, treeLeaf.getTimestampedEntry().getSignedEntry().getX509());
-      logEntry.x509Entry = x509EntryChain;
+      logEntry.setX509Entry(x509EntryChain);
     } else if (entryType == Ct.LogEntryType.PRECERT_ENTRY) {
       PrecertChainEntry preCertChain =
           parsePrecertChainEntry(extraData, treeLeaf.getTimestampedEntry().getSignedEntry().getPreCert());
-      logEntry.precertEntry = preCertChain;
+      logEntry.setPrecertEntry(preCertChain);
     } else {
       throw new SerializationException(String.format("Unknown entry type: %d", entryType));
     }

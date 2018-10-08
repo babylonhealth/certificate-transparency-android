@@ -302,13 +302,13 @@ public class HttpLogClientTest {
     X509Certificate leafCert = null;
     try {
 
-      byte[] leafCertBytes = entries.get(0).getLogEntry().x509Entry.getLeafCertificate();
+      byte[] leafCertBytes = entries.get(0).getLogEntry().getX509Entry().getLeafCertificate();
       leafCert =
           (X509Certificate)
               CertificateFactory.getInstance("X509")
                   .generateCertificate(new ByteArrayInputStream(leafCertBytes));
 
-      byte[] chainCertBytes = entries.get(0).getLogEntry().x509Entry.getCertificateChain().get(0);
+      byte[] chainCertBytes = entries.get(0).getLogEntry().getX509Entry().getCertificateChain().get(0);
       chainCert =
           (X509Certificate)
               CertificateFactory.getInstance("X509")
@@ -409,14 +409,14 @@ public class HttpLogClientTest {
     X509Certificate leafCert = null;
     try {
 
-      byte[] leafCertBytes = entry.getParsedLogEntry().getLogEntry().x509Entry.getLeafCertificate();
+      byte[] leafCertBytes = entry.getParsedLogEntry().getLogEntry().getX509Entry().getLeafCertificate();
       leafCert =
           (X509Certificate)
               CertificateFactory.getInstance("X509")
                   .generateCertificate(new ByteArrayInputStream(leafCertBytes));
 
       byte[] chainCertBytes =
-          entry.getParsedLogEntry().getLogEntry().x509Entry.getCertificateChain().get(0);
+          entry.getParsedLogEntry().getLogEntry().getX509Entry().getCertificateChain().get(0);
       chainCert =
           (X509Certificate)
               CertificateFactory.getInstance("X509")
