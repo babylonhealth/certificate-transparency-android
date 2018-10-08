@@ -428,9 +428,9 @@ public class HttpLogClientTest {
 
     assertTrue(testCert.equals(leafCert));
     assertTrue(testChainCert.equals(chainCert));
-    assertEquals(2, entry.getAuditProof().pathNode.size());
-    assertEquals(1, entry.getAuditProof().leafIndex);
-    assertEquals(2, entry.getAuditProof().treeSize);
+    assertEquals(2, entry.getAuditProof().getPathNode().size());
+    assertEquals(1, entry.getAuditProof().getLeafIndex());
+    assertEquals(2, entry.getAuditProof().getTreeSize());
   }
 
   @Test
@@ -445,6 +445,6 @@ public class HttpLogClientTest {
     HttpLogClient client2 = new HttpLogClient("http://ctlog/", mockInvoker);
     MerkleAuditProof auditProof = client2.getProofByEncodedHash(merkleLeafHash, 40183);
     assertTrue(auditProof != null);
-    assertTrue(auditProof.leafIndex == 198743);
+    assertTrue(auditProof.getLeafIndex() == 198743);
   }
 }

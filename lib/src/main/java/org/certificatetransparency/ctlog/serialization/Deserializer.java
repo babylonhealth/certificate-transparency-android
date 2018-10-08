@@ -102,7 +102,7 @@ public class Deserializer {
     MerkleAuditProof audit_proof = new MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex);
 
     for (Object node : proof) {
-      audit_proof.pathNode.add(Base64.decodeBase64((String) node));
+      audit_proof.getPathNode().add(Base64.decodeBase64((String) node));
     }
     return ParsedLogEntryWithProof.newInstance(entry, audit_proof);
   }
@@ -119,7 +119,7 @@ public class Deserializer {
   public static MerkleAuditProof parseAuditProof(JSONArray proof, long leafIndex, long treeSize) {
 
     MerkleAuditProof audit_proof = new MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex);
-    proof.forEach(node -> audit_proof.pathNode.add(Base64.decodeBase64((String) node)));
+    proof.forEach(node -> audit_proof.getPathNode().add(Base64.decodeBase64((String) node)));
     return audit_proof;
   }
 
@@ -134,15 +134,15 @@ public class Deserializer {
     MerkleTreeLeaf treeLeaf = parseMerkleTreeLeaf(merkleTreeLeaf);
     LogEntry logEntry = new LogEntry();
 
-    Ct.LogEntryType entryType = treeLeaf.timestampedEntry.getEntryType();
+    Ct.LogEntryType entryType = treeLeaf.getTimestampedEntry().getEntryType();
 
     if (entryType == Ct.LogEntryType.X509_ENTRY) {
       X509ChainEntry x509EntryChain =
-          parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().getX509());
+          parseX509ChainEntry(extraData, treeLeaf.getTimestampedEntry().getSignedEntry().getX509());
       logEntry.x509Entry = x509EntryChain;
     } else if (entryType == Ct.LogEntryType.PRECERT_ENTRY) {
       PrecertChainEntry preCertChain =
-          parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.getSignedEntry().getPreCert());
+          parsePrecertChainEntry(extraData, treeLeaf.getTimestampedEntry().getSignedEntry().getPreCert());
       logEntry.precertEntry = preCertChain;
     } else {
       throw new SerializationException(String.format("Unknown entry type: %d", entryType));
