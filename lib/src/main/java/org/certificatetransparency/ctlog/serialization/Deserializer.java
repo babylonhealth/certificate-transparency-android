@@ -219,7 +219,7 @@ public class Deserializer {
    */
   public static X509ChainEntry parseX509ChainEntry(InputStream in, byte[] x509Cert) {
     X509ChainEntry x509EntryChain = new X509ChainEntry();
-    x509EntryChain.leafCertificate = x509Cert;
+    x509EntryChain.setLeafCertificate(x509Cert);
 
     try {
       if (readNumber(in, 3) != in.available()) {
@@ -227,7 +227,7 @@ public class Deserializer {
       }
       while (in.available() > 0) {
         int length = (int) readNumber(in, 3);
-        x509EntryChain.certificateChain.add(readFixedLength(in, length));
+        x509EntryChain.getCertificateChain().add(readFixedLength(in, length));
       }
     } catch (IOException e) {
       throw new SerializationException("Cannot parse xChainEntry. " + e.getLocalizedMessage());
