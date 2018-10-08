@@ -246,7 +246,7 @@ public class HttpLogClient {
     Preconditions.checkArgument(leafHash != null && leafHash.length > 0);
     String encodedMerkleLeafHash = Base64.encodeBase64String(leafHash);
     SignedTreeHead sth = getLogSTH();
-    return getProofByEncodedHash(encodedMerkleLeafHash, sth.treeSize);
+    return getProofByEncodedHash(encodedMerkleLeafHash, sth.getTreeSize());
   }
 
   /**
@@ -360,19 +360,18 @@ public class HttpLogClient {
     String sha256RootHash = (String) response.get("sha256_root_hash");
 
     SignedTreeHead sth = new SignedTreeHead(Ct.Version.V1);
-    sth.treeSize = treeSize;
-    sth.timestamp = timestamp;
-    sth.sha256RootHash = Base64.decodeBase64(sha256RootHash);
-    sth.signature =
-        Deserializer.parseDigitallySignedFromBinary(
-            new ByteArrayInputStream(Base64.decodeBase64(base64Signature)));
+    sth.setTreeSize(treeSize);
+    sth.setTimestamp(timestamp);
+    sth.setSha256RootHash(Base64.decodeBase64(sha256RootHash));
+    sth.setSignature(Deserializer.parseDigitallySignedFromBinary(
+            new ByteArrayInputStream(Base64.decodeBase64(base64Signature))));
 
-    if (sth.sha256RootHash.length != 32) {
+    if (sth.getSha256RootHash().length != 32) {
       throw new CertificateTransparencyException(
           String.format(
               "Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. "
                   + "The size of the root hash is %d",
-              sth.sha256RootHash.length));
+              sth.getSha256RootHash().length));
     }
     return sth;
   }

@@ -228,9 +228,9 @@ public class HttpLogClientTest {
     SignedTreeHead sth = client.getLogSTH();
 
     assertNotNull(sth);
-    assertEquals(1402415255382L, sth.timestamp);
-    assertEquals(4301837, sth.treeSize);
-    String rootHash = Base64.encodeBase64String(sth.sha256RootHash);
+    assertEquals(1402415255382L, sth.getTimestamp());
+    assertEquals(4301837, sth.getTreeSize());
+    String rootHash = Base64.encodeBase64String(sth.getSha256RootHash());
     assertTrue("jdH9k+/lb9abMz3N8rVmwrw8MWU7v55+nSAXej3hqPg=".equals(rootHash));
   }
 
