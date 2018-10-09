@@ -2,37 +2,33 @@ package org.certificatetransparency.ctlog.comm
 
 import com.google.protobuf.ByteString
 import org.apache.commons.codec.binary.Base64
-import org.apache.http.NameValuePair
-import org.apache.http.message.BasicNameValuePair
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.MerkleAuditProof
 import org.certificatetransparency.ctlog.ParsedLogEntry
 import org.certificatetransparency.ctlog.ParsedLogEntryWithProof
 import org.certificatetransparency.ctlog.SignedTreeHead
+import org.certificatetransparency.ctlog.comm.model.AddChainRequest
+import org.certificatetransparency.ctlog.comm.model.AddChainResponse
+import org.certificatetransparency.ctlog.comm.model.GetEntriesResponse
+import org.certificatetransparency.ctlog.comm.model.GetRootsResponse
+import org.certificatetransparency.ctlog.comm.model.GetSthConsistencyResponse
+import org.certificatetransparency.ctlog.comm.model.GetSthResponse
 import org.certificatetransparency.ctlog.isPreCertificate
 import org.certificatetransparency.ctlog.isPreCertificateSigningCert
 import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.Deserializer
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
-import org.json.simple.JSONValue
 import java.io.ByteArrayInputStream
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
-import java.util.ArrayList
 
-/** A CT HTTP client. Abstracts away the json encoding necessary for the server.  */
-class HttpLogClient
-/**
- * For testing specify an HttpInvoker
+/** A CT HTTP client. Abstracts away the json encoding necessary for the server.
  *
  * @constructor New HttpLogClient.
- * @param logUrl CT Log's full URL, e.g. "http://ct.googleapis.com/pilot/ct/v1/"
- * @param postInvoker HttpInvoker instance to use.
+ * @property ctService CtService pointing to CT Log's full URL, e.g. "http://ct.googleapis.com/pilot/ct/v1/"
  */
-@JvmOverloads constructor(private val logUrl: String, private val postInvoker: HttpInvoker = HttpInvoker(), private val ctService: CtService? = null) {
+class HttpLogClient(private val ctService: CtService) {
 
     /**
      * Retrieves Latest Signed Tree Head from the log. The signature of the Signed Tree Head component
@@ -42,7 +38,7 @@ class HttpLogClient
      */
     val logSTH: SignedTreeHead
         get() {
-            val response = postInvoker.makeGetRequest(logUrl + GET_STH_PATH)
+            val response = ctService.getSth().execute()?.body()!!
             return parseSTHResponse(response)
         }
 
@@ -53,19 +49,9 @@ class HttpLogClient
      */
     val logRoots: List<Certificate>
         get() {
-            val response = postInvoker.makeGetRequest(logUrl + GET_ROOTS_PATH)
-
+            val response = ctService.getRoots().execute()?.body()!!
             return parseRootCertsResponse(response)
         }
-
-    private fun jsonToLogEntry(input: JSONObject): ParsedLogEntry {
-        val leaf = input["leaf_input"] as String
-        val extra = input["extra_data"] as String
-
-        return Deserializer.parseLogEntry(
-            ByteArrayInputStream(Base64.decodeBase64(leaf)),
-            ByteArrayInputStream(Base64.decodeBase64(extra)))
-    }
 
     /**
      * JSON-encodes the list of certificates into a JSON object.
@@ -73,21 +59,14 @@ class HttpLogClient
      * @param certs Certificates to encode.
      * @return A JSON object with one field, "chain", holding a JSON array of base64-encoded certs.
      */
-    internal // Because JSONObject, JSONArray extend raw types.
-    fun encodeCertificates(certs: List<Certificate>): JSONObject {
-        val retObject = JSONArray()
-
+    internal fun encodeCertificates(certs: List<Certificate>): AddChainRequest {
         try {
-            for (cert in certs) {
-                retObject.add(Base64.encodeBase64String(cert.encoded))
-            }
+            return AddChainRequest(certs.map {
+                Base64.encodeBase64String(it.encoded)
+            })
         } catch (e: CertificateEncodingException) {
             throw CertificateTransparencyException("Error encoding certificate", e)
         }
-
-        val jsonObject = JSONObject()
-        jsonObject["chain"] = retObject
-        return jsonObject
     }
 
     /**
@@ -111,10 +90,15 @@ class HttpLogClient
 
     private fun addCertificate(
         certificatesChain: List<Certificate>, isPreCertificate: Boolean): Ct.SignedCertificateTimestamp? {
-        val jsonPayload = encodeCertificates(certificatesChain).toJSONString()
-        val methodPath = if (isPreCertificate) ADD_PRE_CHAIN_PATH else ADD_CHAIN_PATH
+        val jsonPayload = encodeCertificates(certificatesChain)//.toJSONString()
 
-        val response = postInvoker.makePostRequest(logUrl + methodPath, jsonPayload)
+        //val methodPath = if (isPreCertificate) ADD_PRE_CHAIN_PATH else ADD_CHAIN_PATH
+
+        val call = if (isPreCertificate) ctService.addPreChain(jsonPayload) else ctService.addChain(jsonPayload)
+
+        val response = call.execute()?.body()!!
+
+
         return parseServerResponse(response)
     }
 
@@ -128,9 +112,7 @@ class HttpLogClient
     fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry> {
         require(start in 0..end)
 
-        val params = createParamsList("start", "end", java.lang.Long.toString(start), java.lang.Long.toString(end))
-
-        val response = postInvoker.makeGetRequest(logUrl + GET_ENTRIES, params)
+        val response = ctService.getEntries(start, end).execute()?.body()!!
         return parseLogEntries(response)
     }
 
@@ -144,9 +126,7 @@ class HttpLogClient
     fun getSTHConsistency(first: Long, second: Long): List<ByteString> {
         require(first in 0..second)
 
-        val params = createParamsList("first", "second", java.lang.Long.toString(first), java.lang.Long.toString(second))
-
-        val response = postInvoker.makeGetRequest(logUrl + GET_STH_CONSISTENCY, params)
+        val response = ctService.getSthConsistency(first, second).execute()?.body()!!
         return parseConsistencyProof(response)
     }
 
@@ -160,7 +140,7 @@ class HttpLogClient
     fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         require(leafIndex in 0..treeSize)
 
-        val response = ctService?.getEntryAndProof(leafIndex, treeSize)?.execute()?.body()!!
+        val response = ctService.getEntryAndProof(leafIndex, treeSize).execute()?.body()!!
 
         val logEntry = Deserializer.parseLogEntry(
             ByteArrayInputStream(Base64.decodeBase64(response.leafInput)),
@@ -192,28 +172,8 @@ class HttpLogClient
      */
     fun getProofByEncodedHash(encodedMerkleLeafHash: String, treeSize: Long): MerkleAuditProof {
         require(encodedMerkleLeafHash.isNotEmpty())
-        val response = ctService?.getProofByHash(treeSize, encodedMerkleLeafHash)?.execute()?.body()!!
+        val response = ctService.getProofByHash(treeSize, encodedMerkleLeafHash).execute()?.body()!!
         return Deserializer.parseAuditProof(response.auditPath, response.leafIndex, treeSize)
-    }
-
-    /**
-     * Creates a list of NameValuePair objects.
-     *
-     * @param firstParamName The first parameter name.
-     * @param firstParamValue The first parameter value.
-     * @param secondParamName The second parameter name.
-     * @param secondParamValue The second parameter value.
-     * @return A list of NameValuePair objects.
-     */
-    private fun createParamsList(
-        firstParamName: String,
-        secondParamName: String,
-        firstParamValue: String,
-        secondParamValue: String): List<NameValuePair> {
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair(firstParamName, firstParamValue))
-        params.add(BasicNameValuePair(secondParamName, secondParamValue))
-        return params
     }
 
     /**
@@ -222,15 +182,14 @@ class HttpLogClient
      * @param response Log response to pars.
      * @return list of Log's entries.
      */
-    private fun parseLogEntries(response: String): List<ParsedLogEntry> {
+    private fun parseLogEntries(response: GetEntriesResponse): List<ParsedLogEntry> {
         requireNotNull(response) { "Log entries response from Log should not be null." }
 
-        val responseJson = JSONValue.parse(response) as JSONObject
-        val arr = responseJson["entries"] as JSONArray
-
-        // JSONArray is guaranteed to be a list of JSONObjects
-        @Suppress("UNCHECKED_CAST")
-        return (arr as List<JSONObject>).map(::jsonToLogEntry)
+        return response.entries.map {
+            Deserializer.parseLogEntry(
+                ByteArrayInputStream(Base64.decodeBase64(it.leafInput)),
+                ByteArrayInputStream(Base64.decodeBase64(it.extraData)))
+        }
     }
 
     /**
@@ -239,17 +198,12 @@ class HttpLogClient
      * @param response JsonObject containing an array of Merkle Tree nodes.
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
-    private fun parseConsistencyProof(response: String): List<ByteString> {
+    private fun parseConsistencyProof(response: GetSthConsistencyResponse): List<ByteString> {
         requireNotNull(response) { "Merkle Consistency response should not be null." }
 
-        val responseJson = JSONValue.parse(response) as JSONObject
-        val arr = responseJson["consistency"] as JSONArray
-
-        val proof = ArrayList<ByteString>()
-        for (node in arr) {
-            proof.add(ByteString.copyFrom(Base64.decodeBase64(node as String)))
+        return response.consistency.map {
+            ByteString.copyFrom(Base64.decodeBase64(it))
         }
-        return proof
     }
 
     /**
@@ -258,20 +212,19 @@ class HttpLogClient
      * @param sthResponse Log response to parse
      * @return a proto object of SignedTreeHead type.
      */
-    private fun parseSTHResponse(sthResponse: String): SignedTreeHead {
+    private fun parseSTHResponse(sthResponse: GetSthResponse): SignedTreeHead {
         requireNotNull(sthResponse) { "Sign Tree Head response from a CT log should not be null" }
 
-        val response = JSONValue.parse(sthResponse) as JSONObject
-        val treeSize = response["tree_size"] as Long
-        val timestamp = response["timestamp"] as Long
+        val treeSize = sthResponse.treeSize
+        val timestamp = sthResponse.timestamp
         if (treeSize < 0 || timestamp < 0) {
             throw CertificateTransparencyException(
                 String.format(
                     "Bad response. Size of tree or timestamp cannot be a negative value. " + "Log Tree size: %d Timestamp: %d",
                     treeSize, timestamp))
         }
-        val base64Signature = response["tree_head_signature"] as String
-        val sha256RootHash = response["sha256_root_hash"] as String
+        val base64Signature = sthResponse.treeHeadSignature
+        val sha256RootHash = sthResponse.sha256RootHash
 
         val sth = SignedTreeHead(Ct.Version.V1)
         sth.treeSize = treeSize
@@ -292,66 +245,48 @@ class HttpLogClient
     /**
      * Parses the response from "get-roots" GET method.
      *
-     * @param response JSONObject with certificates to parse.
+     * @param response GetRootsResponse with certificates to parse.
      * @return a list of root certificates.
      */
-    private fun parseRootCertsResponse(response: String): List<Certificate> {
-        val certs = ArrayList<Certificate>()
-
-        val entries = JSONValue.parse(response) as JSONObject
-        val entriesArray = entries["certificates"] as JSONArray
-
-        for (i in entriesArray) {
-            // We happen to know that JSONArray contains strings.
-            val `in` = Base64.decodeBase64(i as String)
+    private fun parseRootCertsResponse(response: GetRootsResponse): List<Certificate> {
+        return response.certificates.map {
+            val inputStream = Base64.decodeBase64(it)
             try {
-                certs.add(
-                    CertificateFactory.getInstance("X509")
-                        .generateCertificate(ByteArrayInputStream(`in`)))
+                CertificateFactory.getInstance("X509").generateCertificate(ByteArrayInputStream(inputStream))
             } catch (e: CertificateException) {
-                throw CertificateTransparencyException(
-                    "Malformed data from a CT log have been received: " + e.localizedMessage, e)
+                throw CertificateTransparencyException("Malformed data from a CT log have been received: ${e.localizedMessage}", e)
             }
         }
-        return certs
     }
 
     companion object {
-        private const val ADD_PRE_CHAIN_PATH = "add-pre-chain"
-        private const val ADD_CHAIN_PATH = "add-chain"
-        private const val GET_STH_PATH = "get-sth"
-        private const val GET_ROOTS_PATH = "get-roots"
-        private const val GET_ENTRIES = "get-entries"
-        private const val GET_STH_CONSISTENCY = "get-sth-consistency"
-
         /**
          * Parses the CT Log's json response into a proper proto.
          *
          * @param responseBody Response string to parse.
          * @return SCT filled from the JSON input.
          */
-        internal fun parseServerResponse(responseBody: String?): Ct.SignedCertificateTimestamp? {
+        internal fun parseServerResponse(responseBody: AddChainResponse?): Ct.SignedCertificateTimestamp? {
             if (responseBody == null) {
                 return null
             }
 
-            val parsedResponse = JSONValue.parse(responseBody) as JSONObject
             val builder = Ct.SignedCertificateTimestamp.newBuilder()
 
-            val numericVersion = (parsedResponse["sct_version"] as Number).toInt()
+            val numericVersion = responseBody.sctVersion
             val version = Ct.Version.forNumber(numericVersion) ?: throw IllegalArgumentException(
                 String.format("Input JSON has an invalid version: %d", numericVersion))
             builder.version = version
             val logIdBuilder = Ct.LogID.newBuilder()
-            logIdBuilder.keyId = ByteString.copyFrom(Base64.decodeBase64(parsedResponse["id"] as String))
+            logIdBuilder.keyId = ByteString.copyFrom(Base64.decodeBase64(responseBody.id))
             builder.id = logIdBuilder.build()
-            builder.timestamp = (parsedResponse["timestamp"] as Number).toLong()
-            val extensions = parsedResponse["extensions"] as String
+            builder.timestamp = responseBody.timestamp
+            val extensions = responseBody.extensions
             if (!extensions.isEmpty()) {
                 builder.extensions = ByteString.copyFrom(Base64.decodeBase64(extensions))
             }
 
-            val base64Signature = parsedResponse["signature"] as String
+            val base64Signature = responseBody.signature
             builder.signature = Deserializer.parseDigitallySignedFromBinary(
                 ByteArrayInputStream(Base64.decodeBase64(base64Signature)))
             return builder.build()

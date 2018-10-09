@@ -1,7 +1,10 @@
 package org.certificatetransparency.ctlog.utils
 
+import org.certificatetransparency.ctlog.comm.CtService
 import org.certificatetransparency.ctlog.comm.HttpLogClient
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
 import java.security.InvalidKeyException
@@ -25,7 +28,8 @@ object UploadCertificate {
         val certs = CryptoDataLoader.certificatesFromFile(File(pemFile))
         println("Total number of certificates in chain: ${certs.size}")
 
-        val client = HttpLogClient("http://ct.googleapis.com/pilot/ct/v1/")
+        val retrofit = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl("http://ct.googleapis.com/pilot/ct/v1/").build()
+        val client = HttpLogClient(retrofit.create(CtService::class.java))
 
         val resp = client.addCertificate(certs)
 

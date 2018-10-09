@@ -1,8 +1,6 @@
 package org.certificatetransparency.ctlog.comm
 
-import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import okhttp3.Interceptor
@@ -12,16 +10,11 @@ import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.codec.binary.Base64
-import org.apache.http.NameValuePair
-import org.apache.http.message.BasicNameValuePair
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.TestData
+import org.certificatetransparency.ctlog.comm.model.AddChainResponse
 import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
-import org.json.simple.parser.JSONParser
-import org.json.simple.parser.ParseException
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -30,7 +23,6 @@ import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.ArgumentMatchers.anyString
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayInputStream
@@ -39,7 +31,6 @@ import java.lang.reflect.InvocationTargetException
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import java.util.ArrayList
 
 /** Test interaction with the Log http server.  */
 @RunWith(JUnit4::class)
@@ -70,15 +61,14 @@ class HttpLogClientTest {
     @Throws(CertificateException::class, IOException::class)
     fun certificatesAreEncoded() {
         val inputCerts = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
-        val client = HttpLogClient("", ctService = ctService)
+        val client = HttpLogClient(ctService)
 
         val encoded = client.encodeCertificates(inputCerts)
-        assertTrue(encoded.containsKey("chain"))
-        val chain = encoded["chain"] as JSONArray
-        assertEquals("Expected to have two certificates in the chain", 2, chain.size.toLong())
+        assertTrue(encoded.chain.isNotEmpty())
+        assertEquals("Expected to have two certificates in the chain", 2, encoded.chain.size.toLong())
         // Make sure the order is reversed.
         for (i in inputCerts.indices) {
-            assertEquals(Base64.encodeBase64String(inputCerts[i].encoded), chain[i])
+            assertEquals(Base64.encodeBase64String(inputCerts[i].encoded), encoded.chain[i])
         }
     }
 
@@ -93,23 +83,16 @@ class HttpLogClientTest {
     @Test
     @Throws(IOException::class)
     fun serverResponseParsed() {
-        val sct = HttpLogClient.parseServerResponse(JSON_RESPONSE)
+        val sct = HttpLogClient.parseServerResponse(ADD_CHAIN_RESPONSE)
         verifySCTContents(sct)
     }
 
     @Test
     @Throws(IOException::class, CertificateException::class)
     fun certificateSentToServer() {
-        val mockInvoker = mock<HttpInvoker>()
-        whenever(mockInvoker.makePostRequest(eq("http://ctlog/add-chain"), anyString()))
-            .thenReturn(JSON_RESPONSE)
-
-        //TODO matt.dolan
         expectInterceptor("http://ctlog/add-chain", JSON_RESPONSE)
 
-        //whenever(mockInterceptor.intercept(any())).then { jsonResponse(it.arguments[0] as Interceptor.Chain, JSON_RESPONSE) }
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker, ctService = ctService)
+        val client = HttpLogClient(ctService)
         val certs = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
         val res = client.addCertificate(certs)
         assertNotNull("Should have a meaningful SCT", res)
@@ -120,10 +103,9 @@ class HttpLogClientTest {
     @Test
     @Throws(IllegalAccessException::class, IllegalArgumentException::class, InvocationTargetException::class, NoSuchMethodException::class, SecurityException::class)
     fun getLogSTH() {
-        val mockInvoker = mock<HttpInvoker>()
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-sth"), anyOrNull())).thenReturn(STH_RESPONSE)
+        expectInterceptor("http://ctlog/get-sth", STH_RESPONSE)
 
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         val sth = client.logSTH
 
         assertNotNull(sth)
@@ -135,11 +117,9 @@ class HttpLogClientTest {
 
     @Test
     fun getLogSTHBadResponseTimestamp() {
-        val mockInvoker = mock<HttpInvoker>()
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-sth"), anyOrNull()))
-            .thenReturn(BAD_STH_RESPONSE_INVALID_TIMESTAMP)
+        expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_TIMESTAMP)
 
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         try {
             client.logSTH
             fail()
@@ -149,11 +129,9 @@ class HttpLogClientTest {
 
     @Test
     fun getLogSTHBadResponseRootHash() {
-        val mockInvoker = mock<HttpInvoker>()
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-sth"), anyOrNull()))
-            .thenReturn(BAD_STH_RESPONSE_INVALID_ROOT_HASH)
+        expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_ROOT_HASH)
 
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         try {
             client.logSTH
             fail()
@@ -162,17 +140,11 @@ class HttpLogClientTest {
     }
 
     @Test
-    @Throws(IOException::class, ParseException::class)
+    @Throws(IOException::class)
     fun getRootCerts() {
-        val parser = JSONParser()
-        val obj = parser.parse(TestData.fileReader(TestData.TEST_ROOT_CERTS))
-        val response = obj as JSONObject
+        expectInterceptor("http://ctlog/get-roots", TestData.file(TestData.TEST_ROOT_CERTS).readText())
 
-        val mockInvoker = mock<HttpInvoker>()
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-roots"), anyOrNull()))
-            .thenReturn(response.toJSONString())
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         val rootCerts = client.logRoots
 
         assertNotNull(rootCerts)
@@ -181,15 +153,9 @@ class HttpLogClientTest {
 
     @Test
     fun getLogEntries() {
-        val mockInvoker = mock<HttpInvoker>()
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair("start", java.lang.Long.toString(0)))
-        params.add(BasicNameValuePair("end", java.lang.Long.toString(0)))
+        expectInterceptor("http://ctlog/get-entries?start=0&end=0", LOG_ENTRY)
 
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-entries"), eq(params)))
-            .thenReturn(LOG_ENTRY)
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         val testChainCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.ROOT_CA_CERT))[0] as X509Certificate
         val testCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.TEST_CERT))[0] as X509Certificate
         val entries = client.getLogEntries(0, 0)
@@ -215,15 +181,9 @@ class HttpLogClientTest {
 
     @Test
     fun getLogEntriesCorruptedEntry() {
-        val mockInvoker = mock<HttpInvoker>()
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair("start", java.lang.Long.toString(0)))
-        params.add(BasicNameValuePair("end", java.lang.Long.toString(0)))
+        expectInterceptor("http://ctlog/get-entries?start=0&end=0", LOG_ENTRY_CORRUPTED_ENTRY)
 
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-entries"), eq(params)))
-            .thenReturn(LOG_ENTRY_CORRUPTED_ENTRY)
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         try {
             // Must get an actual entry as the list of entries is lazily transformed.
             client.getLogEntries(0, 0)[0]
@@ -234,29 +194,17 @@ class HttpLogClientTest {
 
     @Test
     fun getLogEntriesEmptyEntry() {
-        val mockInvoker = mock<HttpInvoker>()
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair("start", java.lang.Long.toString(0)))
-        params.add(BasicNameValuePair("end", java.lang.Long.toString(0)))
+        expectInterceptor("http://ctlog/get-entries?start=0&end=0", LOG_ENTRY_EMPTY)
 
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-entries"), eq(params)))
-            .thenReturn(LOG_ENTRY_EMPTY)
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         assertTrue(client.getLogEntries(0, 0).isEmpty())
     }
 
     @Test
     fun getSTHConsistency() {
-        val mockInvoker = mock<HttpInvoker>()
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair("first", java.lang.Long.toString(1)))
-        params.add(BasicNameValuePair("second", java.lang.Long.toString(3)))
+        expectInterceptor("http://ctlog/get-sth-consistency?first=1&second=3", CONSISTENCY_PROOF)
 
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-sth-consistency"), eq(params)))
-            .thenReturn(CONSISTENCY_PROOF)
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         val proof = client.getSTHConsistency(1, 3)
         assertNotNull(proof)
         assertEquals(2, proof.size.toLong())
@@ -264,15 +212,9 @@ class HttpLogClientTest {
 
     @Test
     fun getSTHConsistencyEmpty() {
-        val mockInvoker = mock<HttpInvoker>()
-        val params = ArrayList<NameValuePair>()
-        params.add(BasicNameValuePair("first", java.lang.Long.toString(1)))
-        params.add(BasicNameValuePair("second", java.lang.Long.toString(3)))
+        expectInterceptor("http://ctlog/get-sth-consistency?first=1&second=3", CONSISTENCY_PROOF_EMPTY)
 
-        whenever(mockInvoker.makeGetRequest(eq("http://ctlog/get-sth-consistency"), eq(params)))
-            .thenReturn(CONSISTENCY_PROOF_EMPTY)
-
-        val client = HttpLogClient("http://ctlog/", mockInvoker)
+        val client = HttpLogClient(ctService)
         val proof = client.getSTHConsistency(1, 3)
         assertNotNull(proof)
         assertTrue(proof.isEmpty())
@@ -282,7 +224,7 @@ class HttpLogClientTest {
     fun getLogEntrieAndProof() {
         expectInterceptor("http://ctlog/get-entry-and-proof?leaf_index=1&tree_size=2", LOG_ENTRY_AND_PROOF)
 
-        val client = HttpLogClient("http://ctlog/", ctService = ctService)
+        val client = HttpLogClient(ctService)
         val testChainCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.ROOT_CA_CERT))[0] as X509Certificate
         val testCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.TEST_CERT))[0] as X509Certificate
         val entry = client.getLogEntryAndProof(1, 2)
@@ -314,7 +256,7 @@ class HttpLogClientTest {
     fun getLogProofByHash() {
         val merkleLeafHash = "YWhhc2g="
         expectInterceptor("http://ctlog/get-proof-by-hash?tree_size=40183&hash=YWhhc2g%3D", MERKLE_AUDIT_PROOF)
-        val client2 = HttpLogClient("http://ctlog/", ctService = ctService)
+        val client2 = HttpLogClient(ctService)
         val auditProof = client2.getProofByEncodedHash(merkleLeafHash, 40183)
         assertTrue(auditProof.leafIndex == 198743L)
     }
@@ -345,6 +287,13 @@ class HttpLogClientTest {
                 + "UuD+JvjFTRdESfKO5428e1HAQL412Sa5e16D4E3M\","
                 + "\"sha256_root_hash\":\"jdH9k+\\/lb9abMz3N8r7v55+nSAXej3hqPg=\","
                 + "\"tree_size\":4301837}")
+
+        val ADD_CHAIN_RESPONSE = AddChainResponse(
+            sctVersion = 0,
+            id = "pLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BA=",
+            timestamp = 1373015623951,
+            extensions = "",
+            signature = "BAMARjBEAiAggPtKUMFZ4zmNnPhc7As7VR1Dedsdggs9a8pSEHoyGAIgKGsvIPDZgDnxTjGY8fSBwkl15dA0TUqW5ex2HCU7yE8=")
 
         const val JSON_RESPONSE = (
             ""

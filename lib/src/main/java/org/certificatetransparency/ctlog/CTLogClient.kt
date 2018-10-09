@@ -15,7 +15,7 @@ import java.security.cert.Certificate
 class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
     private val retrofit = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(baseLogUrl).build()
 
-    private val httpClient: HttpLogClient = HttpLogClient(baseLogUrl, ctService = retrofit.create(CtService::class.java))
+    private val httpClient: HttpLogClient = HttpLogClient(retrofit.create(CtService::class.java))
 
     private val signatureVerifier: LogSignatureVerifier = LogSignatureVerifier(logInfo)
 
