@@ -46,6 +46,8 @@ object TestData {
     const val TEST_ROOT_CERTS = DATA_ROOT + "test-root-certs"
     const val TEST_GITHUB_CHAIN = DATA_ROOT + "github-chain.pem"
 
+    const val TEST_LOG_LIST_JSON = DATA_ROOT + "log_list.json"
+
     internal fun loadCertificates(filename: String): List<Certificate> {
         val file = File(TestData::class.java.getResource(filename)!!.file)
         return CryptoDataLoader.certificatesFromFile(file)
