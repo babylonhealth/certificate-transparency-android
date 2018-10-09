@@ -57,8 +57,7 @@ object Serializer {
         try {
             outputStream.write(data)
         } catch (e: IOException) {
-            throw SerializationException(
-                String.format("Failure while writing fixed data buffer of length %d", data.size))
+            throw SerializationException("Failure while writing fixed data buffer of length ${data.size}")
         }
     }
 
@@ -66,7 +65,7 @@ object Serializer {
     fun serializeSctToBinary(sct: Ct.SignedCertificateTimestamp): ByteArray {
         val bos = ByteArrayOutputStream()
         if (sct.version != Ct.Version.V1) {
-            throw SerializationException("Cannot serialize unknown SCT version: " + sct.version)
+            throw SerializationException("Cannot serialize unknown SCT version: ${sct.version}")
         }
         writeUint(bos, sct.version.number.toLong(), CTConstants.VERSION_LENGTH)
         writeFixedBytes(bos, sct.id.keyId.toByteArray())

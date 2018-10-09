@@ -33,7 +33,7 @@ object Deserializer {
 
         val version = readNumber(inputStream, 1 /* single byte */).toInt()
         if (version != Ct.Version.V1.number) {
-            throw SerializationException(String.format("Unknown version: %d", version))
+            throw SerializationException("Unknown version: $version")
         }
         sctBuilder.version = Ct.Version.forNumber(version)
 
@@ -61,13 +61,13 @@ object Deserializer {
     fun parseDigitallySignedFromBinary(inputStream: InputStream): Ct.DigitallySigned {
         val builder = Ct.DigitallySigned.newBuilder()
         val hashAlgorithmByte = readNumber(inputStream, 1 /* single byte */).toInt()
-        val hashAlgorithm = Ct.DigitallySigned.HashAlgorithm.forNumber(hashAlgorithmByte) ?: throw SerializationException(
-            String.format("Unknown hash algorithm: %x", hashAlgorithmByte))
+        val hashAlgorithm = Ct.DigitallySigned.HashAlgorithm.forNumber(hashAlgorithmByte)
+            ?: throw SerializationException("Unknown hash algorithm: ${hashAlgorithmByte.toString(16)}")
         builder.hashAlgorithm = hashAlgorithm
 
         val signatureAlgorithmByte = readNumber(inputStream, 1 /* single byte */).toInt()
-        val signatureAlgorithm = Ct.DigitallySigned.SignatureAlgorithm.forNumber(signatureAlgorithmByte) ?: throw SerializationException(
-            String.format("Unknown signature algorithm: %x", signatureAlgorithmByte))
+        val signatureAlgorithm = Ct.DigitallySigned.SignatureAlgorithm.forNumber(signatureAlgorithmByte)
+            ?: throw SerializationException("Unknown signature algorithm: ${signatureAlgorithmByte.toString(16)}")
         builder.sigAlgorithm = signatureAlgorithm
 
         val signature = readVariableLength(inputStream, CTConstants.MAX_SIGNATURE_LENGTH)
@@ -191,7 +191,7 @@ object Deserializer {
 
                 signedEntry.preCert = preCert
             }
-            else -> throw SerializationException(String.format("Unknown entry type: %d", entryType))
+            else -> throw SerializationException("Unknown entry type: $entryType")
         }
         timestampedEntry.signedEntry = signedEntry
 
@@ -219,7 +219,7 @@ object Deserializer {
                 x509EntryChain.certificateChain.add(readFixedLength(inputStream, length))
             }
         } catch (e: IOException) {
-            throw SerializationException("Cannot parse xChainEntry. " + e.localizedMessage)
+            throw SerializationException("Cannot parse xChainEntry. ${e.localizedMessage}")
         }
 
         return x509EntryChain
@@ -245,7 +245,7 @@ object Deserializer {
                 preCertChain.precertificateChain.add(readFixedLength(inputStream, length))
             }
         } catch (e: IOException) {
-            throw SerializationException("Cannot parse PrecertEntryChain." + e.localizedMessage)
+            throw SerializationException("Cannot parse PrecertEntryChain.${e.localizedMessage}")
         }
 
         return preCertChain
@@ -275,8 +275,7 @@ object Deserializer {
         }
 
         if (bytesRead.toLong() != dataLength) {
-            throw SerializationException(
-                String.format("Incomplete data. Expected %d bytes, had %d.", dataLength, bytesRead))
+            throw SerializationException("Incomplete data. Expected $dataLength bytes, had $bytesRead.")
         }
 
         return rawData
@@ -295,8 +294,7 @@ object Deserializer {
         try {
             val bytesRead = inputStream.read(toReturn)
             if (bytesRead < dataLength) {
-                throw SerializationException(
-                    String.format("Not enough bytes: Expected %d, got %d.", dataLength, bytesRead))
+                throw SerializationException("Not enough bytes: Expected $dataLength, got $bytesRead.")
             }
             return toReturn
         } catch (e: IOException) {
@@ -330,8 +328,7 @@ object Deserializer {
             for (i in 0 until numBytes) {
                 val valRead = inputStream.read()
                 if (valRead < 0) {
-                    throw SerializationException(
-                        String.format("Missing length bytes: Expected %d, got %d.", numBytes, i))
+                    throw SerializationException("Missing length bytes: Expected $numBytes, got $i.")
                 }
                 toReturn = toReturn shl 8 or valRead.toLong()
             }

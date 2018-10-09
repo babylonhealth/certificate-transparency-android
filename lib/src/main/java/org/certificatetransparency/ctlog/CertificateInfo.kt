@@ -18,7 +18,7 @@ fun Certificate.isPreCertificateSigningCert(): Boolean {
     try {
         return extendedKeyUsage?.contains(PRECERTIFICATE_SIGNING_OID) == true
     } catch (e: CertificateParsingException) {
-        throw CertificateTransparencyException("Error parsing signer cert: " + e.message, e)
+        throw CertificateTransparencyException("Error parsing signer cert: ${e.message}", e)
     }
 }
 

@@ -61,8 +61,7 @@ object CryptoDataLoader {
         try {
             return parseCertificates(BufferedInputStream(FileInputStream(pemCertsFile)))
         } catch (e: FileNotFoundException) {
-            throw InvalidInputException(
-                String.format("Could not find certificate chain file %s.", pemCertsFile), e)
+            throw InvalidInputException("Could not find certificate chain file $pemCertsFile.", e)
         }
     }
 
@@ -72,8 +71,7 @@ object CryptoDataLoader {
         val correctHeader = pemLines[0] == "-----BEGIN PUBLIC KEY-----"
         val correctFooter = pemLines[pemLines.size - 1] == "-----END PUBLIC KEY-----"
         if (!correctHeader || !correctFooter) {
-            throw IllegalArgumentException(
-                String.format("Input is not a PEM-encoded key file: $pemLines"))
+            throw IllegalArgumentException("Input is not a PEM-encoded key file: $pemLines")
         }
 
         // The contents are PEM encoded - first and last lines are header and footer.
@@ -119,7 +117,7 @@ object CryptoDataLoader {
         try {
             return parsePublicKey(pemFile.readLines(Charset.defaultCharset()))
         } catch (e: IOException) {
-            throw InvalidInputException(String.format("Error reading input file %s", pemFile), e)
+            throw InvalidInputException("Error reading input file $pemFile", e)
         }
     }
 }

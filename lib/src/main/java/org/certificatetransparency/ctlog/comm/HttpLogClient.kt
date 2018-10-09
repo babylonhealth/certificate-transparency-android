@@ -81,7 +81,7 @@ class HttpLogClient(private val ctService: CtService) {
         val isPreCertificate = certificatesChain[0].isPreCertificate()
         if (isPreCertificate && certificatesChain[1].isPreCertificateSigningCert()) {
             require(certificatesChain.size >= 3) {
-                "When signing a PreCertificate with a PreCertificate Signing Cert," + " the issuer certificate must follow."
+                "When signing a PreCertificate with a PreCertificate Signing Cert, the issuer certificate must follow."
             }
         }
 
@@ -218,10 +218,8 @@ class HttpLogClient(private val ctService: CtService) {
         val treeSize = sthResponse.treeSize
         val timestamp = sthResponse.timestamp
         if (treeSize < 0 || timestamp < 0) {
-            throw CertificateTransparencyException(
-                String.format(
-                    "Bad response. Size of tree or timestamp cannot be a negative value. " + "Log Tree size: %d Timestamp: %d",
-                    treeSize, timestamp))
+            throw CertificateTransparencyException("Bad response. Size of tree or timestamp cannot be a negative value. Log Tree size: " +
+                "$treeSize Timestamp: $timestamp")
         }
         val base64Signature = sthResponse.treeHeadSignature
         val sha256RootHash = sthResponse.sha256RootHash
@@ -233,11 +231,9 @@ class HttpLogClient(private val ctService: CtService) {
         sth.signature = Deserializer.parseDigitallySignedFromBinary(
             ByteArrayInputStream(Base64.decode(base64Signature)))
 
-        if (sth.sha256RootHash!!.size != 32) {
-            throw CertificateTransparencyException(
-                String.format(
-                    "Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. " + "The size of the root hash is %d",
-                    sth.sha256RootHash!!.size))
+        if (sth.sha256RootHash?.size != 32) {
+            throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. The size of the " +
+                "root hash is ${sth.sha256RootHash?.size}")
         }
         return sth
     }
@@ -274,8 +270,8 @@ class HttpLogClient(private val ctService: CtService) {
             val builder = Ct.SignedCertificateTimestamp.newBuilder()
 
             val numericVersion = responseBody.sctVersion
-            val version = Ct.Version.forNumber(numericVersion) ?: throw IllegalArgumentException(
-                String.format("Input JSON has an invalid version: %d", numericVersion))
+            val version = Ct.Version.forNumber(numericVersion)
+                ?: throw IllegalArgumentException("Input JSON has an invalid version: $numericVersion")
             builder.version = version
             val logIdBuilder = Ct.LogID.newBuilder()
             logIdBuilder.keyId = ByteString.copyFrom(Base64.decode(responseBody.id))

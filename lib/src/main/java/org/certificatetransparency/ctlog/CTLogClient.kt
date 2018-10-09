@@ -47,7 +47,7 @@ class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
 
             val client = CTLogClient(logUrl, LogInfo.fromKeyFile(logPublicKeyFile))
             val certs = CryptoDataLoader.certificatesFromFile(File(pemFile))
-            println(String.format("Total number of certificates: %d", certs.size))
+            println("Total number of certificates: ${certs.size}")
 
             val result = client.uploadCertificatesChain(certs)
             if (result.isVerified) {

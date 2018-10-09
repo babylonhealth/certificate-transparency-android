@@ -128,7 +128,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             return verifySCTSignatureOverBytes(sct, toVerify)
         } catch (e: IOException) {
             throw CertificateTransparencyException(
-                "TBSCertificate part could not be encoded: " + e.message, e)
+                "TBSCertificate part could not be encoded: ${e.message}", e)
         }
     }
 
@@ -174,9 +174,9 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
                 }.generateTBSCertificate()
             }
         } catch (e: CertificateException) {
-            throw CertificateTransparencyException("Certificate error: " + e.message, e)
+            throw CertificateTransparencyException("Certificate error: ${e.message}", e)
         } catch (e: IOException) {
-            throw CertificateTransparencyException("Error deleting extension: " + e.message, e)
+            throw CertificateTransparencyException("Error deleting extension: ${e.message}", e)
         }
     }
 
@@ -291,7 +291,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             try {
                 return MessageDigest.getInstance("SHA-256").digest(signerCert.publicKey.encoded)
             } catch (e: NoSuchAlgorithmException) {
-                throw UnsupportedCryptoPrimitiveException("SHA-256 not supported: " + e.message, e)
+                throw UnsupportedCryptoPrimitiveException("SHA-256 not supported: ${e.message}", e)
             }
         }
 

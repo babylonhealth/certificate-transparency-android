@@ -26,8 +26,6 @@ import org.junit.runners.JUnit4
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.lang.reflect.InvocationTargetException
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
