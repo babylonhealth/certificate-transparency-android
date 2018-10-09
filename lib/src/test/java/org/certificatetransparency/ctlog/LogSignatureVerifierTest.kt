@@ -36,15 +36,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.security.InvalidKeyException
-import java.security.NoSuchAlgorithmException
-import java.security.SignatureException
 import java.security.cert.Certificate
-import java.security.cert.CertificateEncodingException
-import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
-import java.security.spec.InvalidKeySpecException
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -86,7 +79,6 @@ class LogSignatureVerifierTest {
 
     /** Tests for package-visible methods.  */
     @Test
-    @Throws(IOException::class, CertificateException::class, InvalidKeySpecException::class, NoSuchAlgorithmException::class, SignatureException::class, InvalidKeyException::class)
     fun signatureVerifies() {
         val certs = loadCertificates(TEST_CERT)
         val sct = Deserializer.parseSCTFromBinary(ByteArrayInputStream(TestData.file(TEST_CERT_SCT).readBytes()))
@@ -95,7 +87,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureVerifiesRSA() {
         val certs = loadCertificates(TEST_CERT)
         val sct = Deserializer.parseSCTFromBinary(ByteArrayInputStream(TestData.file(TEST_CERT_SCT_RSA).readBytes()))
@@ -104,7 +95,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnPreCertificateVerifies() {
         val preCertificatesList = loadCertificates(TEST_PRE_CERT)
         assertEquals(1, preCertificatesList.size.toLong())
@@ -126,7 +116,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnPreCertificateVerifiesRSA() {
         val preCertificatesList = loadCertificates(TEST_PRE_CERT)
         assertEquals(1, preCertificatesList.size.toLong())
@@ -149,7 +138,6 @@ class LogSignatureVerifierTest {
 
     /** Tests for the public verifySignature method taking a chain of certificates.  */
     @Test
-    @Throws(IOException::class)
     fun signatureOnRegularCertChainVerifies() {
         // Flow:
         // test-cert.pem -> ca-cert.pem
@@ -160,7 +148,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnCertSignedByIntermediateVerifies() {
         // Flow:
         // test-intermediate-cert.pem -> intermediate-cert.pem -> ca-cert.pem
@@ -174,7 +161,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnPreCertificateCertsChainVerifies() {
         // Flow:
         // test-embedded-pre-cert.pem -> ca-cert.pem
@@ -188,7 +174,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnPreCertificateSignedByPreCertificateSigningCertVerifies() {
         // Flow:
         // test-embedded-with-preca-pre-cert.pem -> ca-pre-cert.pem -> ca-cert.pem
@@ -203,7 +188,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnPreCertificateSignedByIntermediateVerifies() {
         // Flow:
         // test-embedded-with-intermediate-cert.pem -> intermediate-cert.pem -> ca-cert.pem
@@ -219,7 +203,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun signatureOnPreCertificateSignedByPreCertSigningCertSignedByIntermediateVerifies() {
         // Flow:
         // test-embedded-with-intermediate-preca-pre-cert.pem -> intermediate-pre-cert.pem
@@ -238,7 +221,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun throwsWhenChainWithPreCertificateSignedByPreCertificateSigningCertMissingIssuer() {
         val certsChain = ArrayList<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT))
@@ -258,7 +240,6 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    @Throws(IOException::class, CertificateEncodingException::class)
     fun signatureOnEmbeddedSCTsInFinalCertificateVerifies() {
         // Flow:
         // github-chain.txt contains leaf certificate signed by issuing CA.

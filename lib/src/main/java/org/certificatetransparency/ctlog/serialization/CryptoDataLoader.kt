@@ -1,11 +1,11 @@
 package org.certificatetransparency.ctlog.serialization
 
-import org.apache.commons.codec.binary.Base64
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.asn1.DLSequence
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
+import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.UnsupportedCryptoPrimitiveException
 import java.io.BufferedInputStream
 import java.io.File
@@ -79,7 +79,7 @@ object CryptoDataLoader {
         // The contents are PEM encoded - first and last lines are header and footer.
         val b64string = pemLines.subList(1, pemLines.size - 1).joinToString("")
         // Extract public key
-        val keyBytes = Base64.decodeBase64(b64string)
+        val keyBytes = Base64.decode(b64string)
         val keyAlg = determineKeyAlg(keyBytes)
         val spec = X509EncodedKeySpec(keyBytes)
         val kf: KeyFactory

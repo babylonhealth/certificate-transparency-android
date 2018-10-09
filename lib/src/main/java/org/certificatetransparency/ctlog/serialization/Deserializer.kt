@@ -1,7 +1,7 @@
 package org.certificatetransparency.ctlog.serialization
 
 import com.google.protobuf.ByteString
-import org.apache.commons.codec.binary.Base64
+import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogEntry
 import org.certificatetransparency.ctlog.MerkleAuditProof
 import org.certificatetransparency.ctlog.MerkleTreeLeaf
@@ -89,7 +89,7 @@ object Deserializer {
     @JvmStatic
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         val auditProof = MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex)
-        proof.asSequence().map(Base64::decodeBase64).forEach { node -> auditProof.pathNode.add(node) }
+        proof.asSequence().map(Base64::decode).forEach { node -> auditProof.pathNode.add(node) }
         return ParsedLogEntryWithProof.newInstance(entry, auditProof)
     }
 
@@ -105,7 +105,7 @@ object Deserializer {
     @JvmStatic
     fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long): MerkleAuditProof {
         val auditProof = MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex)
-        proof.forEach { node -> auditProof.pathNode.add(Base64.decodeBase64(node)) }
+        proof.forEach { node -> auditProof.pathNode.add(Base64.decode(node)) }
         return auditProof
     }
 

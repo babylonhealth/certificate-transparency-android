@@ -2,10 +2,7 @@ package org.certificatetransparency.ctlog
 
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.junit.Ignore
-
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileReader
 import java.security.cert.Certificate
 
 /** Constants for tests.  */
@@ -49,24 +46,15 @@ object TestData {
     const val TEST_ROOT_CERTS = DATA_ROOT + "test-root-certs"
     const val TEST_GITHUB_CHAIN = DATA_ROOT + "github-chain.pem"
 
-    @JvmStatic
     internal fun loadCertificates(filename: String): List<Certificate> {
         val file = File(TestData::class.java.getResource(filename).file)
         return CryptoDataLoader.certificatesFromFile(file)
     }
 
-    @JvmStatic
-    @Throws(FileNotFoundException::class)
-    fun fileReader(name: String): FileReader {
-        return FileReader(TestData::class.java.getResource(name).file)
-    }
-
-    @JvmStatic
     fun file(name: String): File {
         return File(TestData::class.java.getResource(name).file)
     }
 
-    @JvmStatic
     fun fileName(name: String): String {
         println(name)
         return TestData::class.java.getResource(name).file

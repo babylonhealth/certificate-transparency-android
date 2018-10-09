@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.apache.commons.codec.binary.Base64
+import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.comm.model.AddChainResponse
@@ -58,7 +58,6 @@ class HttpLogClientTest {
     }
 
     @Test
-    @Throws(CertificateException::class, IOException::class)
     fun certificatesAreEncoded() {
         val inputCerts = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
         val client = HttpLogClient(ctService)
@@ -68,7 +67,7 @@ class HttpLogClientTest {
         assertEquals("Expected to have two certificates in the chain", 2, encoded.chain.size.toLong())
         // Make sure the order is reversed.
         for (i in inputCerts.indices) {
-            assertEquals(Base64.encodeBase64String(inputCerts[i].encoded), encoded.chain[i])
+            assertEquals(Base64.toBase64String(inputCerts[i].encoded), encoded.chain[i])
         }
     }
 
@@ -81,14 +80,12 @@ class HttpLogClientTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun serverResponseParsed() {
         val sct = HttpLogClient.parseServerResponse(ADD_CHAIN_RESPONSE)
         verifySCTContents(sct)
     }
 
     @Test
-    @Throws(IOException::class, CertificateException::class)
     fun certificateSentToServer() {
         expectInterceptor("http://ctlog/add-chain", JSON_RESPONSE)
 
@@ -101,7 +98,6 @@ class HttpLogClientTest {
     }
 
     @Test
-    @Throws(IllegalAccessException::class, IllegalArgumentException::class, InvocationTargetException::class, NoSuchMethodException::class, SecurityException::class)
     fun getLogSTH() {
         expectInterceptor("http://ctlog/get-sth", STH_RESPONSE)
 
@@ -111,7 +107,7 @@ class HttpLogClientTest {
         assertNotNull(sth)
         assertEquals(1402415255382L, sth.timestamp)
         assertEquals(4301837, sth.treeSize)
-        val rootHash = Base64.encodeBase64String(sth.sha256RootHash)
+        val rootHash = Base64.toBase64String(sth.sha256RootHash)
         assertTrue("jdH9k+/lb9abMz3N8rVmwrw8MWU7v55+nSAXej3hqPg=" == rootHash)
     }
 
@@ -140,7 +136,6 @@ class HttpLogClientTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun getRootCerts() {
         expectInterceptor("http://ctlog/get-roots", TestData.file(TestData.TEST_ROOT_CERTS).readText())
 
@@ -252,7 +247,6 @@ class HttpLogClientTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getLogProofByHash() {
         val merkleLeafHash = "YWhhc2g="
         expectInterceptor("http://ctlog/get-proof-by-hash?tree_size=40183&hash=YWhhc2g%3D", MERKLE_AUDIT_PROOF)
@@ -394,6 +388,6 @@ class HttpLogClientTest {
 
         const val CONSISTENCY_PROOF_EMPTY = "{ \"consistency\": []}"
 
-        val LOG_ID: ByteArray = Base64.decodeBase64("pLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BA=")
+        val LOG_ID: ByteArray = Base64.decode("pLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BA=")
     }
 }

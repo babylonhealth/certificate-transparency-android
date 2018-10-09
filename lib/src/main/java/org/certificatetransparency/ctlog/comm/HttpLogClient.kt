@@ -1,7 +1,7 @@
 package org.certificatetransparency.ctlog.comm
 
 import com.google.protobuf.ByteString
-import org.apache.commons.codec.binary.Base64
+import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.MerkleAuditProof
 import org.certificatetransparency.ctlog.ParsedLogEntry
@@ -62,7 +62,7 @@ class HttpLogClient(private val ctService: CtService) {
     internal fun encodeCertificates(certs: List<Certificate>): AddChainRequest {
         try {
             return AddChainRequest(certs.map {
-                Base64.encodeBase64String(it.encoded)
+                Base64.toBase64String(it.encoded)
             })
         } catch (e: CertificateEncodingException) {
             throw CertificateTransparencyException("Error encoding certificate", e)
@@ -143,8 +143,8 @@ class HttpLogClient(private val ctService: CtService) {
         val response = ctService.getEntryAndProof(leafIndex, treeSize).execute()?.body()!!
 
         val logEntry = Deserializer.parseLogEntry(
-            ByteArrayInputStream(Base64.decodeBase64(response.leafInput)),
-            ByteArrayInputStream(Base64.decodeBase64(response.extraData)))
+            ByteArrayInputStream(Base64.decode(response.leafInput)),
+            ByteArrayInputStream(Base64.decode(response.extraData)))
 
         return Deserializer.parseLogEntryWithProof(logEntry, response.auditPath, leafIndex, treeSize)
     }
@@ -157,7 +157,7 @@ class HttpLogClient(private val ctService: CtService) {
      */
     fun getProofByHash(leafHash: ByteArray): MerkleAuditProof {
         require(leafHash.isNotEmpty())
-        val encodedMerkleLeafHash = Base64.encodeBase64String(leafHash)
+        val encodedMerkleLeafHash = Base64.toBase64String(leafHash)
         val sth = logSTH
         return getProofByEncodedHash(encodedMerkleLeafHash, sth.treeSize)
     }
@@ -187,8 +187,8 @@ class HttpLogClient(private val ctService: CtService) {
 
         return response.entries.map {
             Deserializer.parseLogEntry(
-                ByteArrayInputStream(Base64.decodeBase64(it.leafInput)),
-                ByteArrayInputStream(Base64.decodeBase64(it.extraData)))
+                ByteArrayInputStream(Base64.decode(it.leafInput)),
+                ByteArrayInputStream(Base64.decode(it.extraData)))
         }
     }
 
@@ -202,7 +202,7 @@ class HttpLogClient(private val ctService: CtService) {
         requireNotNull(response) { "Merkle Consistency response should not be null." }
 
         return response.consistency.map {
-            ByteString.copyFrom(Base64.decodeBase64(it))
+            ByteString.copyFrom(Base64.decode(it))
         }
     }
 
@@ -229,9 +229,9 @@ class HttpLogClient(private val ctService: CtService) {
         val sth = SignedTreeHead(Ct.Version.V1)
         sth.treeSize = treeSize
         sth.timestamp = timestamp
-        sth.sha256RootHash = Base64.decodeBase64(sha256RootHash)
+        sth.sha256RootHash = Base64.decode(sha256RootHash)
         sth.signature = Deserializer.parseDigitallySignedFromBinary(
-            ByteArrayInputStream(Base64.decodeBase64(base64Signature)))
+            ByteArrayInputStream(Base64.decode(base64Signature)))
 
         if (sth.sha256RootHash!!.size != 32) {
             throw CertificateTransparencyException(
@@ -250,7 +250,7 @@ class HttpLogClient(private val ctService: CtService) {
      */
     private fun parseRootCertsResponse(response: GetRootsResponse): List<Certificate> {
         return response.certificates.map {
-            val inputStream = Base64.decodeBase64(it)
+            val inputStream = Base64.decode(it)
             try {
                 CertificateFactory.getInstance("X509").generateCertificate(ByteArrayInputStream(inputStream))
             } catch (e: CertificateException) {
@@ -278,17 +278,17 @@ class HttpLogClient(private val ctService: CtService) {
                 String.format("Input JSON has an invalid version: %d", numericVersion))
             builder.version = version
             val logIdBuilder = Ct.LogID.newBuilder()
-            logIdBuilder.keyId = ByteString.copyFrom(Base64.decodeBase64(responseBody.id))
+            logIdBuilder.keyId = ByteString.copyFrom(Base64.decode(responseBody.id))
             builder.id = logIdBuilder.build()
             builder.timestamp = responseBody.timestamp
             val extensions = responseBody.extensions
             if (!extensions.isEmpty()) {
-                builder.extensions = ByteString.copyFrom(Base64.decodeBase64(extensions))
+                builder.extensions = ByteString.copyFrom(Base64.decode(extensions))
             }
 
             val base64Signature = responseBody.signature
             builder.signature = Deserializer.parseDigitallySignedFromBinary(
-                ByteArrayInputStream(Base64.decodeBase64(base64Signature)))
+                ByteArrayInputStream(Base64.decode(base64Signature)))
             return builder.build()
         }
     }
