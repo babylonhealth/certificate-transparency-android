@@ -11,7 +11,6 @@ sourceSets {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'com.google.protobuf:protobuf-lite:3.0.0'
@@ -22,9 +21,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     testImplementation 'com.squareup.retrofit2:retrofit-mock:2.4.0'
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.19.0'
-    testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation 'com.nhaarman:mockito-kotlin:1.5.0'
 }
 
 protobuf {

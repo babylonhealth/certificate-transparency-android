@@ -47,16 +47,16 @@ object TestData {
     const val TEST_GITHUB_CHAIN = DATA_ROOT + "github-chain.pem"
 
     internal fun loadCertificates(filename: String): List<Certificate> {
-        val file = File(TestData::class.java.getResource(filename).file)
+        val file = File(TestData::class.java.getResource(filename)!!.file)
         return CryptoDataLoader.certificatesFromFile(file)
     }
 
     fun file(name: String): File {
-        return File(TestData::class.java.getResource(name).file)
+        return File(TestData::class.java.getResource(name)!!.file)
     }
 
     fun fileName(name: String): String {
         println(name)
-        return TestData::class.java.getResource(name).file
+        return TestData::class.java.getResource(name)!!.file
     }
 }
