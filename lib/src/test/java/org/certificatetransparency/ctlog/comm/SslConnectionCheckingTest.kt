@@ -15,6 +15,7 @@ import org.certificatetransparency.ctlog.hasEmbeddedSCT
 import org.certificatetransparency.ctlog.utils.VerifySignature
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -91,19 +92,15 @@ class SslConnectionCheckingTest {
     }
 
     @Test
-    fun testBabylonHealthApi() {
-        checkConnection("https://www.babylonhealth.com", true)
-    }
-
-    @Test
     fun testBabylonHealthSupport() {
         checkConnection("https://support.babylonhealth.com", true)
     }
 
     @Test
+    @Ignore
+    // Disabled as this domain fails occassionally as there are both valid and invalid certificates
     fun testBabylonHealthBlog() {
-        // Disabled as this domain fails occassionally as there are both valid and invalid certificates
-        //checkConnection("https://blog.babylonhealth.com", true)
+        checkConnection("https://blog.babylonhealth.com", true)
     }
 
     @Test
@@ -220,8 +217,8 @@ class SslConnectionCheckingTest {
     private fun buildLogSignatureVerifiers() {
         val hasher = MessageDigest.getInstance(LOG_ID_HASH_ALGORITHM)
 
+        // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
         val json = TestData.file(TEST_LOG_LIST_JSON).readText()
-
         val trustedLogKeys = GsonBuilder().create().fromJson(json, LogList::class.java).logs.map { it.key }
 
         for (trustedLogKey in trustedLogKeys) {
@@ -262,36 +259,22 @@ class SslConnectionCheckingTest {
     companion object {
 
         /** I want at least two different CT logs to verify the certificate  */
-        private val MIN_VALID_SCTS = 2
+        private const val MIN_VALID_SCTS = 2
 
         /** A CT log's Id is created by using this hash algorithm on the CT log public key  */
-        private val LOG_ID_HASH_ALGORITHM = "SHA-256"
+        private const val LOG_ID_HASH_ALGORITHM = "SHA-256"
 
-        private val VERBOSE = true
-
-        // A tiny collection of CT logs that are trusted for the purposes of this test. Derived from
-        // https://www.certificate-transparency.org/known-logs -> https://www.gstatic.com/ct/log_list/log_list.json
-        private val TRUSTED_LOG_KEYS = arrayOf(
-            // Comodo 'Sabre' CT log : https://ct.grahamedgecombe.com/logs/34
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8m/SiQ8/xfiHHqtls9m7FyOMBg4JVZY9CgiixXGz0akvKD6DEL8S0ERmFe9U4ZiA0M4kbT5nmuk3I85Sk4bagA==",
-            // Google 'Icarus' log : https://ct.grahamedgecombe.com/logs/25
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETtK8v7MICve56qTHHDhhBOuV4IlUaESxZryCfk9QbG9co/CqPvTsgPDbCpp6oFtyAHwlDhnvr7JijXRD9Cb2FA==",
-            // Cloudflare 'Nimbus2018' Log : https://ct.grahamedgecombe.com/logs/52
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEAsVpWvrH3Ke0VRaMg9ZQoQjb5g/xh1z3DDa6IuxY5DyPsk6brlvrUNXZzoIg0DcvFiAn2kd6xmu4Obk5XA/nRg==",
-            // DigiCert Yeti 2018 https://ct.grahamedgecombe.com/logs/56
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESYlKFDLLFmA9JScaiaNnqlU8oWDytxIYMfswHy9Esg0aiX+WnP/yj4O0ViEHtLwbmOQeSWBGkIu9YK9CLeer+g==")
+        private const val VERBOSE = true
 
         /** Parses a key and determines the key algorithm (RSA or EC) based on the ASN1 OID.  */
         private fun determineKeyAlgorithm(keyBytes: ByteArray): String {
             val seq = ASN1Sequence.getInstance(keyBytes)
             val seq1 = seq.objects.nextElement() as DLSequence
             val oid = seq1.objects.nextElement() as ASN1ObjectIdentifier
-            return if (oid == PKCSObjectIdentifiers.rsaEncryption) {
-                "RSA"
-            } else if (oid == X9ObjectIdentifiers.id_ecPublicKey) {
-                "EC"
-            } else {
-                throw IllegalArgumentException("Unsupported key type $oid")
+            return when (oid) {
+                PKCSObjectIdentifiers.rsaEncryption -> "RSA"
+                X9ObjectIdentifiers.id_ecPublicKey -> "EC"
+                else -> throw IllegalArgumentException("Unsupported key type $oid")
             }
         }
     }
