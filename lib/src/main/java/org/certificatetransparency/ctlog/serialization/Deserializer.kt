@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.serialization
 
-import com.google.protobuf.ByteString
 import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogEntry
 import org.certificatetransparency.ctlog.MerkleAuditProof
@@ -12,7 +11,11 @@ import org.certificatetransparency.ctlog.PrecertChainEntry
 import org.certificatetransparency.ctlog.SignedEntry
 import org.certificatetransparency.ctlog.TimestampedEntry
 import org.certificatetransparency.ctlog.X509ChainEntry
-import org.certificatetransparency.ctlog.proto.Ct
+import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
+import org.certificatetransparency.ctlog.serialization.model.LogEntryType
+import org.certificatetransparency.ctlog.serialization.model.LogID
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.serialization.model.Version
 import java.io.IOException
 import java.io.InputStream
 
@@ -24,56 +27,57 @@ object Deserializer {
      * Parses a SignedCertificateTimestamp from binary encoding.
      *
      * @param inputStream byte stream of binary encoding.
-     * @return Built CT.SignedCertificateTimestamp
+     * @return Built SignedCertificateTimestamp
      * @throws SerializationException if the data stream is too short.
      */
     @JvmStatic
-    fun parseSCTFromBinary(inputStream: InputStream): Ct.SignedCertificateTimestamp {
-        val sctBuilder = Ct.SignedCertificateTimestamp.newBuilder()
-
-        val version = readNumber(inputStream, 1 /* single byte */).toInt()
-        if (version != Ct.Version.V1.number) {
+    fun parseSCTFromBinary(inputStream: InputStream): SignedCertificateTimestamp {
+        val version = Version.forNumber(readNumber(inputStream, 1 /* single byte */).toInt())
+        if (version != Version.V1) {
             throw SerializationException("Unknown version: $version")
         }
-        sctBuilder.version = Ct.Version.forNumber(version)
 
         val keyId = readFixedLength(inputStream, CTConstants.KEY_ID_LENGTH)
-        sctBuilder.id = Ct.LogID.newBuilder().setKeyId(ByteString.copyFrom(keyId)).build()
 
         val timestamp = readNumber(inputStream, CTConstants.TIMESTAMP_LENGTH)
-        sctBuilder.timestamp = timestamp
 
         val extensions = readVariableLength(inputStream, CTConstants.MAX_EXTENSIONS_LENGTH)
-        sctBuilder.extensions = ByteString.copyFrom(extensions)
 
-        sctBuilder.signature = parseDigitallySignedFromBinary(inputStream)
-        return sctBuilder.build()
+        val signature = parseDigitallySignedFromBinary(inputStream)
+
+        return SignedCertificateTimestamp(
+            version = version,
+            id = LogID(keyId),
+            timestamp = timestamp,
+            extensions = extensions,
+            signature = signature
+        )
     }
 
     /**
-     * Parses a Ct.DigitallySigned from binary encoding.
+     * Parses a DigitallySigned from binary encoding.
      *
      * @param inputStream byte stream of binary encoding.
-     * @return Built Ct.DigitallySigned
+     * @return Built DigitallySigned
      * @throws SerializationException if the data stream is too short.
      */
     @JvmStatic
-    fun parseDigitallySignedFromBinary(inputStream: InputStream): Ct.DigitallySigned {
-        val builder = Ct.DigitallySigned.newBuilder()
+    fun parseDigitallySignedFromBinary(inputStream: InputStream): DigitallySigned {
         val hashAlgorithmByte = readNumber(inputStream, 1 /* single byte */).toInt()
-        val hashAlgorithm = Ct.DigitallySigned.HashAlgorithm.forNumber(hashAlgorithmByte)
+        val hashAlgorithm = DigitallySigned.HashAlgorithm.forNumber(hashAlgorithmByte)
             ?: throw SerializationException("Unknown hash algorithm: ${hashAlgorithmByte.toString(16)}")
-        builder.hashAlgorithm = hashAlgorithm
 
         val signatureAlgorithmByte = readNumber(inputStream, 1 /* single byte */).toInt()
-        val signatureAlgorithm = Ct.DigitallySigned.SignatureAlgorithm.forNumber(signatureAlgorithmByte)
+        val signatureAlgorithm = DigitallySigned.SignatureAlgorithm.forNumber(signatureAlgorithmByte)
             ?: throw SerializationException("Unknown signature algorithm: ${signatureAlgorithmByte.toString(16)}")
-        builder.sigAlgorithm = signatureAlgorithm
 
         val signature = readVariableLength(inputStream, CTConstants.MAX_SIGNATURE_LENGTH)
-        builder.signature = ByteString.copyFrom(signature)
 
-        return builder.build()
+        return DigitallySigned(
+            hashAlgorithm = hashAlgorithm,
+            signatureAlgorithm = signatureAlgorithm,
+            signature = signature
+        )
     }
 
     /**
@@ -88,7 +92,7 @@ object Deserializer {
      */
     @JvmStatic
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
-        val auditProof = MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex)
+        val auditProof = MerkleAuditProof(Version.V1, treeSize, leafIndex)
         proof.asSequence().map(Base64::decode).forEach { node -> auditProof.pathNode.add(node) }
         return ParsedLogEntryWithProof.newInstance(entry, auditProof)
     }
@@ -104,7 +108,7 @@ object Deserializer {
      */
     @JvmStatic
     fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long): MerkleAuditProof {
-        val auditProof = MerkleAuditProof(Ct.Version.V1, treeSize, leafIndex)
+        val auditProof = MerkleAuditProof(Version.V1, treeSize, leafIndex)
         proof.forEach { node -> auditProof.pathNode.add(Base64.decode(node)) }
         return auditProof
     }
@@ -124,11 +128,11 @@ object Deserializer {
         val entryType = treeLeaf.timestampedEntry.entryType
 
         when (entryType) {
-            Ct.LogEntryType.X509_ENTRY -> {
+            LogEntryType.X509_ENTRY -> {
                 val x509EntryChain = parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry!!.x509)
                 logEntry.x509Entry = x509EntryChain
             }
-            Ct.LogEntryType.PRECERT_ENTRY -> {
+            LogEntryType.PRECERT_ENTRY -> {
                 val preCertChain = parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry!!.preCert)
                 logEntry.precertEntry = preCertChain
             }
@@ -147,7 +151,7 @@ object Deserializer {
      */
     private fun parseMerkleTreeLeaf(inputStream: InputStream): MerkleTreeLeaf {
         val version = readNumber(inputStream, CTConstants.VERSION_LENGTH).toInt()
-        if (version != Ct.Version.V1.number) {
+        if (version != Version.V1.number) {
             throw SerializationException("Unknown version: $version")
         }
 
@@ -156,7 +160,7 @@ object Deserializer {
             throw SerializationException("Unknown entry type: $leafType")
         }
 
-        return MerkleTreeLeaf(Ct.Version.forNumber(version), parseTimestampedEntry(inputStream))
+        return MerkleTreeLeaf(Version.forNumber(version), parseTimestampedEntry(inputStream))
     }
 
     /**
@@ -172,15 +176,15 @@ object Deserializer {
         timestampedEntry.timestamp = readNumber(inputStream, CTConstants.TIMESTAMP_LENGTH)
 
         val entryType = readNumber(inputStream, CTConstants.LOG_ENTRY_TYPE_LENGTH).toInt()
-        timestampedEntry.entryType = Ct.LogEntryType.forNumber(entryType)
+        timestampedEntry.entryType = LogEntryType.forNumber(entryType)
 
         val signedEntry = SignedEntry()
-        when (entryType) {
-            Ct.LogEntryType.X509_ENTRY_VALUE -> {
+        when (timestampedEntry.entryType) {
+            LogEntryType.X509_ENTRY -> {
                 val length = readNumber(inputStream, 3).toInt()
                 signedEntry.x509 = readFixedLength(inputStream, length)
             }
-            Ct.LogEntryType.PRECERT_ENTRY_VALUE -> {
+            LogEntryType.PRECERT_ENTRY -> {
                 val preCert = PreCert()
 
                 preCert.issuerKeyHash = readFixedLength(inputStream, 32)

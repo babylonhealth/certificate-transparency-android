@@ -1,5 +1,5 @@
 package org.certificatetransparency.ctlog
 
-import org.certificatetransparency.ctlog.proto.Ct
+import org.certificatetransparency.ctlog.serialization.model.Version
 
-class MerkleTreeLeaf(var version: Ct.Version, var timestampedEntry: TimestampedEntry)
+class MerkleTreeLeaf(var version: Version, var timestampedEntry: TimestampedEntry)

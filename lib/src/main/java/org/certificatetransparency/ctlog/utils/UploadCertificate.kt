@@ -3,6 +3,7 @@ package org.certificatetransparency.ctlog.utils
 import org.certificatetransparency.ctlog.comm.CtService
 import org.certificatetransparency.ctlog.comm.HttpLogClient
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
+import org.certificatetransparency.ctlog.serialization.Serializer
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -37,7 +38,7 @@ object UploadCertificate {
         if (args.size >= 2) {
             val outputFile = args[1]
             //TODO(eranm): Binary encoding compatible with the C++ code.
-            File(outputFile).writeBytes(resp?.toByteArray()!!)
+            File(outputFile).writeBytes(Serializer.serializeSctToBinary(resp!!))
         }
     }
 }

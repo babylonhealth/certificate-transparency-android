@@ -256,7 +256,7 @@ class LogSignatureVerifierTest {
         assertEquals("Expected 3 SCTs in the test certificate", 3, scts.size.toLong())
         val logInfos = logInfosGitHub
         for (sct in scts) {
-            val id = Base64.toBase64String(sct.id.keyId.toByteArray())
+            val id = Base64.toBase64String(sct.id.keyId)
             val logInfo = logInfos[id]
             println(id)
             val verifier = LogSignatureVerifier(logInfo!!)

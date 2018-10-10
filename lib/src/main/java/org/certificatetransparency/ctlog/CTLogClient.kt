@@ -2,9 +2,9 @@ package org.certificatetransparency.ctlog
 
 import org.certificatetransparency.ctlog.comm.CtService
 import org.certificatetransparency.ctlog.comm.HttpLogClient
-import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.Serializer
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -20,7 +20,7 @@ class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
     private val signatureVerifier: LogSignatureVerifier = LogSignatureVerifier(logInfo)
 
     /** Result of the certificate upload. Contains the SCT and verification result.  */
-    class UploadResult(val sct: Ct.SignedCertificateTimestamp, val isVerified: Boolean)
+    class UploadResult(val sct: SignedCertificateTimestamp, val isVerified: Boolean)
 
     fun uploadCertificatesChain(chain: List<Certificate>): UploadResult {
         val sct = httpClient.addCertificate(chain)!!

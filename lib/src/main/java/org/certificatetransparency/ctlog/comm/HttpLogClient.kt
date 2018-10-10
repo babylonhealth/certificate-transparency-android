@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.comm
 
-import com.google.protobuf.ByteString
 import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.MerkleAuditProof
@@ -15,8 +14,10 @@ import org.certificatetransparency.ctlog.comm.model.GetSthConsistencyResponse
 import org.certificatetransparency.ctlog.comm.model.GetSthResponse
 import org.certificatetransparency.ctlog.isPreCertificate
 import org.certificatetransparency.ctlog.isPreCertificateSigningCert
-import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.Deserializer
+import org.certificatetransparency.ctlog.serialization.model.LogID
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.serialization.model.Version
 import java.io.ByteArrayInputStream
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
@@ -75,7 +76,7 @@ class HttpLogClient(private val ctService: CtService) {
      * @param certificatesChain The certificate chain to add.
      * @return SignedCertificateTimestamp if the log added the chain successfully.
      */
-    fun addCertificate(certificatesChain: List<Certificate>): Ct.SignedCertificateTimestamp? {
+    fun addCertificate(certificatesChain: List<Certificate>): SignedCertificateTimestamp? {
         require(!certificatesChain.isEmpty()) { "Must have at least one certificate to submit." }
 
         val isPreCertificate = certificatesChain[0].isPreCertificate()
@@ -89,7 +90,7 @@ class HttpLogClient(private val ctService: CtService) {
     }
 
     private fun addCertificate(
-        certificatesChain: List<Certificate>, isPreCertificate: Boolean): Ct.SignedCertificateTimestamp? {
+        certificatesChain: List<Certificate>, isPreCertificate: Boolean): SignedCertificateTimestamp? {
         val jsonPayload = encodeCertificates(certificatesChain)//.toJSONString()
 
         //val methodPath = if (isPreCertificate) ADD_PRE_CHAIN_PATH else ADD_CHAIN_PATH
@@ -123,7 +124,7 @@ class HttpLogClient(private val ctService: CtService) {
      * @param second The tree_size of the second tree, in decimal.
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
-    fun getSTHConsistency(first: Long, second: Long): List<ByteString> {
+    fun getSTHConsistency(first: Long, second: Long): List<ByteArray> {
         require(first in 0..second)
 
         val response = ctService.getSthConsistency(first, second).execute()?.body()!!
@@ -198,12 +199,10 @@ class HttpLogClient(private val ctService: CtService) {
      * @param response JsonObject containing an array of Merkle Tree nodes.
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
-    private fun parseConsistencyProof(response: GetSthConsistencyResponse): List<ByteString> {
+    private fun parseConsistencyProof(response: GetSthConsistencyResponse): List<ByteArray> {
         requireNotNull(response) { "Merkle Consistency response should not be null." }
 
-        return response.consistency.map {
-            ByteString.copyFrom(Base64.decode(it))
-        }
+        return response.consistency.map { Base64.decode(it) }
     }
 
     /**
@@ -224,7 +223,7 @@ class HttpLogClient(private val ctService: CtService) {
         val base64Signature = sthResponse.treeHeadSignature
         val sha256RootHash = sthResponse.sha256RootHash
 
-        val sth = SignedTreeHead(Ct.Version.V1)
+        val sth = SignedTreeHead(Version.V1)
         sth.treeSize = treeSize
         sth.timestamp = timestamp
         sth.sha256RootHash = Base64.decode(sha256RootHash)
@@ -257,35 +256,23 @@ class HttpLogClient(private val ctService: CtService) {
 
     companion object {
         /**
-         * Parses the CT Log's json response into a proper proto.
+         * Parses the CT Log's json response into a SignedCertificateTimestamp.
          *
          * @param responseBody Response string to parse.
          * @return SCT filled from the JSON input.
          */
-        internal fun parseServerResponse(responseBody: AddChainResponse?): Ct.SignedCertificateTimestamp? {
+        internal fun parseServerResponse(responseBody: AddChainResponse?): SignedCertificateTimestamp? {
             if (responseBody == null) {
                 return null
             }
 
-            val builder = Ct.SignedCertificateTimestamp.newBuilder()
-
-            val numericVersion = responseBody.sctVersion
-            val version = Ct.Version.forNumber(numericVersion)
-                ?: throw IllegalArgumentException("Input JSON has an invalid version: $numericVersion")
-            builder.version = version
-            val logIdBuilder = Ct.LogID.newBuilder()
-            logIdBuilder.keyId = ByteString.copyFrom(Base64.decode(responseBody.id))
-            builder.id = logIdBuilder.build()
-            builder.timestamp = responseBody.timestamp
-            val extensions = responseBody.extensions
-            if (!extensions.isEmpty()) {
-                builder.extensions = ByteString.copyFrom(Base64.decode(extensions))
-            }
-
-            val base64Signature = responseBody.signature
-            builder.signature = Deserializer.parseDigitallySignedFromBinary(
-                ByteArrayInputStream(Base64.decode(base64Signature)))
-            return builder.build()
+            return SignedCertificateTimestamp(
+                version = Version.forNumber(responseBody.sctVersion),
+                id = LogID(Base64.decode(responseBody.id)),
+                timestamp = responseBody.timestamp,
+                extensions = if (responseBody.extensions.isNotEmpty()) Base64.decode(responseBody.extensions) else ByteArray(0),
+                signature = Deserializer.parseDigitallySignedFromBinary(ByteArrayInputStream(Base64.decode(responseBody.signature)))
+            )
         }
     }
 }

@@ -13,8 +13,10 @@ import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.comm.model.AddChainResponse
-import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
+import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.serialization.model.Version
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -69,12 +71,12 @@ class HttpLogClientTest {
         }
     }
 
-    private fun verifySCTContents(sct: Ct.SignedCertificateTimestamp?) {
-        assertEquals(Ct.Version.V1, sct?.version)
-        assertArrayEquals(LOG_ID, sct?.id?.keyId?.toByteArray())
+    private fun verifySCTContents(sct: SignedCertificateTimestamp?) {
+        assertEquals(Version.V1, sct?.version)
+        assertArrayEquals(LOG_ID, sct?.id?.keyId)
         assertEquals(1373015623951L, sct?.timestamp)
-        assertEquals(Ct.DigitallySigned.HashAlgorithm.SHA256, sct?.signature?.hashAlgorithm)
-        assertEquals(Ct.DigitallySigned.SignatureAlgorithm.ECDSA, sct?.signature?.sigAlgorithm)
+        assertEquals(DigitallySigned.HashAlgorithm.SHA256, sct?.signature?.hashAlgorithm)
+        assertEquals(DigitallySigned.SignatureAlgorithm.ECDSA, sct?.signature?.signatureAlgorithm)
     }
 
     @Test

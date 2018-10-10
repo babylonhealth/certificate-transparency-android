@@ -8,7 +8,6 @@ import org.bouncycastle.asn1.x509.Extensions
 import org.bouncycastle.asn1.x509.TBSCertificate
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator
 import org.bouncycastle.util.encoders.Base64
-import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CTConstants
 import org.certificatetransparency.ctlog.serialization.CTConstants.LOG_ENTRY_TYPE_LENGTH
 import org.certificatetransparency.ctlog.serialization.CTConstants.MAX_CERTIFICATE_LENGTH
@@ -16,6 +15,9 @@ import org.certificatetransparency.ctlog.serialization.CTConstants.MAX_EXTENSION
 import org.certificatetransparency.ctlog.serialization.CTConstants.TIMESTAMP_LENGTH
 import org.certificatetransparency.ctlog.serialization.CTConstants.VERSION_LENGTH
 import org.certificatetransparency.ctlog.serialization.Serializer
+import org.certificatetransparency.ctlog.serialization.model.LogEntryType
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.serialization.model.Version
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.security.InvalidKeyException
@@ -64,9 +66,9 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
      * @param chain The certificates chain as sent to the log.
      * @return true if the log's signature over this SCT can be verified, false otherwise.
      */
-    fun verifySignature(sct: Ct.SignedCertificateTimestamp?, chain: List<Certificate>): Boolean {
-        if (sct != null && !logInfo.isSameLogId(sct.id.keyId.toByteArray())) {
-            throw CertificateTransparencyException("Log ID of SCT (${Base64.toBase64String(sct.id.keyId.toByteArray())}) does not match this " +
+    fun verifySignature(sct: SignedCertificateTimestamp?, chain: List<Certificate>): Boolean {
+        if (sct != null && !logInfo.isSameLogId(sct.id.keyId)) {
+            throw CertificateTransparencyException("Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this " +
                 "log's ID (${Base64.toBase64String(logInfo.id)}).")
         }
 
@@ -96,8 +98,8 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
      * @param leafCert leaf certificate sent to the log.
      * @return true if the log's signature over this SCT can be verified, false otherwise.
      */
-    fun verifySignature(sct: Ct.SignedCertificateTimestamp, leafCert: Certificate): Boolean {
-        if (!logInfo.isSameLogId(sct.id.keyId.toByteArray())) {
+    fun verifySignature(sct: SignedCertificateTimestamp, leafCert: Certificate): Boolean {
+        if (!logInfo.isSameLogId(sct.id.keyId)) {
             throw CertificateTransparencyException("Log ID of SCT (${sct.id.keyId}) does not match this log's ID.")
         }
         val toVerify = serializeSignedSCTData(leafCert, sct)
@@ -117,7 +119,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
      * @return true if the SCT verifies, false otherwise.
      */
     internal fun verifySCTOverPreCertificate(
-        sct: Ct.SignedCertificateTimestamp?,
+        sct: SignedCertificateTimestamp?,
         certificate: X509Certificate,
         issuerInfo: IssuerInformation): Boolean {
         requireNotNull(issuerInfo) { "At the very least, the issuer key hash is needed." }
@@ -205,7 +207,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
         return outputExtensions
     }
 
-    private fun verifySCTSignatureOverBytes(sct: Ct.SignedCertificateTimestamp?, toVerify: ByteArray): Boolean {
+    private fun verifySCTSignatureOverBytes(sct: SignedCertificateTimestamp?, toVerify: ByteArray): Boolean {
         val sigAlg = when {
             logInfo.signatureAlgorithm == "EC" -> "SHA256withECDSA"
             logInfo.signatureAlgorithm == "RSA" -> "SHA256withRSA"
@@ -216,7 +218,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             val signature = Signature.getInstance(sigAlg)
             signature.initVerify(logInfo.key)
             signature.update(toVerify)
-            return signature.verify(sct!!.signature.signature.toByteArray())
+            return signature.verify(sct!!.signature.signature)
         } catch (e: SignatureException) {
             throw CertificateTransparencyException("Signature object not properly initialized or signature from SCT is improperly encoded.", e)
         } catch (e: InvalidKeyException) {
@@ -261,29 +263,29 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             return extensions.getExtension(ASN1ObjectIdentifier(X509_AUTHORITY_KEY_IDENTIFIER)) != null
         }
 
-        internal fun serializeSignedSCTData(certificate: Certificate, sct: Ct.SignedCertificateTimestamp?): ByteArray {
+        internal fun serializeSignedSCTData(certificate: Certificate, sct: SignedCertificateTimestamp?): ByteArray {
             val bos = ByteArrayOutputStream()
             serializeCommonSCTFields(sct!!, bos)
-            Serializer.writeUint(bos, Ct.LogEntryType.X509_ENTRY_VALUE.toLong(), LOG_ENTRY_TYPE_LENGTH)
+            Serializer.writeUint(bos, LogEntryType.X509_ENTRY.number.toLong(), LOG_ENTRY_TYPE_LENGTH)
             try {
                 Serializer.writeVariableLength(bos, certificate.encoded, MAX_CERTIFICATE_LENGTH)
             } catch (e: CertificateEncodingException) {
                 throw CertificateTransparencyException("Error encoding certificate", e)
             }
 
-            Serializer.writeVariableLength(bos, sct.extensions.toByteArray(), MAX_EXTENSIONS_LENGTH)
+            Serializer.writeVariableLength(bos, sct.extensions, MAX_EXTENSIONS_LENGTH)
 
             return bos.toByteArray()
         }
 
         internal fun serializeSignedSCTDataForPreCertificate(
-            preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: Ct.SignedCertificateTimestamp?): ByteArray {
+            preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp?): ByteArray {
             val bos = ByteArrayOutputStream()
             serializeCommonSCTFields(sct!!, bos)
-            Serializer.writeUint(bos, Ct.LogEntryType.PRECERT_ENTRY_VALUE.toLong(), LOG_ENTRY_TYPE_LENGTH)
+            Serializer.writeUint(bos, LogEntryType.PRECERT_ENTRY.number.toLong(), LOG_ENTRY_TYPE_LENGTH)
             Serializer.writeFixedBytes(bos, issuerKeyHash)
             Serializer.writeVariableLength(bos, preCertBytes, MAX_CERTIFICATE_LENGTH)
-            Serializer.writeVariableLength(bos, sct.extensions.toByteArray(), MAX_EXTENSIONS_LENGTH)
+            Serializer.writeVariableLength(bos, sct.extensions, MAX_EXTENSIONS_LENGTH)
             return bos.toByteArray()
         }
 
@@ -295,8 +297,8 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             }
         }
 
-        private fun serializeCommonSCTFields(sct: Ct.SignedCertificateTimestamp, bos: ByteArrayOutputStream) {
-            require(sct.version == Ct.Version.V1) { "Can only serialize SCT v1 for now." }
+        private fun serializeCommonSCTFields(sct: SignedCertificateTimestamp, bos: ByteArrayOutputStream) {
+            require(sct.version == Version.V1) { "Can only serialize SCT v1 for now." }
             Serializer.writeUint(bos, sct.version.number.toLong(), VERSION_LENGTH) // ct::V1
             Serializer.writeUint(bos, 0, 1) // ct::CERTIFICATE_TIMESTAMP
             Serializer.writeUint(bos, sct.timestamp, TIMESTAMP_LENGTH) // Timestamp

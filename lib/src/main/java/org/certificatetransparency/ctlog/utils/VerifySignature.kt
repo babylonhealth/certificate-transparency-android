@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.utils
 
-import com.google.protobuf.InvalidProtocolBufferException
 import org.bouncycastle.asn1.ASN1OctetString
 import org.bouncycastle.asn1.ASN1Primitive
 import org.bouncycastle.asn1.DEROctetString
@@ -9,10 +8,10 @@ import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
-import org.certificatetransparency.ctlog.proto.Ct
 import org.certificatetransparency.ctlog.serialization.CTConstants
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.Deserializer
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
@@ -42,7 +41,7 @@ object VerifySignature {
             println("ERROR: Certificates chain does not contain any certificates.")
             System.exit(-1)
         }
-        var scts: MutableList<Ct.SignedCertificateTimestamp> = ArrayList()
+        var scts: MutableList<SignedCertificateTimestamp> = ArrayList()
         if ("null" == sctFile) {
             println("No SCTs as input, assuming there are some in the cert")
             val leafCert = certs[0] as X509Certificate
@@ -54,10 +53,9 @@ object VerifySignature {
         } else {
             val sctBytes = File(sctFile).readBytes()
             try {
-                scts.add(Ct.SignedCertificateTimestamp.parseFrom(sctBytes))
-            } catch (e: InvalidProtocolBufferException) {
-                println("Not a protocol buffer. Trying reading as binary")
                 scts.add(Deserializer.parseSCTFromBinary(ByteArrayInputStream(sctBytes)))
+            } catch (e: Exception) {
+                println("Not a valid buffer")
             }
         }
         if (scts.isEmpty()) {
@@ -71,7 +69,7 @@ object VerifySignature {
         // Verify the SCTs one at a time
         var success = true
         for (sct in scts) {
-            val id = Base64.toBase64String(sct.id.keyId.toByteArray())
+            val id = Base64.toBase64String(sct.id.keyId)
             println("SCT to verify with keyID: $id")
             println(sct.toString())
             val logInfo = logInfos[id]
@@ -94,7 +92,7 @@ object VerifySignature {
     }
 
     @Throws(IOException::class)
-    fun parseSCTsFromCert(leafCert: X509Certificate): MutableList<Ct.SignedCertificateTimestamp> {
+    fun parseSCTsFromCert(leafCert: X509Certificate): MutableList<SignedCertificateTimestamp> {
         val bytes = leafCert.getExtensionValue(CTConstants.SCT_CERTIFICATE_OID)
         val p = ASN1Primitive.fromByteArray(ASN1OctetString.getInstance(bytes).octets) as DEROctetString
 
@@ -133,8 +131,8 @@ object VerifySignature {
     }
 
     @Throws(IOException::class)
-    private fun parseSCTsFromCertExtension(extensionvalue: ByteArray): Array<Ct.SignedCertificateTimestamp> {
-        val sctList = ArrayList<Ct.SignedCertificateTimestamp>()
+    private fun parseSCTsFromCertExtension(extensionvalue: ByteArray): Array<SignedCertificateTimestamp> {
+        val sctList = ArrayList<SignedCertificateTimestamp>()
         val bis = ByteArrayInputStream(extensionvalue)
         TlsUtils.readUint16(bis) // first one is the length of all SCTs concatenated, we don't actually need this
         while (bis.available() > 2) {

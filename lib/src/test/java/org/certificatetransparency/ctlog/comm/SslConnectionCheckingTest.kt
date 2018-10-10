@@ -183,7 +183,7 @@ class SslConnectionCheckingTest {
 
             var validSctCount = 0
             for (sct in sctsInCertificate) {
-                val logId = Base64.toBase64String(sct.id.keyId.toByteArray())
+                val logId = Base64.toBase64String(sct.id.keyId)
                 if (verifiers.containsKey(logId)) {
                     v("  SCT trusted log $logId")
                     if (verifiers[logId]?.verifySignature(sct, certificateList) == true) {

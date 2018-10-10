@@ -1,9 +1,9 @@
 package org.certificatetransparency.ctlog
 
-import org.certificatetransparency.ctlog.proto.Ct
+import org.certificatetransparency.ctlog.serialization.model.LogEntryType
 
 class TimestampedEntry {
     var timestamp: Long = 0
-    var entryType: Ct.LogEntryType? = null
+    var entryType: LogEntryType? = null
     var signedEntry: SignedEntry? = null
 }

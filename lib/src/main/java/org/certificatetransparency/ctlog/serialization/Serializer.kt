@@ -1,6 +1,7 @@
 package org.certificatetransparency.ctlog.serialization
 
-import org.certificatetransparency.ctlog.proto.Ct
+import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.serialization.model.Version
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
@@ -62,20 +63,20 @@ object Serializer {
     }
 
     @JvmStatic
-    fun serializeSctToBinary(sct: Ct.SignedCertificateTimestamp): ByteArray {
+    fun serializeSctToBinary(sct: SignedCertificateTimestamp): ByteArray {
         val bos = ByteArrayOutputStream()
-        if (sct.version != Ct.Version.V1) {
+        if (sct.version != Version.V1) {
             throw SerializationException("Cannot serialize unknown SCT version: ${sct.version}")
         }
         writeUint(bos, sct.version.number.toLong(), CTConstants.VERSION_LENGTH)
-        writeFixedBytes(bos, sct.id.keyId.toByteArray())
+        writeFixedBytes(bos, sct.id.keyId)
         writeUint(bos, sct.timestamp, CTConstants.TIMESTAMP_LENGTH)
-        writeVariableLength(bos, sct.extensions.toByteArray(), CTConstants.MAX_EXTENSIONS_LENGTH)
+        writeVariableLength(bos, sct.extensions, CTConstants.MAX_EXTENSIONS_LENGTH)
         writeUint(bos, sct.signature.hashAlgorithm.number.toLong(), CTConstants.HASH_ALG_LENGTH)
         writeUint(
-            bos, sct.signature.sigAlgorithm.number.toLong(), CTConstants.SIGNATURE_ALG_LENGTH)
+            bos, sct.signature.signatureAlgorithm.number.toLong(), CTConstants.SIGNATURE_ALG_LENGTH)
         writeVariableLength(
-            bos, sct.signature.signature.toByteArray(), CTConstants.MAX_SIGNATURE_LENGTH)
+            bos, sct.signature.signature, CTConstants.MAX_SIGNATURE_LENGTH)
 
         return bos.toByteArray()
     }
