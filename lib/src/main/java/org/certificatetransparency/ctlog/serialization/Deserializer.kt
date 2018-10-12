@@ -94,7 +94,7 @@ object Deserializer {
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         val auditProof = MerkleAuditProof(Version.V1, treeSize, leafIndex)
         proof.asSequence().map(Base64::decode).forEach { node -> auditProof.pathNode.add(node) }
-        return ParsedLogEntryWithProof.newInstance(entry, auditProof)
+        return ParsedLogEntryWithProof(entry, auditProof)
     }
 
     /**
@@ -139,7 +139,7 @@ object Deserializer {
             else -> throw SerializationException("Unknown entry type: $entryType")
         }
 
-        return ParsedLogEntry.newInstance(treeLeaf, logEntry)
+        return ParsedLogEntry(treeLeaf, logEntry)
     }
 
     /**
