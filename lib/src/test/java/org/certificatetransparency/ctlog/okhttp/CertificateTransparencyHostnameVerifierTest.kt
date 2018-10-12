@@ -21,7 +21,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test
     fun verifyRuby2() {
-        val client = OkHttpClient.Builder().addNetworkInterceptor(MyInterceptor()).build()
+        val client = OkHttpClient.Builder().addNetworkInterceptor(CertificateTransparencyInterceptor()).build()
 
         val request = Request.Builder()
             .url("https://app.babylonpartners.com")
@@ -32,7 +32,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test(expected = SSLPeerUnverifiedException::class)
     fun verifyBlog2() {
-        val client = OkHttpClient.Builder().addNetworkInterceptor(MyInterceptor()).build()
+        val client = OkHttpClient.Builder().addNetworkInterceptor(CertificateTransparencyInterceptor()).build()
 
         val request = Request.Builder()
             .url("https://blog.babylonhealth.com/")
