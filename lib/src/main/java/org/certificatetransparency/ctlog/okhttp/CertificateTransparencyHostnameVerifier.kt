@@ -1,14 +1,17 @@
 package org.certificatetransparency.ctlog.okhttp
 
+import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.datasource.DataSource
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLException
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
-class CertificateTransparencyHostnameVerifier @JvmOverloads constructor(
+class CertificateTransparencyHostnameVerifier private constructor(
     private val delegate: HostnameVerifier,
-    trustManager: X509TrustManager? = null
-) : CertificateTransparencyBase(trustManager), HostnameVerifier {
+    trustManager: X509TrustManager?,
+    logListDataSource: DataSource<Map<String, LogSignatureVerifier>>?
+) : CertificateTransparencyBase(trustManager, logListDataSource), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
         if (delegate.verify(host, sslSession)) {
@@ -22,5 +25,13 @@ class CertificateTransparencyHostnameVerifier @JvmOverloads constructor(
         }
 
         return false
+    }
+
+    class Builder(val delegate: HostnameVerifier) {
+        var trustManager: X509TrustManager? = null
+
+        var logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
+
+        fun build() = CertificateTransparencyHostnameVerifier(delegate, trustManager, logListDataSource)
     }
 }

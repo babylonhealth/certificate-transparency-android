@@ -8,9 +8,15 @@ import javax.net.ssl.SSLPeerUnverifiedException
 
 class CertificateTransparencyHostnameVerifierTest {
 
+    companion object {
+        val hostnameVerifier = CertificateTransparencyHostnameVerifier.Builder(OkHostnameVerifier.INSTANCE).build()
+
+        val networkInterceptor = CertificateTransparencyInterceptor.Builder().build()
+    }
+
     @Test
     fun verifyRuby() {
-        val client = OkHttpClient.Builder().hostnameVerifier(CertificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE)).build()
+        val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
 
         val request = Request.Builder()
             .url("https://app.babylonpartners.com")
@@ -21,7 +27,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test
     fun verifyRuby2() {
-        val client = OkHttpClient.Builder().addNetworkInterceptor(CertificateTransparencyInterceptor()).build()
+        val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 
         val request = Request.Builder()
             .url("https://app.babylonpartners.com")
@@ -32,7 +38,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test(expected = SSLPeerUnverifiedException::class)
     fun verifyBlog2() {
-        val client = OkHttpClient.Builder().addNetworkInterceptor(CertificateTransparencyInterceptor()).build()
+        val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 
         val request = Request.Builder()
             .url("https://blog.babylonhealth.com/")
@@ -43,7 +49,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test
     fun verifyPhp() {
-        val client = OkHttpClient.Builder().hostnameVerifier(CertificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE)).build()
+        val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
 
         //client.sslSocketFactory()
 
@@ -56,7 +62,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test
     fun verifyAi() {
-        val client = OkHttpClient.Builder().hostnameVerifier(CertificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE)).build()
+        val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
 
         val request = Request.Builder()
             .url("https://services.babylonpartners.com/")
@@ -67,7 +73,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test
     fun verifyWebApp() {
-        val client = OkHttpClient.Builder().hostnameVerifier(CertificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE)).build()
+        val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
 
         val request = Request.Builder()
             .url("https://online.babylonhealth.com/")
@@ -78,7 +84,7 @@ class CertificateTransparencyHostnameVerifierTest {
 
     @Test(expected = SSLPeerUnverifiedException::class)
     fun verifyBlog() {
-        val client = OkHttpClient.Builder().hostnameVerifier(CertificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE)).build()
+        val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
 
         val request = Request.Builder()
             .url("https://blog.babylonhealth.com/")
