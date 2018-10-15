@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog
 
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.TestData.INTERMEDIATE_CA_CERT
 import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_BY_INTERMEDIATE
 import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_CERT
@@ -26,6 +25,7 @@ import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.TestData.loadCertificates
+import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.serialization.Deserializer
 import org.certificatetransparency.ctlog.utils.VerifySignature
 import org.junit.Assert.assertEquals

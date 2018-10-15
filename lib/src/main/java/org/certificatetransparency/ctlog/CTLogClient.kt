@@ -61,6 +61,6 @@ class CTLogClient(baseLogUrl: String, logInfo: LogInfo) {
             }
         }
 
-        private fun getBaseUrl(url: String) = "http://${url}/ct/v1/"
+        private fun getBaseUrl(url: String) = "http://$url/ct/v1/"
     }
 }

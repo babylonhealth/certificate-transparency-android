@@ -18,10 +18,10 @@ package org.certificatetransparency.ctlog.okhttp
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.datasource.InMemoryDataSource
+import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
 import org.certificatetransparency.ctlog.utils.VerifySignature
 import java.io.IOException

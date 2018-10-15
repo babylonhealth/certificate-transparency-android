@@ -1,16 +1,12 @@
 package org.certificatetransparency.ctlog.comm
 
 import com.google.gson.GsonBuilder
-import org.bouncycastle.asn1.ASN1ObjectIdentifier
-import org.bouncycastle.asn1.ASN1Sequence
-import org.bouncycastle.asn1.DLSequence
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
-import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.TestData.TEST_LOG_LIST_JSON
+import org.certificatetransparency.ctlog.der.Base64
+import org.certificatetransparency.ctlog.der.PublicKeyFactory
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
 import org.certificatetransparency.ctlog.utils.VerifySignature
 import org.junit.Assert.assertEquals
@@ -21,13 +17,11 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.IOException
 import java.net.URL
-import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
 import java.security.spec.InvalidKeySpecException
-import java.security.spec.X509EncodedKeySpec
 import java.util.Arrays
 import java.util.HashMap
 import javax.net.ssl.HttpsURLConnection
@@ -225,8 +219,8 @@ class SslConnectionCheckingTest {
             hasher.reset()
             val keyBytes = Base64.decode(trustedLogKey)
             val logId = Base64.toBase64String(hasher.digest(keyBytes))
-            val keyFactory = KeyFactory.getInstance(determineKeyAlgorithm(keyBytes))
-            val publicKey = keyFactory.generatePublic(X509EncodedKeySpec(keyBytes))
+            val publicKey = PublicKeyFactory.fromByteArray(keyBytes)
+
             verifiers[logId] = LogSignatureVerifier(LogInfo(publicKey))
         }
     }
@@ -265,17 +259,5 @@ class SslConnectionCheckingTest {
         private const val LOG_ID_HASH_ALGORITHM = "SHA-256"
 
         private const val VERBOSE = true
-
-        /** Parses a key and determines the key algorithm (RSA or EC) based on the ASN1 OID.  */
-        private fun determineKeyAlgorithm(keyBytes: ByteArray): String {
-            val seq = ASN1Sequence.getInstance(keyBytes)
-            val seq1 = seq.objects.nextElement() as DLSequence
-            val oid = seq1.objects.nextElement() as ASN1ObjectIdentifier
-            return when (oid) {
-                PKCSObjectIdentifiers.rsaEncryption -> "RSA"
-                X9ObjectIdentifiers.id_ecPublicKey -> "EC"
-                else -> throw IllegalArgumentException("Unsupported key type $oid")
-            }
-        }
     }
 }

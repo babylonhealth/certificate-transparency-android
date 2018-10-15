@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.comm
 
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.MerkleAuditProof
 import org.certificatetransparency.ctlog.ParsedLogEntry
@@ -12,6 +11,7 @@ import org.certificatetransparency.ctlog.comm.model.GetEntriesResponse
 import org.certificatetransparency.ctlog.comm.model.GetRootsResponse
 import org.certificatetransparency.ctlog.comm.model.GetSthConsistencyResponse
 import org.certificatetransparency.ctlog.comm.model.GetSthResponse
+import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.isPreCertificate
 import org.certificatetransparency.ctlog.isPreCertificateSigningCert
 import org.certificatetransparency.ctlog.serialization.Deserializer

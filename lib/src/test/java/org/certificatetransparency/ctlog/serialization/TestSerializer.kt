@@ -1,7 +1,7 @@
 package org.certificatetransparency.ctlog.serialization
 
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.TestData
+import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
 import org.certificatetransparency.ctlog.serialization.model.LogID
 import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp

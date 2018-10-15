@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.serialization
 
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogEntry
 import org.certificatetransparency.ctlog.MerkleAuditProof
 import org.certificatetransparency.ctlog.MerkleTreeLeaf
@@ -11,6 +10,7 @@ import org.certificatetransparency.ctlog.PrecertChainEntry
 import org.certificatetransparency.ctlog.SignedEntry
 import org.certificatetransparency.ctlog.TimestampedEntry
 import org.certificatetransparency.ctlog.X509ChainEntry
+import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
 import org.certificatetransparency.ctlog.serialization.model.LogEntryType
 import org.certificatetransparency.ctlog.serialization.model.LogID

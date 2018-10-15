@@ -19,16 +19,12 @@ package org.certificatetransparency.ctlog.okhttp
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import org.bouncycastle.asn1.ASN1ObjectIdentifier
-import org.bouncycastle.asn1.ASN1Sequence
-import org.bouncycastle.asn1.DLSequence
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
-import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
-import org.bouncycastle.util.encoders.Base64
 import org.bouncycastle.util.io.pem.PemReader
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.der.Base64
+import org.certificatetransparency.ctlog.der.PublicKeyFactory
 import org.certificatetransparency.ctlog.okhttp.model.LogList
 import retrofit2.Retrofit
 import java.io.StringReader
@@ -122,21 +118,8 @@ class LogListNetworkDataSource : DataSource<Map<String, LogSignatureVerifier>> {
             hasher.reset()
             Base64.toBase64String(hasher.digest(it))
         }) {
-            val keyFactory = KeyFactory.getInstance(determineKeyAlgorithm(it))
-            val publicKey = keyFactory.generatePublic(X509EncodedKeySpec(it))
+            val publicKey = PublicKeyFactory.fromByteArray(it)
             LogSignatureVerifier(LogInfo(publicKey))
-        }
-    }
-
-    /** Parses a key and determines the key algorithm (RSA or EC) based on the ASN1 OID.  */
-    private fun determineKeyAlgorithm(keyBytes: ByteArray): String {
-        val seq = ASN1Sequence.getInstance(keyBytes)
-        val seq1 = seq.objects.nextElement() as DLSequence
-        val oid = seq1.objects.nextElement() as ASN1ObjectIdentifier
-        return when (oid) {
-            PKCSObjectIdentifiers.rsaEncryption -> "RSA"
-            X9ObjectIdentifiers.id_ecPublicKey -> "EC"
-            else -> throw IllegalArgumentException("Unsupported key type $oid")
         }
     }
 }

@@ -1,15 +1,11 @@
 package org.certificatetransparency.ctlog
 
-import org.bouncycastle.util.encoders.Base64
+import org.certificatetransparency.ctlog.der.Base64
+import org.certificatetransparency.ctlog.der.PublicKeyFactory
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import java.security.KeyFactory
-import java.security.NoSuchAlgorithmException
-import java.security.PublicKey
-import java.security.spec.InvalidKeySpecException
-import java.security.spec.X509EncodedKeySpec
 
 /** Mostly for verifying the log info calculates the log ID correctly.  */
 @RunWith(JUnit4::class)
@@ -17,20 +13,20 @@ class LogInfoTest {
 
     @Test
     fun testCalculatesLogIdCorrectly() {
-        val logInfo = LogInfo(getKey(PUBLIC_KEY, "EC"))
+        val logInfo = LogInfo(PublicKeyFactory.fromByteArray(PUBLIC_KEY))
         assertTrue(logInfo.isSameLogId(LOG_ID))
     }
 
     @Test
     fun testCalculatesLogIdCorrectlyRSA() {
-        val logInfo = LogInfo(getKey(PUBLIC_KEY_RSA, "RSA"))
+        val logInfo = LogInfo(PublicKeyFactory.fromByteArray(PUBLIC_KEY_RSA))
         assertTrue(logInfo.isSameLogId(LOG_ID_RSA))
     }
 
     companion object {
         /** EC log key  */
         val PUBLIC_KEY: ByteArray = Base64.decode(
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfahLEimAoz2t01p3uMziiLOl/fHTDM0YDOhBRuiBARsV" + "4UvxG2LdNgoIGLrtCzWE0J5APC2em4JlvR8EEEFMoA==")
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfahLEimAoz2t01p3uMziiLOl/fHTDM0YDOhBRuiBARsV4UvxG2LdNgoIGLrtCzWE0J5APC2em4JlvR8EEEFMoA==")
 
         val LOG_ID: ByteArray = Base64.decode("pLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BA=")
 
@@ -45,17 +41,5 @@ class LogInfoTest {
                 + "3wIDAQAB")
 
         val LOG_ID_RSA: ByteArray = Base64.decode("oCQsumIkVhezsKvGJ+spTJIM9H+jy/OdvSGDIX0VsgY=")
-
-        internal fun getKey(keyBytes: ByteArray, keyAlg: String): PublicKey {
-            val spec = X509EncodedKeySpec(keyBytes)
-            try {
-                val kf = KeyFactory.getInstance(keyAlg)
-                return kf.generatePublic(spec)
-            } catch (e: InvalidKeySpecException) {
-                throw RuntimeException(e)
-            } catch (e: NoSuchAlgorithmException) {
-                throw RuntimeException(e)
-            }
-        }
     }
 }

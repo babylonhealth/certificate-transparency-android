@@ -66,8 +66,8 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
      * @param chain The certificates chain as sent to the log.
      * @return true if the log's signature over this SCT can be verified, false otherwise.
      */
-    fun verifySignature(sct: SignedCertificateTimestamp?, chain: List<Certificate>): Boolean {
-        if (sct != null && !logInfo.isSameLogId(sct.id.keyId)) {
+    fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): Boolean {
+        if (!logInfo.isSameLogId(sct.id.keyId)) {
             throw CertificateTransparencyException("Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this " +
                 "log's ID (${Base64.toBase64String(logInfo.id)}).")
         }
@@ -119,7 +119,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
      * @return true if the SCT verifies, false otherwise.
      */
     internal fun verifySCTOverPreCertificate(
-        sct: SignedCertificateTimestamp?,
+        sct: SignedCertificateTimestamp,
         certificate: X509Certificate,
         issuerInfo: IssuerInformation): Boolean {
         requireNotNull(issuerInfo) { "At the very least, the issuer key hash is needed." }
@@ -207,7 +207,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
         return outputExtensions
     }
 
-    private fun verifySCTSignatureOverBytes(sct: SignedCertificateTimestamp?, toVerify: ByteArray): Boolean {
+    private fun verifySCTSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): Boolean {
         val sigAlg = when {
             logInfo.signatureAlgorithm == "EC" -> "SHA256withECDSA"
             logInfo.signatureAlgorithm == "RSA" -> "SHA256withRSA"
@@ -218,7 +218,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             val signature = Signature.getInstance(sigAlg)
             signature.initVerify(logInfo.key)
             signature.update(toVerify)
-            return signature.verify(sct!!.signature.signature)
+            return signature.verify(sct.signature.signature)
         } catch (e: SignatureException) {
             throw CertificateTransparencyException("Signature object not properly initialized or signature from SCT is improperly encoded.", e)
         } catch (e: InvalidKeyException) {

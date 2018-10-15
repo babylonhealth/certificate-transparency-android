@@ -4,9 +4,9 @@ import org.bouncycastle.asn1.ASN1OctetString
 import org.bouncycastle.asn1.ASN1Primitive
 import org.bouncycastle.asn1.DEROctetString
 import org.bouncycastle.crypto.tls.TlsUtils
-import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
 import org.certificatetransparency.ctlog.serialization.CTConstants
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
