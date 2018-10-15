@@ -18,12 +18,12 @@ package org.certificatetransparency.ctlog.okhttp
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.datasource.InMemoryDataSource
-import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
-import org.certificatetransparency.ctlog.utils.VerifySignature
+import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
@@ -77,7 +77,7 @@ open class CertificateTransparencyBase(
         }
 
         try {
-            val sctsInCertificate = VerifySignature.parseSCTsFromCert(leafCertificate)
+            val sctsInCertificate = leafCertificate.signedCertificateTimestamps()
             if (sctsInCertificate.size < MIN_VALID_SCTS) {
                 v("  Too few SCTs are present, I want at least $MIN_VALID_SCTS CT logs to be nominated.")
                 return false

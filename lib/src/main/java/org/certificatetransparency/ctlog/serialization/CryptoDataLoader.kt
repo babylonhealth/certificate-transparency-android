@@ -1,8 +1,8 @@
 package org.certificatetransparency.ctlog.serialization
 
 import org.certificatetransparency.ctlog.UnsupportedCryptoPrimitiveException
-import org.certificatetransparency.ctlog.der.Base64
-import org.certificatetransparency.ctlog.der.PublicKeyFactory
+import org.certificatetransparency.ctlog.Base64
+import org.certificatetransparency.ctlog.PublicKeyFactory
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream

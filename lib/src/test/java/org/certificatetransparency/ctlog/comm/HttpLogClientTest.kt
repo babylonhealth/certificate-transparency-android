@@ -12,7 +12,7 @@ import okhttp3.ResponseBody
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.comm.model.AddChainResponse
-import org.certificatetransparency.ctlog.der.Base64
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
 import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp

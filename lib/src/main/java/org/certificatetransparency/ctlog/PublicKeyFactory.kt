@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog.der
+package org.certificatetransparency.ctlog
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.bouncycastle.asn1.ASN1Sequence

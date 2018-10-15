@@ -25,9 +25,7 @@ import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.TestData.loadCertificates
-import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.serialization.Deserializer
-import org.certificatetransparency.ctlog.utils.VerifySignature
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -252,7 +250,7 @@ class LogSignatureVerifierTest {
         val issuerCert = certsChain[1]
         assertTrue(
             "The test certificate does have embedded SCTs", leafcert.hasEmbeddedSCT())
-        val scts = VerifySignature.parseSCTsFromCert(leafcert)
+        val scts = leafcert.signedCertificateTimestamps()
         assertEquals("Expected 3 SCTs in the test certificate", 3, scts.size.toLong())
         val logInfos = logInfosGitHub
         for (sct in scts) {

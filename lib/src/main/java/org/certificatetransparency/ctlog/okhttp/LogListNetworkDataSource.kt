@@ -23,8 +23,8 @@ import org.bouncycastle.util.io.pem.PemReader
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.der.Base64
-import org.certificatetransparency.ctlog.der.PublicKeyFactory
+import org.certificatetransparency.ctlog.Base64
+import org.certificatetransparency.ctlog.PublicKeyFactory
 import org.certificatetransparency.ctlog.okhttp.model.LogList
 import retrofit2.Retrofit
 import java.io.StringReader

@@ -1,14 +1,14 @@
 package org.certificatetransparency.ctlog.comm
 
 import com.google.gson.GsonBuilder
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.PublicKeyFactory
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.TestData.TEST_LOG_LIST_JSON
-import org.certificatetransparency.ctlog.der.Base64
-import org.certificatetransparency.ctlog.der.PublicKeyFactory
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
-import org.certificatetransparency.ctlog.utils.VerifySignature
+import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Ignore
@@ -167,7 +167,7 @@ class SslConnectionCheckingTest {
 
 
         try {
-            val sctsInCertificate = VerifySignature.parseSCTsFromCert(leafCertificate)
+            val sctsInCertificate = leafCertificate.signedCertificateTimestamps()
             if (sctsInCertificate.size < MIN_VALID_SCTS) {
                 v("  Too few SCTs are present, I want at least $MIN_VALID_SCTS CT logs to be nominated.")
                 return false

@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog.der
+package org.certificatetransparency.ctlog
 
 import org.bouncycastle.util.encoders.Base64
 

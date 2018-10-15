@@ -11,7 +11,7 @@ import org.certificatetransparency.ctlog.comm.model.GetEntriesResponse
 import org.certificatetransparency.ctlog.comm.model.GetRootsResponse
 import org.certificatetransparency.ctlog.comm.model.GetSthConsistencyResponse
 import org.certificatetransparency.ctlog.comm.model.GetSthResponse
-import org.certificatetransparency.ctlog.der.Base64
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.isPreCertificate
 import org.certificatetransparency.ctlog.isPreCertificateSigningCert
 import org.certificatetransparency.ctlog.serialization.Deserializer

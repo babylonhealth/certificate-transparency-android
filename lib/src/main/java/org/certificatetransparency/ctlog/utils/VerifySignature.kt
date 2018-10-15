@@ -1,14 +1,10 @@
 package org.certificatetransparency.ctlog.utils
 
-import org.bouncycastle.asn1.ASN1OctetString
-import org.bouncycastle.asn1.ASN1Primitive
-import org.bouncycastle.asn1.DEROctetString
-import org.bouncycastle.crypto.tls.TlsUtils
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
-import org.certificatetransparency.ctlog.der.Base64
 import org.certificatetransparency.ctlog.hasEmbeddedSCT
-import org.certificatetransparency.ctlog.serialization.CTConstants
+import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.Deserializer
 import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
@@ -48,7 +44,7 @@ object VerifySignature {
             if (leafCert.hasEmbeddedSCT()) {
                 // Get the SCT(s) from the certificate
                 println("The leafcert does have some SCTs")
-                scts = parseSCTsFromCert(leafCert)
+                scts = leafCert.signedCertificateTimestamps().toMutableList()
             }
         } else {
             val sctBytes = File(sctFile).readBytes()
@@ -91,15 +87,6 @@ object VerifySignature {
         }
     }
 
-    @Throws(IOException::class)
-    fun parseSCTsFromCert(leafCert: X509Certificate): MutableList<SignedCertificateTimestamp> {
-        val bytes = leafCert.getExtensionValue(CTConstants.SCT_CERTIFICATE_OID)
-        val p = ASN1Primitive.fromByteArray(ASN1OctetString.getInstance(bytes).octets) as DEROctetString
-
-        // These are serialized SCTs, we must de-serialize them into an array with one SCT each
-        return parseSCTsFromCertExtension(p.octets).toMutableList()
-    }
-
     /**
      * Reads CT log public key from a file, or all keys that reside in a directory
      *
@@ -128,18 +115,5 @@ object VerifySignature {
             logInfos[Base64.toBase64String(logInfo.id)] = logInfo
         }
         return logInfos
-    }
-
-    @Throws(IOException::class)
-    private fun parseSCTsFromCertExtension(extensionvalue: ByteArray): Array<SignedCertificateTimestamp> {
-        val sctList = ArrayList<SignedCertificateTimestamp>()
-        val bis = ByteArrayInputStream(extensionvalue)
-        TlsUtils.readUint16(bis) // first one is the length of all SCTs concatenated, we don't actually need this
-        while (bis.available() > 2) {
-            val sctBytes = TlsUtils.readOpaque16(bis)
-            // System.out.println("Read SCT bytes (excluding length): " + sctBytes.length);
-            sctList.add(Deserializer.parseSCTFromBinary(ByteArrayInputStream(sctBytes)))
-        }
-        return sctList.toTypedArray()
     }
 }
