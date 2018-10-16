@@ -15,7 +15,7 @@ import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.spec.X509EncodedKeySpec
 
-object PublicKeyFactory {
+internal object PublicKeyFactory {
 
     fun fromByteArray(bytes: ByteArray): PublicKey {
         val keyFactory = KeyFactory.getInstance(determineKeyAlgorithm(bytes))

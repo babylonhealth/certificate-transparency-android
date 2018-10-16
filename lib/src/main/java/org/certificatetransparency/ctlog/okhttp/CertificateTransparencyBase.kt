@@ -20,8 +20,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
 import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogSignatureVerifier
-import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.datasource.InMemoryDataSource
+import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import org.certificatetransparency.ctlog.hasEmbeddedSct
 import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import java.io.IOException
@@ -43,8 +42,7 @@ open class CertificateTransparencyBase(
         CertificateChainCleaner.get(localTrustManager)
     }
 
-    private val logListDataSource = logListDataSource
-        ?: InMemoryDataSource<Map<String, LogSignatureVerifier>>().compose(LogListNetworkDataSource()).reuseInflight()
+    private val logListDataSource = logListDataSource ?: LogListDataSourceFactory.create()
 
     /**
      * Check if the certificates provided by a server contain Signed Certificate Timestamps

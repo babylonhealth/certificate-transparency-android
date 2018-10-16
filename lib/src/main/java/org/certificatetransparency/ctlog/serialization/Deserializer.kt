@@ -1,26 +1,26 @@
 package org.certificatetransparency.ctlog.serialization
 
 import org.certificatetransparency.ctlog.Base64
-import org.certificatetransparency.ctlog.LogEntry
-import org.certificatetransparency.ctlog.MerkleAuditProof
-import org.certificatetransparency.ctlog.MerkleTreeLeaf
-import org.certificatetransparency.ctlog.ParsedLogEntry
-import org.certificatetransparency.ctlog.ParsedLogEntryWithProof
-import org.certificatetransparency.ctlog.PreCertificate
-import org.certificatetransparency.ctlog.PreCertificateChainEntry
-import org.certificatetransparency.ctlog.SignedEntry
-import org.certificatetransparency.ctlog.TimestampedEntry
-import org.certificatetransparency.ctlog.X509ChainEntry
-import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
-import org.certificatetransparency.ctlog.serialization.model.LogEntryType
-import org.certificatetransparency.ctlog.serialization.model.LogID
-import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.serialization.model.Version
+import org.certificatetransparency.ctlog.domain.logclient.model.DigitallySigned
+import org.certificatetransparency.ctlog.domain.logclient.model.LogEntry
+import org.certificatetransparency.ctlog.domain.logclient.model.LogEntryType
+import org.certificatetransparency.ctlog.domain.logclient.model.LogId
+import org.certificatetransparency.ctlog.domain.logclient.model.MerkleAuditProof
+import org.certificatetransparency.ctlog.domain.logclient.model.MerkleTreeLeaf
+import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntry
+import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntryWithProof
+import org.certificatetransparency.ctlog.domain.logclient.model.PreCertificate
+import org.certificatetransparency.ctlog.domain.logclient.model.PreCertificateChainEntry
+import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.domain.logclient.model.SignedEntry
+import org.certificatetransparency.ctlog.domain.logclient.model.TimestampedEntry
+import org.certificatetransparency.ctlog.domain.logclient.model.Version
+import org.certificatetransparency.ctlog.domain.logclient.model.X509ChainEntry
 import java.io.IOException
 import java.io.InputStream
 
 /** Converting binary data to CT structures.  */
-object Deserializer {
+internal object Deserializer {
     private const val TIMESTAMPED_ENTRY_LEAF_TYPE = 0
 
     /**
@@ -47,7 +47,7 @@ object Deserializer {
 
         return SignedCertificateTimestamp(
             version = version,
-            id = LogID(keyId),
+            id = LogId(keyId),
             timestamp = timestamp,
             extensions = extensions,
             signature = signature
@@ -177,7 +177,7 @@ object Deserializer {
                 val length = readNumber(inputStream, 3).toInt()
                 SignedEntry.X509(readFixedLength(inputStream, length))
             }
-            LogEntryType.PRECERT_ENTRY -> {
+            LogEntryType.PRE_CERTIFICATE_ENTRY -> {
                 val issuerKeyHash = readFixedLength(inputStream, 32)
 
                 val length = readNumber(inputStream, 2).toInt()

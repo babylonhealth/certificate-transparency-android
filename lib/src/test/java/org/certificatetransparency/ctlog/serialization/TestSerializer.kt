@@ -2,10 +2,10 @@ package org.certificatetransparency.ctlog.serialization
 
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.Base64
-import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
-import org.certificatetransparency.ctlog.serialization.model.LogID
-import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.serialization.model.Version
+import org.certificatetransparency.ctlog.domain.logclient.model.DigitallySigned
+import org.certificatetransparency.ctlog.domain.logclient.model.LogId
+import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.domain.logclient.model.Version
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,7 +30,7 @@ class TestSerializer {
         val sct = SignedCertificateTimestamp(
             version = Version.V1,
             timestamp = 1365181456089L,
-            id = LogID(Base64.decode(keyIdBase64)),
+            id = LogId(Base64.decode(keyIdBase64)),
             signature = signature,
             extensions = ByteArray(0)
         )

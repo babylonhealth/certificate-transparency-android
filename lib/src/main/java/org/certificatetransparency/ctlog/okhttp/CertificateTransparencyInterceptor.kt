@@ -19,7 +19,7 @@ package org.certificatetransparency.ctlog.okhttp
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.certificatetransparency.ctlog.LogSignatureVerifier
-import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
 

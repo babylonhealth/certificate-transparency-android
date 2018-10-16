@@ -1,7 +1,7 @@
 package org.certificatetransparency.ctlog.serialization
 
 /** Constants used for serializing and de-serializing.  */
-object CTConstants {
+internal object CTConstants {
     // All in bytes.
     const val MAX_EXTENSIONS_LENGTH = (1 shl 16) - 1
     const val MAX_SIGNATURE_LENGTH = (1 shl 16) - 1

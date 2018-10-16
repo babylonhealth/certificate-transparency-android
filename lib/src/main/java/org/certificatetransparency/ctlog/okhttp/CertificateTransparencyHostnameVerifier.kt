@@ -17,7 +17,7 @@
 package org.certificatetransparency.ctlog.okhttp
 
 import org.certificatetransparency.ctlog.LogSignatureVerifier
-import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLException
 import javax.net.ssl.SSLSession

@@ -1,6 +1,6 @@
 package org.certificatetransparency.ctlog
 
-import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
+import org.certificatetransparency.ctlog.utils.CryptoDataLoader
 import org.junit.Ignore
 import java.io.File
 import java.security.cert.Certificate

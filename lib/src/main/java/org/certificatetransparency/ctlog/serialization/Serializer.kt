@@ -1,13 +1,13 @@
 package org.certificatetransparency.ctlog.serialization
 
-import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.serialization.model.Version
+import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.domain.logclient.model.Version
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
 
 /** Serializes common structure to binary format.  */
-object Serializer {
+internal object Serializer {
     /**
      * Write a numeric value of numBytes bytes, MSB first.
      *
