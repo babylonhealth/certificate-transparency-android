@@ -1,13 +1,13 @@
-package org.certificatetransparency.ctlog.okhttp
+package org.certificatetransparency.ctlog.data
 
-import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.data.loglist.LogListNetworkDataSource
 import org.certificatetransparency.ctlog.data.loglist.LogListService
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import org.certificatetransparency.ctlog.domain.datasource.InMemoryDataSource
 import retrofit2.Retrofit
 
-object LogListDataSourceFactory {
+internal object LogListDataSourceFactory {
     fun create(): DataSource<Map<String, LogSignatureVerifier>> {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.gstatic.com/ct/log_list/")

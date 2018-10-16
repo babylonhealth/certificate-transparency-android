@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.data.verifier
 
 import org.bouncycastle.asn1.x500.X500Name
 import org.bouncycastle.asn1.x509.Extension

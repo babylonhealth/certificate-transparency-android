@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.okhttp
+package org.certificatetransparency.ctlog.data
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
 import org.certificatetransparency.ctlog.Base64
-import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import org.certificatetransparency.ctlog.hasEmbeddedSct
 import org.certificatetransparency.ctlog.signedCertificateTimestamps
@@ -30,7 +30,7 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
-open class CertificateTransparencyBase(
+internal open class CertificateTransparencyBase(
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
 ) {

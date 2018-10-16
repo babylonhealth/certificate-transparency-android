@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.okhttp
+package org.certificatetransparency.ctlog.data
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
 
-class CertificateTransparencyInterceptor private constructor(
+internal class CertificateTransparencyInterceptor(
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>?
 ) : CertificateTransparencyBase(trustManager, logListDataSource), Interceptor {
@@ -39,13 +39,5 @@ class CertificateTransparencyInterceptor private constructor(
         }
 
         return chain.proceed(chain.request())
-    }
-
-    class Builder {
-        var trustManager: X509TrustManager? = null
-
-        var logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
-
-        fun build() = CertificateTransparencyInterceptor(trustManager, logListDataSource)
     }
 }

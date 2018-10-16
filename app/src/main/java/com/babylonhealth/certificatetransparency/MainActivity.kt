@@ -24,7 +24,7 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.certificatetransparency.ctlog.okhttp.CertificateTransparencyInterceptor
+import org.certificatetransparency.ctlog.CertificateTransparencyFactory
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         button.setOnClickListener {
 
-            val interceptor = CertificateTransparencyInterceptor.Builder().build()
+            val interceptor = CertificateTransparencyFactory.okHttpInterceptor().build()
 
             val client = OkHttpClient.Builder().apply {
                 addNetworkInterceptor(interceptor)

@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.data.verifier
 
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
@@ -7,8 +7,16 @@ import org.bouncycastle.asn1.x509.Extensions
 import org.bouncycastle.asn1.x509.TBSCertificate
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator
 import org.bouncycastle.util.encoders.Base64
+import org.certificatetransparency.ctlog.CertificateTransparencyException
+import org.certificatetransparency.ctlog.LogInfo
+import org.certificatetransparency.ctlog.UnsupportedCryptoPrimitiveException
 import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.domain.logclient.model.Version
+import org.certificatetransparency.ctlog.hasEmbeddedSct
+import org.certificatetransparency.ctlog.isPreCertificate
+import org.certificatetransparency.ctlog.isPreCertificateSigningCert
+import org.certificatetransparency.ctlog.issuerInformation
+import org.certificatetransparency.ctlog.issuerInformationFromPreCertificate
 import org.certificatetransparency.ctlog.serialization.CTConstants
 import org.certificatetransparency.ctlog.serialization.CTConstants.LOG_ENTRY_TYPE_LENGTH
 import org.certificatetransparency.ctlog.serialization.CTConstants.MAX_CERTIFICATE_LENGTH

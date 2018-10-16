@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.okhttp
+package org.certificatetransparency.ctlog.data
 
-import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLException
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
-class CertificateTransparencyHostnameVerifier private constructor(
+internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>?
@@ -41,13 +41,5 @@ class CertificateTransparencyHostnameVerifier private constructor(
         }
 
         return false
-    }
-
-    class Builder(val delegate: HostnameVerifier) {
-        var trustManager: X509TrustManager? = null
-
-        var logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
-
-        fun build() = CertificateTransparencyHostnameVerifier(delegate, trustManager, logListDataSource)
     }
 }
