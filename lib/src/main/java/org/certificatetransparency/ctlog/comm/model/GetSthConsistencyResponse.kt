@@ -23,6 +23,6 @@ import com.google.gson.annotations.SerializedName
  *
  * @property consistency An array of Merkle Tree nodes, base64 encoded.
  */
-data class GetSthConsistencyResponse(
+internal data class GetSthConsistencyResponse(
     @SerializedName("consistency") val consistency: List<String>
 )

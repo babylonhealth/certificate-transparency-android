@@ -41,7 +41,7 @@ class HttpLogClientTest {
 
     private val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(mockInterceptor).build()
     private val retrofit = Retrofit.Builder().client(client).addConverterFactory(GsonConverterFactory.create()).baseUrl("http://ctlog/").build()
-    private val ctService: LogClientService = retrofit.create(LogClientService::class.java)
+    private val logClientService: LogClientService = retrofit.create(LogClientService::class.java)
 
     private fun expectInterceptor(url: String, jsonResponse: String) {
         whenever(mockInterceptor.intercept(argThat { request().url().toString() == url })).then {
@@ -61,7 +61,7 @@ class HttpLogClientTest {
     @Test
     fun certificatesAreEncoded() {
         val inputCerts = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
 
         val encoded = client.encodeCertificates(inputCerts)
         assertTrue(encoded.chain.isNotEmpty())
@@ -90,7 +90,7 @@ class HttpLogClientTest {
     fun certificateSentToServer() {
         expectInterceptor("http://ctlog/add-chain", JSON_RESPONSE)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         val certs = CryptoDataLoader.certificatesFromFile(TestData.file(TEST_DATA_PATH))
         val res = client.addCertificate(certs)
         assertNotNull("Should have a meaningful SCT", res)
@@ -102,7 +102,7 @@ class HttpLogClientTest {
     fun getLogSth() {
         expectInterceptor("http://ctlog/get-sth", STH_RESPONSE)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         val sth = client.logSth
 
         assertNotNull(sth)
@@ -116,7 +116,7 @@ class HttpLogClientTest {
     fun getLogSthBadResponseTimestamp() {
         expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_TIMESTAMP)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         try {
             client.logSth
             fail()
@@ -128,7 +128,7 @@ class HttpLogClientTest {
     fun getLogSTHBadResponseRootHash() {
         expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_ROOT_HASH)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         try {
             client.logSth
             fail()
@@ -140,7 +140,7 @@ class HttpLogClientTest {
     fun getRootCerts() {
         expectInterceptor("http://ctlog/get-roots", TestData.file(TestData.TEST_ROOT_CERTS).readText())
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         val rootCerts = client.logRoots
 
         assertNotNull(rootCerts)
@@ -151,7 +151,7 @@ class HttpLogClientTest {
     fun getLogEntries() {
         expectInterceptor("http://ctlog/get-entries?start=0&end=0", LOG_ENTRY)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         val testChainCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.ROOT_CA_CERT))[0] as X509Certificate
         val testCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.TEST_CERT))[0] as X509Certificate
         val entries = client.getLogEntries(0, 0)
@@ -180,7 +180,7 @@ class HttpLogClientTest {
     fun getLogEntriesCorruptedEntry() {
         expectInterceptor("http://ctlog/get-entries?start=0&end=0", LOG_ENTRY_CORRUPTED_ENTRY)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         try {
             // Must get an actual entry as the list of entries is lazily transformed.
             client.getLogEntries(0, 0)[0]
@@ -193,7 +193,7 @@ class HttpLogClientTest {
     fun getLogEntriesEmptyEntry() {
         expectInterceptor("http://ctlog/get-entries?start=0&end=0", LOG_ENTRY_EMPTY)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         assertTrue(client.getLogEntries(0, 0).isEmpty())
     }
 
@@ -201,8 +201,8 @@ class HttpLogClientTest {
     fun getSTHConsistency() {
         expectInterceptor("http://ctlog/get-sth-consistency?first=1&second=3", CONSISTENCY_PROOF)
 
-        val client = HttpLogClient(ctService)
-        val proof = client.getSTHConsistency(1, 3)
+        val client = HttpLogClient(logClientService)
+        val proof = client.getSthConsistency(1, 3)
         assertNotNull(proof)
         assertEquals(2, proof.size.toLong())
     }
@@ -211,8 +211,8 @@ class HttpLogClientTest {
     fun getSTHConsistencyEmpty() {
         expectInterceptor("http://ctlog/get-sth-consistency?first=1&second=3", CONSISTENCY_PROOF_EMPTY)
 
-        val client = HttpLogClient(ctService)
-        val proof = client.getSTHConsistency(1, 3)
+        val client = HttpLogClient(logClientService)
+        val proof = client.getSthConsistency(1, 3)
         assertNotNull(proof)
         assertTrue(proof.isEmpty())
     }
@@ -221,7 +221,7 @@ class HttpLogClientTest {
     fun getLogEntrieAndProof() {
         expectInterceptor("http://ctlog/get-entry-and-proof?leaf_index=1&tree_size=2", LOG_ENTRY_AND_PROOF)
 
-        val client = HttpLogClient(ctService)
+        val client = HttpLogClient(logClientService)
         val testChainCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.ROOT_CA_CERT))[0] as X509Certificate
         val testCert = CryptoDataLoader.certificatesFromFile(TestData.file(TestData.TEST_CERT))[0] as X509Certificate
         val entry = client.getLogEntryAndProof(1, 2)
@@ -253,7 +253,7 @@ class HttpLogClientTest {
     fun getLogProofByHash() {
         val merkleLeafHash = "YWhhc2g="
         expectInterceptor("http://ctlog/get-proof-by-hash?tree_size=40183&hash=YWhhc2g%3D", MERKLE_AUDIT_PROOF)
-        val client2 = HttpLogClient(ctService)
+        val client2 = HttpLogClient(logClientService)
         val auditProof = client2.getProofByEncodedHash(merkleLeafHash, 40183)
         assertTrue(auditProof.leafIndex == 198743L)
     }

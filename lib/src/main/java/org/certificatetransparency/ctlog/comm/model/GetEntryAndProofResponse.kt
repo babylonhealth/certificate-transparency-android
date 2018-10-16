@@ -23,7 +23,7 @@ import com.google.gson.annotations.SerializedName
  * @property extraData The base64-encoded unsigned data, same as in https://tools.ietf.org/html/rfc6962#section-4.6.
  * @property auditPath An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
  */
-data class GetEntryAndProofResponse(
+internal data class GetEntryAndProofResponse(
     @SerializedName("leaf_input") val leafInput: String,
     @SerializedName("extra_data") val extraData: String,
     @SerializedName("audit_path") val auditPath: List<String>

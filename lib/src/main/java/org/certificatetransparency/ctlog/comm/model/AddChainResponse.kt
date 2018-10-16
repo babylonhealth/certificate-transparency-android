@@ -32,7 +32,7 @@ import com.google.gson.annotations.SerializedName
  * field.  Logs should set this to the empty string.  Clients should decode the base64-encoded data and include it in the SCT.
  * @property signature The SCT signature, base64 encoded.
  */
-data class AddChainResponse(
+internal data class AddChainResponse(
     @SerializedName("sct_version") val sctVersion: Int,
     @SerializedName("id") val id: String,
     @SerializedName("timestamp") val timestamp: Long,

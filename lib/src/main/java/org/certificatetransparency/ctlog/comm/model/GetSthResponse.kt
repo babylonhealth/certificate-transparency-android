@@ -24,7 +24,7 @@ import com.google.gson.annotations.SerializedName
  * @property sha256RootHash The Merkle Tree Hash of the tree, in base64.
  * @property treeHeadSignature A TreeHeadSignature for the above data.
  */
-data class GetSthResponse(
+internal data class GetSthResponse(
     @SerializedName("tree_size") val treeSize: Long,
     @SerializedName("timestamp") val timestamp: Long,
     @SerializedName("sha256_root_hash") val sha256RootHash: String,

@@ -33,7 +33,7 @@ import retrofit2.http.Query
 /**
  * Retrofit interface for https://tools.ietf.org/html/rfc6962#section-4.3
  */
-interface LogClientService {
+internal interface LogClientService {
 
     /**
      * Retrieve Merkle Audit Proof from Log by Leaf Hash

@@ -7,7 +7,6 @@ import org.certificatetransparency.ctlog.ParsedLogEntry
 import org.certificatetransparency.ctlog.ParsedLogEntryWithProof
 import org.certificatetransparency.ctlog.SignedTreeHead
 import org.certificatetransparency.ctlog.comm.model.AddChainRequest
-import org.certificatetransparency.ctlog.comm.model.AddChainResponse
 import org.certificatetransparency.ctlog.comm.model.GetEntriesResponse
 import org.certificatetransparency.ctlog.comm.model.GetRootsResponse
 import org.certificatetransparency.ctlog.comm.model.GetSthConsistencyResponse
@@ -15,7 +14,6 @@ import org.certificatetransparency.ctlog.comm.model.GetSthResponse
 import org.certificatetransparency.ctlog.isPreCertificate
 import org.certificatetransparency.ctlog.isPreCertificateSigningCert
 import org.certificatetransparency.ctlog.serialization.Deserializer
-import org.certificatetransparency.ctlog.serialization.model.LogID
 import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.serialization.model.Version
 import java.io.ByteArrayInputStream
@@ -29,7 +27,7 @@ import java.security.cert.CertificateFactory
  * @constructor New HttpLogClient.
  * @property ctService CtService pointing to CT Log's full URL, e.g. "http://ct.googleapis.com/pilot/ct/v1/"
  */
-class HttpLogClient(private val ctService: LogClientService) {
+internal class HttpLogClient(private val ctService: LogClientService) : LogClient {
 
     /**
      * Retrieves Latest Signed Tree Head from the log. The signature of the Signed Tree Head component
@@ -72,7 +70,7 @@ class HttpLogClient(private val ctService: LogClientService) {
      * @param certificatesChain The certificate chain to add.
      * @return SignedCertificateTimestamp if the log added the chain successfully.
      */
-    fun addCertificate(certificatesChain: List<Certificate>): SignedCertificateTimestamp? {
+    override fun addCertificate(certificatesChain: List<Certificate>): SignedCertificateTimestamp {
         require(!certificatesChain.isEmpty()) { "Must have at least one certificate to submit." }
 
         val isPreCertificate = certificatesChain[0].isPreCertificate()
@@ -85,7 +83,7 @@ class HttpLogClient(private val ctService: LogClientService) {
         return addCertificate(certificatesChain, isPreCertificate)
     }
 
-    private fun addCertificate(certificatesChain: List<Certificate>, isPreCertificate: Boolean): SignedCertificateTimestamp? {
+    private fun addCertificate(certificatesChain: List<Certificate>, isPreCertificate: Boolean): SignedCertificateTimestamp {
         val jsonPayload = encodeCertificates(certificatesChain)
 
         val call = if (isPreCertificate) ctService.addPreChain(jsonPayload) else ctService.addChain(jsonPayload)
@@ -100,7 +98,7 @@ class HttpLogClient(private val ctService: LogClientService) {
      * @param end 0-based index of last entry to retrieve, in decimal.
      * @return list of Log's entries.
      */
-    fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry> {
+    override fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry> {
         require(start in 0..end)
 
         return ctService.getEntries(start, end).execute()?.body()!!.toParsedLogEntries()
@@ -113,7 +111,7 @@ class HttpLogClient(private val ctService: LogClientService) {
      * @param second The tree_size of the second tree, in decimal.
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
-    fun getSTHConsistency(first: Long, second: Long): List<ByteArray> {
+    override fun getSthConsistency(first: Long, second: Long): List<ByteArray> {
         require(first in 0..second)
 
         return ctService.getSthConsistency(first, second).execute()?.body()!!.toMerkleTreeNodes()
@@ -126,7 +124,7 @@ class HttpLogClient(private val ctService: LogClientService) {
      * @param treeSize The tree_size of the tree for which the proof is desired.
      * @return ParsedLog entry object with proof.
      */
-    fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
+    override fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         require(leafIndex in 0..treeSize)
 
         val response = ctService.getEntryAndProof(leafIndex, treeSize).execute()?.body()!!
@@ -144,7 +142,7 @@ class HttpLogClient(private val ctService: LogClientService) {
      * @param leafHash sha256 hash of MerkleTreeLeaf.
      * @return MerkleAuditProof object.
      */
-    fun getProofByHash(leafHash: ByteArray): MerkleAuditProof {
+    override fun getProofByHash(leafHash: ByteArray): MerkleAuditProof {
         require(leafHash.isNotEmpty())
         val encodedMerkleLeafHash = Base64.toBase64String(leafHash)
         val sth = logSth
@@ -159,7 +157,7 @@ class HttpLogClient(private val ctService: LogClientService) {
      * from latest STH.
      * @return MerkleAuditProof object.
      */
-    fun getProofByEncodedHash(encodedMerkleLeafHash: String, treeSize: Long): MerkleAuditProof {
+    override fun getProofByEncodedHash(encodedMerkleLeafHash: String, treeSize: Long): MerkleAuditProof {
         require(encodedMerkleLeafHash.isNotEmpty())
         val response = ctService.getProofByHash(treeSize, encodedMerkleLeafHash).execute()?.body()!!
         return Deserializer.parseAuditProof(response.auditPath, response.leafIndex, treeSize)
@@ -237,19 +235,4 @@ class HttpLogClient(private val ctService: LogClientService) {
             }
         }
     }
-}
-
-/**
- * Parses the CT Log's json response into a SignedCertificateTimestamp.
- *
- * @return SCT filled from the JSON input.
- */
-fun AddChainResponse.toSignedCertificateTimestamp(): SignedCertificateTimestamp {
-    return SignedCertificateTimestamp(
-        version = Version.forNumber(sctVersion),
-        id = LogID(Base64.decode(id)),
-        timestamp = timestamp,
-        extensions = if (extensions.isNotEmpty()) Base64.decode(extensions) else ByteArray(0),
-        signature = Deserializer.parseDigitallySignedFromBinary(ByteArrayInputStream(Base64.decode(signature)))
-    )
 }

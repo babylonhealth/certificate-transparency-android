@@ -27,7 +27,7 @@ import org.certificatetransparency.ctlog.comm.model.GetEntriesResponse.Entry
  *
  * @property entries An array of [Entry] objects
  */
-data class GetEntriesResponse(
+internal data class GetEntriesResponse(
     @SerializedName("entries") val entries: List<Entry>
 ) {
     /**

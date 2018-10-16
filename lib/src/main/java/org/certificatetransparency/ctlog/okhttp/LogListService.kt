@@ -20,7 +20,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 
-internal interface LogService {
+internal interface LogListService {
     @GET("log_list.json")
     fun getLogList(): Call<ResponseBody>
 

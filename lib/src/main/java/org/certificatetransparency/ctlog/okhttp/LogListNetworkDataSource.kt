@@ -57,7 +57,7 @@ class LogListNetworkDataSource : DataSource<Map<String, LogSignatureVerifier>> {
         .baseUrl("https://www.gstatic.com/ct/log_list/")
         .build()
 
-    private val logService = retrofit.create(LogService::class.java)
+    private val logService = retrofit.create(LogListService::class.java)
 
     override suspend fun get(): Map<String, LogSignatureVerifier>? {
         println("Loading log-list.json from network")
