@@ -22,7 +22,7 @@ import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.datasource.InMemoryDataSource
-import org.certificatetransparency.ctlog.hasEmbeddedSCT
+import org.certificatetransparency.ctlog.hasEmbeddedSct
 import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import java.io.IOException
 import java.security.KeyStore
@@ -71,7 +71,7 @@ open class CertificateTransparencyBase(
 
         val leafCertificate = certificates[0] as X509Certificate
 
-        if (!leafCertificate.hasEmbeddedSCT()) {
+        if (!leafCertificate.hasEmbeddedSct()) {
             v("  This certificate does not have any Signed Certificate Timestamps in it.")
             return false
         }

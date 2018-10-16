@@ -37,7 +37,7 @@ class HttpLogClient(private val ctService: CtService) {
      *
      * @return latest STH
      */
-    val logSTH: SignedTreeHead
+    internal val logSTH: SignedTreeHead
         get() {
             val response = ctService.getSth().execute()?.body()!!
             return parseSTHResponse(response)
@@ -48,7 +48,7 @@ class HttpLogClient(private val ctService: CtService) {
      *
      * @return a list of root certificates.
      */
-    val logRoots: List<Certificate>
+    internal val logRoots: List<Certificate>
         get() {
             val response = ctService.getRoots().execute()?.body()!!
             return parseRootCertsResponse(response)
@@ -235,19 +235,6 @@ class HttpLogClient(private val ctService: CtService) {
             sha256RootHash = sha256RootHash,
             signature = Deserializer.parseDigitallySignedFromBinary(ByteArrayInputStream(Base64.decode(base64Signature)))
         )
-
-        /*val sth = SignedTreeHead(Version.V1)
-        sth.treeSize = treeSize
-        sth.timestamp = timestamp
-        sth.sha256RootHash = sha256RootHash
-        sth.signature = Deserializer.parseDigitallySignedFromBinary(
-            ByteArrayInputStream(Base64.decode(base64Signature)))
-
-        if (sth.sha256RootHash?.size != 32) {
-            throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. The size of the " +
-                "root hash is ${sth.sha256RootHash?.size}")
-        }
-        return sth*/
     }
 
     /**

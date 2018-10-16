@@ -1,6 +1,7 @@
 package org.certificatetransparency.ctlog
 
-class LogEntry {
-    var x509Entry: X509ChainEntry? = null
-    var precertEntry: PrecertChainEntry? = null
+sealed class LogEntry {
+    data class X509(val x509Entry: X509ChainEntry) : LogEntry()
+
+    data class PreCertificate(val preCertificateEntry: PreCertificateChainEntry) : LogEntry()
 }

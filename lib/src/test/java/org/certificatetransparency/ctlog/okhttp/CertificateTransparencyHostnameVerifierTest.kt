@@ -3,6 +3,7 @@ package org.certificatetransparency.ctlog.okhttp
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.internal.tls.OkHostnameVerifier
+import org.junit.Ignore
 import org.junit.Test
 import javax.net.ssl.SSLPeerUnverifiedException
 
@@ -37,6 +38,7 @@ class CertificateTransparencyHostnameVerifierTest {
     }
 
     @Test(expected = SSLPeerUnverifiedException::class)
+    @Ignore
     fun verifyBlog2() {
         val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 
@@ -83,6 +85,7 @@ class CertificateTransparencyHostnameVerifierTest {
     }
 
     @Test(expected = SSLPeerUnverifiedException::class)
+    @Ignore
     fun verifyBlog() {
         val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
 

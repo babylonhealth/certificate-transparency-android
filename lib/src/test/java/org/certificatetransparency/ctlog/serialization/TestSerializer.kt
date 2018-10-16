@@ -16,7 +16,7 @@ import org.junit.runners.JUnit4
 class TestSerializer {
 
     @Test
-    fun serializeSCT() {
+    fun serializeSct() {
         val keyIdBase64 = "3xwuwRUAlFJHqWFoMl3cXHlZ6PfG04j8AC4LvT9012Q="
 
         val signatureBase64 = "MEUCIGBuEK5cLVobCu1J3Ek39I3nGk6XhOnCCN+/6e9TbPfyAiEAvrKcctfQbWHQa9s4oGlGmqhv4S4Yu3zEVomiwBh+9aU="

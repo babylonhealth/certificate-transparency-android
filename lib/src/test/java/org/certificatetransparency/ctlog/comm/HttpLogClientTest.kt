@@ -9,10 +9,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
+import org.certificatetransparency.ctlog.LogEntry
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.comm.model.AddChainResponse
-import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
 import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
@@ -71,18 +72,18 @@ class HttpLogClientTest {
         }
     }
 
-    private fun verifySCTContents(sct: SignedCertificateTimestamp?) {
-        assertEquals(Version.V1, sct?.version)
-        assertArrayEquals(LOG_ID, sct?.id?.keyId)
-        assertEquals(1373015623951L, sct?.timestamp)
-        assertEquals(DigitallySigned.HashAlgorithm.SHA256, sct?.signature?.hashAlgorithm)
-        assertEquals(DigitallySigned.SignatureAlgorithm.ECDSA, sct?.signature?.signatureAlgorithm)
+    private fun SignedCertificateTimestamp?.verifySctContents() {
+        assertEquals(Version.V1, this?.version)
+        assertArrayEquals(LOG_ID, this?.id?.keyId)
+        assertEquals(1373015623951L, this?.timestamp)
+        assertEquals(DigitallySigned.HashAlgorithm.SHA256, this?.signature?.hashAlgorithm)
+        assertEquals(DigitallySigned.SignatureAlgorithm.ECDSA, this?.signature?.signatureAlgorithm)
     }
 
     @Test
     fun serverResponseParsed() {
         val sct = HttpLogClient.parseServerResponse(ADD_CHAIN_RESPONSE)
-        verifySCTContents(sct)
+        sct.verifySctContents()
     }
 
     @Test
@@ -94,7 +95,7 @@ class HttpLogClientTest {
         val res = client.addCertificate(certs)
         assertNotNull("Should have a meaningful SCT", res)
 
-        verifySCTContents(res)
+        res.verifySctContents()
     }
 
     @Test
@@ -158,12 +159,13 @@ class HttpLogClientTest {
         var chainCert: X509Certificate? = null
         var leafCert: X509Certificate? = null
         try {
+            val x509Entry = (entries[0].logEntry as LogEntry.X509).x509Entry
 
-            val leafCertBytes = entries[0].logEntry.x509Entry!!.leafCertificate
+            val leafCertBytes = x509Entry.leafCertificate
             leafCert = CertificateFactory.getInstance("X509")
                 .generateCertificate(ByteArrayInputStream(leafCertBytes!!)) as X509Certificate
 
-            val chainCertBytes = entries[0].logEntry.x509Entry!!.certificateChain[0]
+            val chainCertBytes = x509Entry.certificateChain[0]
             chainCert = CertificateFactory.getInstance("X509")
                 .generateCertificate(ByteArrayInputStream(chainCertBytes)) as X509Certificate
         } catch (e: CertificateException) {
@@ -227,12 +229,13 @@ class HttpLogClientTest {
         var chainCert: X509Certificate? = null
         var leafCert: X509Certificate? = null
         try {
+            val x509Entry = (entry.parsedLogEntry.logEntry as LogEntry.X509).x509Entry
 
-            val leafCertBytes = entry.parsedLogEntry.logEntry.x509Entry!!.leafCertificate
+            val leafCertBytes = x509Entry.leafCertificate
             leafCert = CertificateFactory.getInstance("X509")
-                .generateCertificate(ByteArrayInputStream(leafCertBytes!!)) as X509Certificate
+                .generateCertificate(ByteArrayInputStream(leafCertBytes)) as X509Certificate
 
-            val chainCertBytes = entry.parsedLogEntry.logEntry.x509Entry!!.certificateChain[0]
+            val chainCertBytes = x509Entry.certificateChain[0]
             chainCert = CertificateFactory.getInstance("X509")
                 .generateCertificate(ByteArrayInputStream(chainCertBytes)) as X509Certificate
         } catch (e: CertificateException) {

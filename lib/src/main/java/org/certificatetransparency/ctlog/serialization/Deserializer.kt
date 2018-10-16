@@ -1,16 +1,16 @@
 package org.certificatetransparency.ctlog.serialization
 
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogEntry
 import org.certificatetransparency.ctlog.MerkleAuditProof
 import org.certificatetransparency.ctlog.MerkleTreeLeaf
 import org.certificatetransparency.ctlog.ParsedLogEntry
 import org.certificatetransparency.ctlog.ParsedLogEntryWithProof
-import org.certificatetransparency.ctlog.PreCert
-import org.certificatetransparency.ctlog.PrecertChainEntry
+import org.certificatetransparency.ctlog.PreCertificate
+import org.certificatetransparency.ctlog.PreCertificateChainEntry
 import org.certificatetransparency.ctlog.SignedEntry
 import org.certificatetransparency.ctlog.TimestampedEntry
 import org.certificatetransparency.ctlog.X509ChainEntry
-import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.serialization.model.DigitallySigned
 import org.certificatetransparency.ctlog.serialization.model.LogEntryType
 import org.certificatetransparency.ctlog.serialization.model.LogID
@@ -31,7 +31,7 @@ object Deserializer {
      * @throws SerializationException if the data stream is too short.
      */
     @JvmStatic
-    fun parseSCTFromBinary(inputStream: InputStream): SignedCertificateTimestamp {
+    fun parseSctFromBinary(inputStream: InputStream): SignedCertificateTimestamp {
         val version = Version.forNumber(readNumber(inputStream, 1 /* single byte */).toInt())
         if (version != Version.V1) {
             throw SerializationException("Unknown version: $version")
@@ -123,20 +123,16 @@ object Deserializer {
     @JvmStatic
     fun parseLogEntry(merkleTreeLeaf: InputStream, extraData: InputStream): ParsedLogEntry {
         val treeLeaf = parseMerkleTreeLeaf(merkleTreeLeaf)
-        val logEntry = LogEntry()
 
-        val entryType = treeLeaf.timestampedEntry.entryType
-
-        when (entryType) {
-            LogEntryType.X509_ENTRY -> {
-                val x509EntryChain = parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry!!.x509)
-                logEntry.x509Entry = x509EntryChain
+        val logEntry = when (treeLeaf.timestampedEntry.signedEntry) {
+            is SignedEntry.X509 -> {
+                val x509EntryChain = parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.x509)
+                LogEntry.X509(x509EntryChain)
             }
-            LogEntryType.PRECERT_ENTRY -> {
-                val preCertChain = parsePrecertChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry!!.preCert)
-                logEntry.precertEntry = preCertChain
+            is SignedEntry.PreCertificate -> {
+                val preCertChain = parsePreCertificateChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.preCertificate)
+                LogEntry.PreCertificate(preCertChain)
             }
-            else -> throw SerializationException("Unknown entry type: $entryType")
         }
 
         return ParsedLogEntry(treeLeaf, logEntry)
@@ -171,35 +167,33 @@ object Deserializer {
      * @throws SerializationException if the data stream is too short.
      */
     private fun parseTimestampedEntry(inputStream: InputStream): TimestampedEntry {
-        val timestampedEntry = TimestampedEntry()
-
-        timestampedEntry.timestamp = readNumber(inputStream, CTConstants.TIMESTAMP_LENGTH)
+        val timestamp = readNumber(inputStream, CTConstants.TIMESTAMP_LENGTH)
 
         val entryType = readNumber(inputStream, CTConstants.LOG_ENTRY_TYPE_LENGTH).toInt()
-        timestampedEntry.entryType = LogEntryType.forNumber(entryType)
+        val logEntryType = LogEntryType.forNumber(entryType)
 
-        val signedEntry = SignedEntry()
-        when (timestampedEntry.entryType) {
+        val signedEntry = when (logEntryType) {
             LogEntryType.X509_ENTRY -> {
                 val length = readNumber(inputStream, 3).toInt()
-                signedEntry.x509 = readFixedLength(inputStream, length)
+                SignedEntry.X509(readFixedLength(inputStream, length))
             }
             LogEntryType.PRECERT_ENTRY -> {
-                val preCert = PreCert()
+                val issuerKeyHash = readFixedLength(inputStream, 32)
 
-                preCert.issuerKeyHash = readFixedLength(inputStream, 32)
-
-                // set tbs certificate
                 val length = readNumber(inputStream, 2).toInt()
-                preCert.tbsCertificate = readFixedLength(inputStream, length)
+                val tbsCertificate = readFixedLength(inputStream, length)
 
-                signedEntry.preCert = preCert
+                SignedEntry.PreCertificate(
+                    PreCertificate(
+                        issuerKeyHash = issuerKeyHash,
+                        tbsCertificate = tbsCertificate))
             }
             else -> throw SerializationException("Unknown entry type: $entryType")
         }
-        timestampedEntry.signedEntry = signedEntry
 
-        return timestampedEntry
+        return TimestampedEntry(
+            timestamp = timestamp,
+            signedEntry = signedEntry)
     }
 
     /**
@@ -211,8 +205,7 @@ object Deserializer {
      * @return [X509ChainEntry] object.
      */
     private fun parseX509ChainEntry(inputStream: InputStream, x509Cert: ByteArray?): X509ChainEntry {
-        val x509EntryChain = X509ChainEntry()
-        x509EntryChain.leafCertificate = x509Cert
+        val certificateChain = mutableListOf<ByteArray>()
 
         try {
             if (readNumber(inputStream, 3) != inputStream.available().toLong()) {
@@ -220,25 +213,27 @@ object Deserializer {
             }
             while (inputStream.available() > 0) {
                 val length = readNumber(inputStream, 3).toInt()
-                x509EntryChain.certificateChain.add(readFixedLength(inputStream, length))
+                certificateChain.add(readFixedLength(inputStream, length))
             }
         } catch (e: IOException) {
             throw SerializationException("Cannot parse xChainEntry. ${e.localizedMessage}")
         }
 
-        return x509EntryChain
+        return X509ChainEntry(
+            leafCertificate = x509Cert,
+            certificateChain = certificateChain.toList()
+        )
     }
 
     /**
-     * Parses PrecertChainEntry structure.
+     * Parses PreCertificateChainEntry structure.
      *
-     * @param inputStream PrecertChainEntry structure, byte stream of binary encoding.
-     * @param preCert Precertificate.
-     * @return [PrecertChainEntry] object.
+     * @param inputStream PreCertificateChainEntry structure, byte stream of binary encoding.
+     * @param preCertificate Pre-certificate.
+     * @return [PreCertificateChainEntry] object.
      */
-    private fun parsePrecertChainEntry(inputStream: InputStream, preCert: PreCert?): PrecertChainEntry {
-        val preCertChain = PrecertChainEntry()
-        preCertChain.preCert = preCert
+    private fun parsePreCertificateChainEntry(inputStream: InputStream, preCertificate: PreCertificate): PreCertificateChainEntry {
+        val preCertificateChain = mutableListOf<ByteArray>()
 
         try {
             if (readNumber(inputStream, 3) != inputStream.available().toLong()) {
@@ -246,13 +241,16 @@ object Deserializer {
             }
             while (inputStream.available() > 0) {
                 val length = readNumber(inputStream, 3).toInt()
-                preCertChain.precertificateChain.add(readFixedLength(inputStream, length))
+                preCertificateChain.add(readFixedLength(inputStream, length))
             }
         } catch (e: IOException) {
             throw SerializationException("Cannot parse PrecertEntryChain.${e.localizedMessage}")
         }
 
-        return preCertChain
+        return PreCertificateChainEntry(
+            preCertificate = preCertificate,
+            preCertificateChain = preCertificateChain.toList()
+        )
     }
 
     /**

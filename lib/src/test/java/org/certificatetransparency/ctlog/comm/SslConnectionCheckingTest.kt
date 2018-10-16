@@ -7,7 +7,7 @@ import org.certificatetransparency.ctlog.LogSignatureVerifier
 import org.certificatetransparency.ctlog.PublicKeyFactory
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.TestData.TEST_LOG_LIST_JSON
-import org.certificatetransparency.ctlog.hasEmbeddedSCT
+import org.certificatetransparency.ctlog.hasEmbeddedSct
 import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
@@ -160,7 +160,7 @@ class SslConnectionCheckingTest {
 
         val leafCertificate = certificates[0] as X509Certificate
 
-        if (!leafCertificate.hasEmbeddedSCT()) {
+        if (!leafCertificate.hasEmbeddedSct()) {
             v("  This certificate does not have any Signed Certificate Timestamps in it.")
             return false
         }

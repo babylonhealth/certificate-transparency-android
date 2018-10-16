@@ -13,21 +13,17 @@ import java.security.cert.X509Certificate
 /** Helper class for finding out all kinds of information about a certificate.  */
 
 fun Certificate.isPreCertificateSigningCert(): Boolean {
-    this as X509Certificate
-
     try {
-        return extendedKeyUsage?.contains(PRECERTIFICATE_SIGNING_OID) == true
+        return this is X509Certificate && extendedKeyUsage?.contains(PRECERTIFICATE_SIGNING_OID) == true
     } catch (e: CertificateParsingException) {
         throw CertificateTransparencyException("Error parsing signer cert: ${e.message}", e)
     }
 }
 
 fun Certificate.isPreCertificate(): Boolean {
-    this as X509Certificate
-    return criticalExtensionOIDs?.contains(POISON_EXTENSION_OID) == true
+    return this is X509Certificate && criticalExtensionOIDs?.contains(POISON_EXTENSION_OID) == true
 }
 
-fun Certificate.hasEmbeddedSCT(): Boolean {
-    this as X509Certificate
-    return nonCriticalExtensionOIDs?.contains(SCT_CERTIFICATE_OID) == true
+fun Certificate.hasEmbeddedSct(): Boolean {
+    return this is X509Certificate && nonCriticalExtensionOIDs?.contains(SCT_CERTIFICATE_OID) == true
 }

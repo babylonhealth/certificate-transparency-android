@@ -26,7 +26,6 @@ import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTi
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.cert.X509Certificate
-import java.util.ArrayList
 
 @Throws(IOException::class)
 fun X509Certificate.signedCertificateTimestamps(): List<SignedCertificateTimestamp> {
@@ -34,18 +33,18 @@ fun X509Certificate.signedCertificateTimestamps(): List<SignedCertificateTimesta
     val p = ASN1Primitive.fromByteArray(ASN1OctetString.getInstance(bytes).octets) as DEROctetString
 
     // These are serialized SCTs, we must de-serialize them into an array with one SCT each
-    return parseSCTsFromCertExtension(p.octets).toMutableList()
+    return parseSctsFromCertExtension(p.octets)
 }
 
 @Throws(IOException::class)
-private fun parseSCTsFromCertExtension(extensionvalue: ByteArray): Array<SignedCertificateTimestamp> {
-    val sctList = ArrayList<SignedCertificateTimestamp>()
-    val bis = ByteArrayInputStream(extensionvalue)
+private fun parseSctsFromCertExtension(extensionValue: ByteArray): List<SignedCertificateTimestamp> {
+    val sctList = mutableListOf<SignedCertificateTimestamp>()
+    val bis = ByteArrayInputStream(extensionValue)
     TlsUtils.readUint16(bis) // first one is the length of all SCTs concatenated, we don't actually need this
     while (bis.available() > 2) {
         val sctBytes = TlsUtils.readOpaque16(bis)
         // System.out.println("Read SCT bytes (excluding length): " + sctBytes.length);
-        sctList.add(Deserializer.parseSCTFromBinary(ByteArrayInputStream(sctBytes)))
+        sctList.add(Deserializer.parseSctFromBinary(ByteArrayInputStream(sctBytes)))
     }
-    return sctList.toTypedArray()
+    return sctList.toList()
 }
