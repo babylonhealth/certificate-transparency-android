@@ -3,7 +3,7 @@ package org.certificatetransparency.ctlog.comm
 import com.google.gson.GsonBuilder
 import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogInfo
-import org.certificatetransparency.ctlog.LogSignatureVerifier
+import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.PublicKeyFactory
 import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.TestData.TEST_LOG_LIST_JSON

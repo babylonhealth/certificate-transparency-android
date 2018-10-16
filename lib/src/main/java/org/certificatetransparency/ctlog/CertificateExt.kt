@@ -4,6 +4,7 @@ package org.certificatetransparency.ctlog
 
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
+import org.certificatetransparency.ctlog.data.verifier.IssuerInformation
 import org.certificatetransparency.ctlog.serialization.CTConstants.POISON_EXTENSION_OID
 import org.certificatetransparency.ctlog.serialization.CTConstants.PRECERTIFICATE_SIGNING_OID
 import org.certificatetransparency.ctlog.serialization.CTConstants.SCT_CERTIFICATE_OID
