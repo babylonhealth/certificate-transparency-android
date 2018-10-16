@@ -5,6 +5,12 @@ import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.asn1.DLSequence
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
+import org.bouncycastle.util.io.pem.PemReader
+import org.certificatetransparency.ctlog.serialization.InvalidInputException
+import java.io.File
+import java.io.FileReader
+import java.io.IOException
+import java.io.StringReader
 import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.spec.X509EncodedKeySpec
@@ -14,6 +20,26 @@ object PublicKeyFactory {
     fun fromByteArray(bytes: ByteArray): PublicKey {
         val keyFactory = KeyFactory.getInstance(determineKeyAlgorithm(bytes))
         return keyFactory.generatePublic(X509EncodedKeySpec(bytes))
+    }
+
+    /**
+     * Load EC or RSA public key from a PEM file.
+     *
+     * @param pemFile File containing the key.
+     * @return Public key represented by this file.
+     */
+    fun fromPemFile(pemFile: File): PublicKey {
+        try {
+            val pemContent = PemReader(FileReader(pemFile)).readPemObject().content
+            return fromByteArray(pemContent)
+        } catch (e: IOException) {
+            throw InvalidInputException("Error reading input file $pemFile", e)
+        }
+    }
+
+    fun fromPemString(keyText: String): PublicKey {
+        val pemContent = PemReader(StringReader(keyText)).readPemObject().content
+        return fromByteArray(pemContent)
     }
 
     /**

@@ -2,7 +2,6 @@ package org.certificatetransparency.ctlog
 
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
-import org.bouncycastle.asn1.x500.X500Name
 import org.bouncycastle.asn1.x509.Extension
 import org.bouncycastle.asn1.x509.Extensions
 import org.bouncycastle.asn1.x509.TBSCertificate
@@ -15,7 +14,6 @@ import org.certificatetransparency.ctlog.serialization.CTConstants.MAX_EXTENSION
 import org.certificatetransparency.ctlog.serialization.CTConstants.TIMESTAMP_LENGTH
 import org.certificatetransparency.ctlog.serialization.CTConstants.VERSION_LENGTH
 import org.certificatetransparency.ctlog.serialization.Serializer
-import org.certificatetransparency.ctlog.serialization.model.LogEntryType
 import org.certificatetransparency.ctlog.serialization.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.serialization.model.Version
 import java.io.ByteArrayOutputStream
@@ -29,7 +27,6 @@ import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
-import java.util.Arrays
 
 /**
  * Verifies signatures from a given CT Log.
@@ -39,17 +36,6 @@ import java.util.Arrays
  *
  * */
 class LogSignatureVerifier(private val logInfo: LogInfo) {
-
-    internal class IssuerInformation(
-        internal val name: X500Name?,
-        internal val keyHash: ByteArray,
-        internal val x509authorityKeyIdentifier: Extension?,
-        private val issuedByPreCertificateSigningCert: Boolean) {
-
-        internal fun issuedByPreCertificateSigningCert(): Boolean {
-            return issuedByPreCertificateSigningCert
-        }
-    }
 
     /**
      * Verifies the CT Log's signature over the SCT and certificate. Works for the following cases:
@@ -82,10 +68,10 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
         val issuerCert = chain[1]
         val issuerInformation = if (!issuerCert.isPreCertificateSigningCert()) {
             // If signed by the real issuing CA
-            issuerInformationFromCertificateIssuer(issuerCert)
+            issuerCert.issuerInformation()
         } else {
             require(chain.size >= 3) { "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer." }
-            issuerInformationFromPreCertificateSigningCert(issuerCert, getKeyHash(chain[2]))
+            issuerInformationFromPreCertificateSigningCert(issuerCert, chain[2].keyHash())
         }
         return verifySCTOverPreCertificate(sct, leafCert, issuerInformation)
     }
@@ -146,7 +132,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
                 // Make sure that we have the X509akid of the real issuer if:
                 // The PreCertificate has this extension, AND:
                 // The PreCertificate was signed by a PreCertificate signing cert.
-                if (parsedPreCertificate.hasX509AuthorityKeyIdentifier() && issuerInformation.issuedByPreCertificateSigningCert()) {
+                if (parsedPreCertificate.hasX509AuthorityKeyIdentifier() && issuerInformation.issuedByPreCertificateSigningCert) {
                     require(issuerInformation.x509authorityKeyIdentifier != null)
                 }
 
@@ -183,7 +169,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
 
     private fun getExtensionsWithoutPoisonAndSCT(extensions: Extensions, replacementX509authorityKeyIdentifier: Extension?): List<Extension> {
         val extensionsOidsArray = extensions.extensionOIDs
-        val extensionsOids = Arrays.asList(*extensionsOidsArray).iterator()
+        val extensionsOids = extensionsOidsArray.iterator()
 
         // Order is important, which is why a list is used.
         val outputExtensions = mutableListOf<Extension>()
@@ -229,7 +215,10 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
     companion object {
         const val X509_AUTHORITY_KEY_IDENTIFIER = "2.5.29.35"
 
-        internal fun issuerInformationFromPreCertificateSigningCert(
+        private const val X509_ENTRY = 0L
+        private const val PRECERT_ENTRY = 1L
+
+        private fun issuerInformationFromPreCertificateSigningCert(
             certificate: Certificate, keyHash: ByteArray): IssuerInformation {
             try {
                 ASN1InputStream(certificate.encoded).use { aIssuerIn ->
@@ -247,22 +236,14 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             }
         }
 
-        // Produces issuer information in case the PreCertificate is signed by a regular CA cert,
-        // not PreCertificate Signing Cert. In this case, the only thing that's needed is the
-        // issuer key hash - the Precertificate will already have the right value for the issuer
-        // name and K509 Authority Key Identifier extension.
-        internal fun issuerInformationFromCertificateIssuer(certificate: Certificate): IssuerInformation {
-            return IssuerInformation(null, getKeyHash(certificate), null, false)
-        }
-
         private fun org.bouncycastle.asn1.x509.Certificate.hasX509AuthorityKeyIdentifier(): Boolean {
             return tbsCertificate.extensions.getExtension(ASN1ObjectIdentifier(X509_AUTHORITY_KEY_IDENTIFIER)) != null
         }
 
-        internal fun serializeSignedSctData(certificate: Certificate, sct: SignedCertificateTimestamp?): ByteArray {
+        private fun serializeSignedSctData(certificate: Certificate, sct: SignedCertificateTimestamp?): ByteArray {
             val bos = ByteArrayOutputStream()
             serializeCommonSctFields(sct!!, bos)
-            Serializer.writeUint(bos, LogEntryType.X509_ENTRY.number.toLong(), LOG_ENTRY_TYPE_LENGTH)
+            Serializer.writeUint(bos, X509_ENTRY, LOG_ENTRY_TYPE_LENGTH)
             try {
                 Serializer.writeVariableLength(bos, certificate.encoded, MAX_CERTIFICATE_LENGTH)
             } catch (e: CertificateEncodingException) {
@@ -274,23 +255,15 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             return bos.toByteArray()
         }
 
-        internal fun serializeSignedSctDataForPreCertificate(
+        private fun serializeSignedSctDataForPreCertificate(
             preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp?): ByteArray {
             val bos = ByteArrayOutputStream()
             serializeCommonSctFields(sct!!, bos)
-            Serializer.writeUint(bos, LogEntryType.PRECERT_ENTRY.number.toLong(), LOG_ENTRY_TYPE_LENGTH)
+            Serializer.writeUint(bos, PRECERT_ENTRY, LOG_ENTRY_TYPE_LENGTH)
             Serializer.writeFixedBytes(bos, issuerKeyHash)
             Serializer.writeVariableLength(bos, preCertBytes, MAX_CERTIFICATE_LENGTH)
             Serializer.writeVariableLength(bos, sct.extensions, MAX_EXTENSIONS_LENGTH)
             return bos.toByteArray()
-        }
-
-        private fun getKeyHash(signerCert: Certificate): ByteArray {
-            try {
-                return MessageDigest.getInstance("SHA-256").digest(signerCert.publicKey.encoded)
-            } catch (e: NoSuchAlgorithmException) {
-                throw UnsupportedCryptoPrimitiveException("SHA-256 not supported: ${e.message}", e)
-            }
         }
 
         private fun serializeCommonSctFields(sct: SignedCertificateTimestamp, bos: ByteArrayOutputStream) {
@@ -299,5 +272,21 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
             Serializer.writeUint(bos, 0, 1) // ct::CERTIFICATE_TIMESTAMP
             Serializer.writeUint(bos, sct.timestamp, TIMESTAMP_LENGTH) // Timestamp
         }
+    }
+}
+
+// Produces issuer information in case the PreCertificate is signed by a regular CA cert,
+// not PreCertificate Signing Cert. In this case, the only thing that's needed is the
+// issuer key hash - the Precertificate will already have the right value for the issuer
+// name and K509 Authority Key Identifier extension.
+internal fun Certificate.issuerInformation(): IssuerInformation {
+    return IssuerInformation(keyHash = keyHash(), issuedByPreCertificateSigningCert = false)
+}
+
+private fun Certificate.keyHash(): ByteArray {
+    try {
+        return MessageDigest.getInstance("SHA-256").digest(publicKey.encoded)
+    } catch (e: NoSuchAlgorithmException) {
+        throw UnsupportedCryptoPrimitiveException("SHA-256 not supported: ${e.message}", e)
     }
 }

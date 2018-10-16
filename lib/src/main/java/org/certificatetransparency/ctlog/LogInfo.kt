@@ -3,7 +3,6 @@ package org.certificatetransparency.ctlog
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
-import java.util.Arrays
 
 /**
  * Holds information about the log: Mainly, its public key and log ID (which is calculated from the
@@ -18,7 +17,7 @@ data class LogInfo(val key: PublicKey) {
 
     val signatureAlgorithm: String = key.algorithm
 
-    fun isSameLogId(idToCheck: ByteArray): Boolean = Arrays.equals(id, idToCheck)
+    fun isSameLogId(idToCheck: ByteArray): Boolean = id.contentEquals(idToCheck)
 
     companion object {
 

@@ -25,7 +25,6 @@ import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.TestData.loadCertificates
-import org.certificatetransparency.ctlog.serialization.CryptoDataLoader
 import org.certificatetransparency.ctlog.serialization.Deserializer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -38,8 +37,6 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
-import java.util.ArrayList
-import java.util.HashMap
 
 /**
  * This test verifies that the data is correctly serialized for signature comparison, so signature
@@ -64,7 +61,7 @@ class LogSignatureVerifierTest {
     /** Returns a Map of LogInfos with all log keys to verify the Github certificate  */
     private val logInfosGitHub: Map<String, LogInfo>
         get() {
-            val logInfos = HashMap<String, LogInfo>()
+            val logInfos = mutableMapOf<String, LogInfo>()
             var logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_PILOT))
             var id = Base64.toBase64String(logInfo.id)
             logInfos[id] = logInfo
@@ -112,7 +109,7 @@ class LogSignatureVerifierTest {
             verifier.verifySCTOverPreCertificate(
                 sct,
                 preCertificate as X509Certificate,
-                LogSignatureVerifier.issuerInformationFromCertificateIssuer(signerCert)))
+                signerCert.issuerInformation()))
     }
 
     @Test
@@ -133,7 +130,7 @@ class LogSignatureVerifierTest {
             verifier.verifySCTOverPreCertificate(
                 sct,
                 preCertificate as X509Certificate,
-                LogSignatureVerifier.issuerInformationFromCertificateIssuer(signerCert)))
+                signerCert.issuerInformation()))
     }
 
     /** Tests for the public verifySignature method taking a chain of certificates.  */
@@ -151,7 +148,7 @@ class LogSignatureVerifierTest {
     fun signatureOnCertSignedByIntermediateVerifies() {
         // Flow:
         // test-intermediate-cert.pem -> intermediate-cert.pem -> ca-cert.pem
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_INTERMEDIATE_CERT))
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
@@ -164,7 +161,7 @@ class LogSignatureVerifierTest {
     fun signatureOnPreCertificateCertsChainVerifies() {
         // Flow:
         // test-embedded-pre-cert.pem -> ca-cert.pem
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
 
@@ -177,7 +174,7 @@ class LogSignatureVerifierTest {
     fun signatureOnPreCertificateSignedByPreCertificateSigningCertVerifies() {
         // Flow:
         // test-embedded-with-preca-pre-cert.pem -> ca-pre-cert.pem -> ca-cert.pem
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT))
         certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
@@ -191,7 +188,7 @@ class LogSignatureVerifierTest {
     fun signatureOnPreCertificateSignedByIntermediateVerifies() {
         // Flow:
         // test-embedded-with-intermediate-cert.pem -> intermediate-cert.pem -> ca-cert.pem
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE))
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
@@ -207,7 +204,7 @@ class LogSignatureVerifierTest {
         // Flow:
         // test-embedded-with-intermediate-preca-pre-cert.pem -> intermediate-pre-cert.pem
         //   -> intermediate-cert.pem -> ca-cert.pem
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE))
         certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_BY_INTERMEDIATE))
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
@@ -222,7 +219,7 @@ class LogSignatureVerifierTest {
 
     @Test
     fun throwsWhenChainWithPreCertificateSignedByPreCertificateSigningCertMissingIssuer() {
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT))
         certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_CERT))
 
@@ -244,7 +241,7 @@ class LogSignatureVerifierTest {
         // Flow:
         // github-chain.txt contains leaf certificate signed by issuing CA.
         // Leafcert contains three embedded SCTs, we verify them all
-        val certsChain = ArrayList<Certificate>()
+        val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_GITHUB_CHAIN))
 
         // the leaf cert is the first one in this test data
@@ -266,7 +263,7 @@ class LogSignatureVerifierTest {
                 verifier.verifySCTOverPreCertificate(
                     sct,
                     leafcert,
-                    LogSignatureVerifier.issuerInformationFromCertificateIssuer(issuerCert)))
+                    issuerCert.issuerInformation()))
             assertTrue("Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
         }
     }
@@ -278,7 +275,7 @@ class LogSignatureVerifierTest {
      * @return new LogInfo instance.
      */
     private fun LogInfo.Companion.fromKeyFile(pemKeyFilePath: String): LogInfo {
-        val logPublicKey = CryptoDataLoader.keyFromFile(File(pemKeyFilePath))
+        val logPublicKey = PublicKeyFactory.fromPemFile(File(pemKeyFilePath))
         return LogInfo(logPublicKey)
     }
 }

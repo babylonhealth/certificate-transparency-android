@@ -19,29 +19,25 @@ package org.certificatetransparency.ctlog.okhttp
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import org.bouncycastle.util.io.pem.PemReader
+import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.LogSignatureVerifier
-import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.PublicKeyFactory
+import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.okhttp.model.LogList
 import retrofit2.Retrofit
-import java.io.StringReader
-import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
 import java.security.Signature
 import java.security.spec.InvalidKeySpecException
-import java.security.spec.X509EncodedKeySpec
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
 class LogListNetworkDataSource : DataSource<Map<String, LogSignatureVerifier>> {
 
     override val coroutineContext = GlobalScope.coroutineContext
 
-    private val publicKey = parsePublicKey(
+    private val publicKey = PublicKeyFactory.fromPemString(
         """-----BEGIN PUBLIC KEY-----
            MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAsu0BHGnQ++W2CTdyZyxv
            HHRALOZPlnu/VMVgo2m+JZ8MNbAOH2cgXb8mvOj8flsX/qPMuKIaauO+PwROMjiq
@@ -85,13 +81,6 @@ class LogListNetworkDataSource : DataSource<Map<String, LogSignatureVerifier>> {
     }
 
     override suspend fun set(value: Map<String, LogSignatureVerifier>) = Unit
-
-    private fun parsePublicKey(keyText: String): PublicKey {
-        val pemContent = PemReader(StringReader(keyText)).readPemObject().content
-        val keySpec = X509EncodedKeySpec(pemContent)
-
-        return KeyFactory.getInstance("RSA").generatePublic(keySpec)
-    }
 
     private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): Boolean {
         // signature is not thread-safe

@@ -22,8 +22,6 @@ import java.security.NoSuchAlgorithmException
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
 import java.security.spec.InvalidKeySpecException
-import java.util.Arrays
-import java.util.HashMap
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -44,7 +42,7 @@ import javax.net.ssl.HttpsURLConnection
 @RunWith(JUnit4::class)
 class SslConnectionCheckingTest {
 
-    private val verifiers = HashMap<String, LogSignatureVerifier>()
+    private val verifiers = mutableMapOf<String, LogSignatureVerifier>()
 
     init {
         buildLogSignatureVerifiers()
@@ -173,7 +171,7 @@ class SslConnectionCheckingTest {
                 return false
             }
 
-            val certificateList = Arrays.asList(*certificates)
+            val certificateList = certificates.toList()
 
             var validSctCount = 0
             for (sct in sctsInCertificate) {

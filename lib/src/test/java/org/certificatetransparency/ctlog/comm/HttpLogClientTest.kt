@@ -41,7 +41,7 @@ class HttpLogClientTest {
 
     private val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(mockInterceptor).build()
     private val retrofit = Retrofit.Builder().client(client).addConverterFactory(GsonConverterFactory.create()).baseUrl("http://ctlog/").build()
-    private val ctService: CtService = retrofit.create(CtService::class.java)
+    private val ctService: LogClientService = retrofit.create(LogClientService::class.java)
 
     private fun expectInterceptor(url: String, jsonResponse: String) {
         whenever(mockInterceptor.intercept(argThat { request().url().toString() == url })).then {
@@ -82,7 +82,7 @@ class HttpLogClientTest {
 
     @Test
     fun serverResponseParsed() {
-        val sct = HttpLogClient.parseServerResponse(ADD_CHAIN_RESPONSE)
+        val sct = ADD_CHAIN_RESPONSE.toSignedCertificateTimestamp()
         sct.verifySctContents()
     }
 
@@ -99,11 +99,11 @@ class HttpLogClientTest {
     }
 
     @Test
-    fun getLogSTH() {
+    fun getLogSth() {
         expectInterceptor("http://ctlog/get-sth", STH_RESPONSE)
 
         val client = HttpLogClient(ctService)
-        val sth = client.logSTH
+        val sth = client.logSth
 
         assertNotNull(sth)
         assertEquals(1402415255382L, sth.timestamp)
@@ -113,12 +113,12 @@ class HttpLogClientTest {
     }
 
     @Test
-    fun getLogSTHBadResponseTimestamp() {
+    fun getLogSthBadResponseTimestamp() {
         expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_TIMESTAMP)
 
         val client = HttpLogClient(ctService)
         try {
-            client.logSTH
+            client.logSth
             fail()
         } catch (e: CertificateTransparencyException) {
         }
@@ -130,7 +130,7 @@ class HttpLogClientTest {
 
         val client = HttpLogClient(ctService)
         try {
-            client.logSTH
+            client.logSth
             fail()
         } catch (e: CertificateTransparencyException) {
         }
@@ -258,7 +258,7 @@ class HttpLogClientTest {
         assertTrue(auditProof.leafIndex == 198743L)
     }
 
-    companion object {
+    internal companion object {
         const val TEST_DATA_PATH = "/testdata/test-colliding-roots.pem"
 
         const val STH_RESPONSE = (
