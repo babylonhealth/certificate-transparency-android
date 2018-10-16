@@ -18,9 +18,15 @@ package org.certificatetransparency.ctlog.comm.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * @property treeSize The size of the tree, in entries, in decimal.
+ * @property timestamp The timestamp, in decimal.
+ * @property sha256RootHash The Merkle Tree Hash of the tree, in base64.
+ * @property treeHeadSignature A TreeHeadSignature for the above data.
+ */
 data class GetSthResponse(
+    @SerializedName("tree_size") val treeSize: Long,
     @SerializedName("timestamp") val timestamp: Long,
-    @SerializedName("tree_head_signature") val treeHeadSignature: String,
     @SerializedName("sha256_root_hash") val sha256RootHash: String,
-    @SerializedName("tree_size") val treeSize: Long
+    @SerializedName("tree_head_signature") val treeHeadSignature: String
 )

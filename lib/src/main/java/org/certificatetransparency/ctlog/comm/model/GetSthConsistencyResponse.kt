@@ -18,6 +18,11 @@ package org.certificatetransparency.ctlog.comm.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Note that no signature is required on this data, as it is used to verify an STH, which is signed.
+ *
+ * @property consistency An array of Merkle Tree nodes, base64 encoded.
+ */
 data class GetSthConsistencyResponse(
     @SerializedName("consistency") val consistency: List<String>
 )

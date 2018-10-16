@@ -18,6 +18,10 @@ package org.certificatetransparency.ctlog.comm.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * @property chain An array of base64-encoded certificates. The first element is the end-entity certificate; the second chains to the first
+ * and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
+ */
 data class AddChainRequest(
     @SerializedName("chain") val chain: List<String>
 )

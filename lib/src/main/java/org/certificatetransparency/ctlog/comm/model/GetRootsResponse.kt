@@ -18,6 +18,9 @@ package org.certificatetransparency.ctlog.comm.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * @property certificates An array of base64-encoded root certificates that are acceptable to the log.
+ */
 data class GetRootsResponse(
     @SerializedName("certificates") val certificates: List<String>
 )

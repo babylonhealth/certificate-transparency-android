@@ -18,6 +18,10 @@ package org.certificatetransparency.ctlog.comm.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * @property leafIndex The 0-based index of the end entity corresponding to the "hash" parameter.
+ * @property auditPath An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+ */
 data class ProofByHashResponse(
     @SerializedName("leaf_index") val leafIndex: Long,
     @SerializedName("audit_path") val auditPath: List<String>
