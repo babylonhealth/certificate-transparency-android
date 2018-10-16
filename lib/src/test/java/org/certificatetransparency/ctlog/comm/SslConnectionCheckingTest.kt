@@ -193,9 +193,7 @@ class SslConnectionCheckingTest {
             }
             return validSctCount >= MIN_VALID_SCTS
         } catch (e: IOException) {
-            if (VERBOSE) {
-                e.printStackTrace()
-            }
+            e.printStackTrace()
             return false
         }
     }
@@ -245,9 +243,7 @@ class SslConnectionCheckingTest {
     }
 
     private fun v(message: String) {
-        if (VERBOSE) {
-            println(message)
-        }
+        println(message)
     }
 
     companion object {
@@ -257,7 +253,5 @@ class SslConnectionCheckingTest {
 
         /** A CT log's Id is created by using this hash algorithm on the CT log public key  */
         private const val LOG_ID_HASH_ALGORITHM = "SHA-256"
-
-        private const val VERBOSE = true
     }
 }
