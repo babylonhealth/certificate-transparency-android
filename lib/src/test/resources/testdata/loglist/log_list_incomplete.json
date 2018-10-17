@@ -1,0 +1,40 @@
+{
+  "logs": [
+    {
+      "description": "Google 'Argon2018' log",
+      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0gBVBa3VR7QZu82V+ynXWD14JM3ORp37MtRxTmACJV5ZPtfUA7htQ2hofuigZQs+bnFZkje+qejxoyvk2Q1VaA==",
+      "url": "ct.googleapis.com/logs/argon2018/",
+      "maximum_merge_delay": 86400,
+      "operated_by": [
+        0
+      ],
+      "dns_api_endpoint": "argon2018.ct.googleapis.com"
+    },
+    {
+      "description": "Google 'Argon2019' log",
+      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI3MQm+HzXvaYa2mVlhB4zknbtAT8cSxakmBoJcBKGqGwYS0bhxSpuvABM1kdBTDpQhXnVdcq+LSiukXJRpGHVg==",
+      "url": "ct.googleapis.com/logs/argon2019/",
+      "maximum_merge_delay": 86400,
+      "operated_by": [
+        0
+      ],
+      "dns_api_endpoint": "argon2019.ct.googleapis.com"
+    },
+    {
+      "description": "Google 'Argon2020' log",
+      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6Tx2p1yKY4015NyIYvdrk36es0uAc1zA4PQ+TGRY+3ZjUTIYY9Wyu+3q/147JG4vNVKLtDWarZwVqGkg6lAYzA==",
+      "url": "ct.googleapis.com/logs/argon2020/",
+      "maximum_merge_delay": 86400,
+      "operated_by": [
+        0
+      ],
+      "dns_api_endpoint": "argon2020.ct.googleapis.com"
+    }
+  ],
+  "operators": [
+    {
+      "name": "Google",
+      "id": 0
+    }
+  ]
+}

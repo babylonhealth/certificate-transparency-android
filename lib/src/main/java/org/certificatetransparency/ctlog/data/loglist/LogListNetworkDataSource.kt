@@ -54,21 +54,19 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
            -----END PUBLIC KEY-----""")
 
     override suspend fun get(): List<LogServer>? {
-        println("Loading log-list.json from network")
+        try {
+            val logListJob = async { logService.getLogList().execute().body()?.string() }
+            val signatureJob = async { logService.getLogListSignature().execute().body()?.bytes() }
 
-        val logListJob = async { logService.getLogList().execute().body()?.string() }
-        val signatureJob = async { logService.getLogListSignature().execute().body()?.bytes() }
+            val logListJson = requireNotNull(logListJob.await())
+            val signature = requireNotNull(signatureJob.await())
 
-        val logListJson = logListJob.await()
-        val signature = signatureJob.await()
-
-        if (logListJson == null || signature == null) {
-            return null
-        }
-
-        if (verify(logListJson, signature, publicKey)) {
-            val logList = GsonBuilder().setLenient().create().fromJson(logListJson, LogList::class.java)
-            return buildLogSignatureVerifiers(logList)
+            if (verify(logListJson, signature, publicKey)) {
+                val logList = GsonBuilder().setLenient().create().fromJson(logListJson, LogList::class.java)
+                return buildLogSignatureVerifiers(logList)
+            }
+        } catch (e: Exception) {
+            println("Exception loading log-list.json from network. ${e.message}")
         }
 
         return null
@@ -77,12 +75,17 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
     override suspend fun set(value: List<LogServer>) = Unit
 
     private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): Boolean {
-        // signature is not thread-safe
-        val sig = Signature.getInstance("SHA256WithRSA")
-        sig.initVerify(publicKey)
-        sig.update(message.toByteArray())
+        return try {
+            // signature is not thread-safe
+            val sig = Signature.getInstance("SHA256WithRSA")
+            sig.initVerify(publicKey)
+            sig.update(message.toByteArray())
 
-        return sig.verify(signature)
+            sig.verify(signature)
+        } catch (e: Exception) {
+            println("Exception loading signature")
+            false
+        }
     }
 
     /**
