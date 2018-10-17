@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.data.verifier
+package org.certificatetransparency.ctlog.domain.logclient.model
 
-import org.certificatetransparency.ctlog.data.logclient.model.SignedTreeHead
 import org.certificatetransparency.ctlog.equalsVerifier
 import org.junit.Test
 
-class IssuerInformationTest {
-
+class PreCertificateTest {
     @Test
     fun verifyEquals() {
-        equalsVerifier<SignedTreeHead>()
+        equalsVerifier<PreCertificate>()
     }
 }
