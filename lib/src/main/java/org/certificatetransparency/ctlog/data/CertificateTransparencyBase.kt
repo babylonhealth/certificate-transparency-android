@@ -19,6 +19,8 @@ package org.certificatetransparency.ctlog.data
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
 import org.certificatetransparency.ctlog.Base64
+import org.certificatetransparency.ctlog.Host
+import org.certificatetransparency.ctlog.data.loglist.LogListDataSourceFactory
 import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import org.certificatetransparency.ctlog.hasEmbeddedSct
@@ -31,6 +33,7 @@ import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 internal open class CertificateTransparencyBase(
+    private val hosts: Set<Host>,
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
 ) {
@@ -101,6 +104,8 @@ internal open class CertificateTransparencyBase(
             return false
         }
     }
+
+    protected fun checkCertificateTransparency(host: String) = hosts.any { it.matches(host) }
 
     private fun v(message: String) {
         if (VERBOSE) {

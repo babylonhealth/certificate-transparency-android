@@ -16,6 +16,7 @@
 
 package org.certificatetransparency.ctlog.data
 
+import org.certificatetransparency.ctlog.Host
 import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import javax.net.ssl.HostnameVerifier
@@ -25,21 +26,26 @@ import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
+    hosts: Set<Host>,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>?
-) : CertificateTransparencyBase(trustManager, logListDataSource), HostnameVerifier {
+) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
-        if (delegate.verify(host, sslSession)) {
-            try {
-                val cleanedCerts = cleaner.clean(sslSession.peerCertificates.toList(), host)
-
-                return isGood(cleanedCerts)
-            } catch (e: SSLException) {
-                throw RuntimeException(e)
-            }
+        if (!delegate.verify(host, sslSession)) {
+            return false
         }
 
-        return false
+        if (!checkCertificateTransparency(host)) {
+            return true
+        }
+
+        try {
+            val cleanedCerts = cleaner.clean(sslSession.peerCertificates.toList(), host)
+
+            return isGood(cleanedCerts)
+        } catch (e: SSLException) {
+            throw RuntimeException(e)
+        }
     }
 }

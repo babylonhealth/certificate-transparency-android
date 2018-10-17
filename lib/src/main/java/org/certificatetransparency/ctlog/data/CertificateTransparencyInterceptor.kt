@@ -18,24 +18,29 @@ package org.certificatetransparency.ctlog.data
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import org.certificatetransparency.ctlog.Host
 import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyInterceptor(
-    trustManager: X509TrustManager? = null,
+    hosts: Set<Host>,
+    trustManager: X509TrustManager?,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>?
-) : CertificateTransparencyBase(trustManager, logListDataSource), Interceptor {
+) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        val certs = chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate } ?: emptyList()
+        val host = chain.request()?.url()?.host()!!
 
-        val cleanedCerts = cleaner.clean(certs, chain.request()?.url()?.host()!!)
+        if (checkCertificateTransparency(host)) {
+            val certs = chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate } ?: emptyList()
+            val cleanedCerts = cleaner.clean(certs, chain.request()?.url()?.host()!!)
 
-        if (!isGood(cleanedCerts)) {
-            chain.call().cancel()
+            if (!isGood(cleanedCerts)) {
+                chain.call().cancel()
+            }
         }
 
         return chain.proceed(chain.request())

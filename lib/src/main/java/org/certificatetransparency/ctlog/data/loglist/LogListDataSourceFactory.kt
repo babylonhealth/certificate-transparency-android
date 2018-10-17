@@ -1,10 +1,7 @@
-package org.certificatetransparency.ctlog.data
+package org.certificatetransparency.ctlog.data.loglist
 
 import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
-import org.certificatetransparency.ctlog.data.loglist.LogListNetworkDataSource
-import org.certificatetransparency.ctlog.data.loglist.LogListService
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
-import org.certificatetransparency.ctlog.domain.datasource.InMemoryDataSource
 import retrofit2.Retrofit
 
 internal object LogListDataSourceFactory {

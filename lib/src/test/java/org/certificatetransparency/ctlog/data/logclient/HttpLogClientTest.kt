@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog.comm
+package org.certificatetransparency.ctlog.data.logclient
 
 import com.nhaarman.mockito_kotlin.argThat
 import com.nhaarman.mockito_kotlin.mock
@@ -12,10 +12,6 @@ import okhttp3.ResponseBody
 import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
 import org.certificatetransparency.ctlog.TestData
-import org.certificatetransparency.ctlog.data.logclient.HttpLogClient
-import org.certificatetransparency.ctlog.data.logclient.LogClientService
-import org.certificatetransparency.ctlog.data.logclient.model.network.AddChainResponse
-import org.certificatetransparency.ctlog.data.logclient.toSignedCertificateTimestamp
 import org.certificatetransparency.ctlog.domain.logclient.model.DigitallySigned
 import org.certificatetransparency.ctlog.domain.logclient.model.LogEntry
 import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
@@ -81,12 +77,6 @@ class HttpLogClientTest {
         assertEquals(1373015623951L, this?.timestamp)
         assertEquals(DigitallySigned.HashAlgorithm.SHA256, this?.signature?.hashAlgorithm)
         assertEquals(DigitallySigned.SignatureAlgorithm.ECDSA, this?.signature?.signatureAlgorithm)
-    }
-
-    @Test
-    fun serverResponseParsed() {
-        val sct = ADD_CHAIN_RESPONSE.toSignedCertificateTimestamp()
-        sct.verifySctContents()
     }
 
     @Test
@@ -287,13 +277,6 @@ class HttpLogClientTest {
                 + "UuD+JvjFTRdESfKO5428e1HAQL412Sa5e16D4E3M\","
                 + "\"sha256_root_hash\":\"jdH9k+\\/lb9abMz3N8r7v55+nSAXej3hqPg=\","
                 + "\"tree_size\":4301837}")
-
-        val ADD_CHAIN_RESPONSE = AddChainResponse(
-            sctVersion = 0,
-            id = "pLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BA=",
-            timestamp = 1373015623951,
-            extensions = "",
-            signature = "BAMARjBEAiAggPtKUMFZ4zmNnPhc7As7VR1Dedsdggs9a8pSEHoyGAIgKGsvIPDZgDnxTjGY8fSBwkl15dA0TUqW5ex2HCU7yE8=")
 
         const val JSON_RESPONSE = (
             ""

@@ -2,21 +2,23 @@ package org.certificatetransparency.ctlog.data.logclient
 
 import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.CertificateTransparencyException
-import org.certificatetransparency.ctlog.domain.logclient.model.MerkleAuditProof
-import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntry
-import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntryWithProof
+import org.certificatetransparency.ctlog.data.logclient.model.SignedTreeHead
 import org.certificatetransparency.ctlog.data.logclient.model.network.AddChainRequest
+import org.certificatetransparency.ctlog.data.logclient.model.network.AddChainResponse
 import org.certificatetransparency.ctlog.data.logclient.model.network.GetEntriesResponse
 import org.certificatetransparency.ctlog.data.logclient.model.network.GetRootsResponse
 import org.certificatetransparency.ctlog.data.logclient.model.network.GetSthConsistencyResponse
 import org.certificatetransparency.ctlog.data.logclient.model.network.GetSthResponse
-import org.certificatetransparency.ctlog.isPreCertificate
-import org.certificatetransparency.ctlog.isPreCertificateSigningCert
-import org.certificatetransparency.ctlog.data.logclient.model.SignedTreeHead
 import org.certificatetransparency.ctlog.domain.logclient.LogClient
-import org.certificatetransparency.ctlog.serialization.Deserializer
+import org.certificatetransparency.ctlog.domain.logclient.model.LogId
+import org.certificatetransparency.ctlog.domain.logclient.model.MerkleAuditProof
+import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntry
+import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntryWithProof
 import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.domain.logclient.model.Version
+import org.certificatetransparency.ctlog.isPreCertificate
+import org.certificatetransparency.ctlog.isPreCertificateSigningCert
+import org.certificatetransparency.ctlog.serialization.Deserializer
 import java.io.ByteArrayInputStream
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
@@ -235,5 +237,20 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
                 throw CertificateTransparencyException("Malformed data from a CT log have been received: ${e.localizedMessage}", e)
             }
         }
+    }
+
+    /**
+     * Parses the CT Log's json response into a SignedCertificateTimestamp.
+     *
+     * @return SCT filled from the JSON input.
+     */
+    private fun AddChainResponse.toSignedCertificateTimestamp(): SignedCertificateTimestamp {
+        return SignedCertificateTimestamp(
+            version = Version.forNumber(sctVersion),
+            id = LogId(Base64.decode(id)),
+            timestamp = timestamp,
+            extensions = if (extensions.isNotEmpty()) Base64.decode(extensions) else ByteArray(0),
+            signature = Deserializer.parseDigitallySignedFromBinary(ByteArrayInputStream(Base64.decode(signature)))
+        )
     }
 }

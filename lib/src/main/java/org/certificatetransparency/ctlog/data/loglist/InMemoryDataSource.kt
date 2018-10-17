@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.domain.datasource
+package org.certificatetransparency.ctlog.data.loglist
 
 import kotlinx.coroutines.GlobalScope
+import org.certificatetransparency.ctlog.domain.datasource.DataSource
 
 class InMemoryDataSource<Value : Any> : DataSource<Value> {
     private var cachedValue: Value? = null
