@@ -19,14 +19,14 @@ internal object Serializer {
     fun writeUint(outputStream: OutputStream, value: Long, numBytes: Int) {
         require(value >= 0)
         require(value < Math.pow(256.0, numBytes.toDouble())) { "Value $value cannot be stored in $numBytes bytes" }
-        var numBytes = numBytes
+        var numBytesRemaining = numBytes
         try {
-            while (numBytes > 0) {
+            while (numBytesRemaining > 0) {
                 // MSB first.
-                val shiftBy = (numBytes - 1) * 8
+                val shiftBy = (numBytesRemaining - 1) * 8
                 val mask = 0xff.toLong() shl shiftBy
                 outputStream.write((value and mask shr shiftBy).toByte().toInt())
-                numBytes--
+                numBytesRemaining--
             }
         } catch (e: IOException) {
             throw SerializationException("Failure while writing number $value", e)

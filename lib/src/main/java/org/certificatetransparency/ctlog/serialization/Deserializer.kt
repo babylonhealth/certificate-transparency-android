@@ -10,12 +10,10 @@ import org.certificatetransparency.ctlog.domain.logclient.model.MerkleTreeLeaf
 import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntry
 import org.certificatetransparency.ctlog.domain.logclient.model.ParsedLogEntryWithProof
 import org.certificatetransparency.ctlog.domain.logclient.model.PreCertificate
-import org.certificatetransparency.ctlog.domain.logclient.model.PreCertificateChainEntry
 import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.domain.logclient.model.SignedEntry
 import org.certificatetransparency.ctlog.domain.logclient.model.TimestampedEntry
 import org.certificatetransparency.ctlog.domain.logclient.model.Version
-import org.certificatetransparency.ctlog.domain.logclient.model.X509ChainEntry
 import java.io.IOException
 import java.io.InputStream
 
@@ -126,12 +124,10 @@ internal object Deserializer {
 
         val logEntry = when (treeLeaf.timestampedEntry.signedEntry) {
             is SignedEntry.X509 -> {
-                val x509EntryChain = parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.x509)
-                LogEntry.X509(x509EntryChain)
+                parseX509ChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.x509)
             }
             is SignedEntry.PreCertificate -> {
-                val preCertChain = parsePreCertificateChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.preCertificate)
-                LogEntry.PreCertificate(preCertChain)
+                parsePreCertificateChainEntry(extraData, treeLeaf.timestampedEntry.signedEntry.preCertificate)
             }
         }
 
@@ -202,9 +198,9 @@ internal object Deserializer {
      * @param inputStream X509ChainEntry structure, byte stream of binary encoding.
      * @param x509Cert leaf certificate.
      * @throws SerializationException if an I/O error occurs.
-     * @return [X509ChainEntry] object.
+     * @return [LogEntry.X509ChainEntry] object.
      */
-    private fun parseX509ChainEntry(inputStream: InputStream, x509Cert: ByteArray?): X509ChainEntry {
+    private fun parseX509ChainEntry(inputStream: InputStream, x509Cert: ByteArray?): LogEntry.X509ChainEntry {
         val certificateChain = mutableListOf<ByteArray>()
 
         try {
@@ -219,7 +215,7 @@ internal object Deserializer {
             throw SerializationException("Cannot parse xChainEntry. ${e.localizedMessage}")
         }
 
-        return X509ChainEntry(
+        return LogEntry.X509ChainEntry(
             leafCertificate = x509Cert,
             certificateChain = certificateChain.toList()
         )
@@ -230,9 +226,9 @@ internal object Deserializer {
      *
      * @param inputStream PreCertificateChainEntry structure, byte stream of binary encoding.
      * @param preCertificate Pre-certificate.
-     * @return [PreCertificateChainEntry] object.
+     * @return [LogEntry.PreCertificateChainEntry] object.
      */
-    private fun parsePreCertificateChainEntry(inputStream: InputStream, preCertificate: PreCertificate): PreCertificateChainEntry {
+    private fun parsePreCertificateChainEntry(inputStream: InputStream, preCertificate: PreCertificate): LogEntry.PreCertificateChainEntry {
         val preCertificateChain = mutableListOf<ByteArray>()
 
         try {
@@ -247,7 +243,7 @@ internal object Deserializer {
             throw SerializationException("Cannot parse PrecertEntryChain.${e.localizedMessage}")
         }
 
-        return PreCertificateChainEntry(
+        return LogEntry.PreCertificateChainEntry(
             preCertificate = preCertificate,
             preCertificateChain = preCertificateChain.toList()
         )
