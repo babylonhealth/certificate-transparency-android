@@ -1,5 +1,9 @@
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.data.verifier
 
+import org.certificatetransparency.ctlog.Base64
+import org.certificatetransparency.ctlog.LogInfo
+import org.certificatetransparency.ctlog.PublicKeyFactory
+import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.TestData.INTERMEDIATE_CA_CERT
 import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_BY_INTERMEDIATE
 import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_CERT
@@ -25,8 +29,10 @@ import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.TestData.loadCertificates
-import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
+import org.certificatetransparency.ctlog.hasEmbeddedSct
+import org.certificatetransparency.ctlog.issuerInformation
 import org.certificatetransparency.ctlog.serialization.Deserializer
+import org.certificatetransparency.ctlog.signedCertificateTimestamps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -214,8 +220,7 @@ class LogSignatureVerifierTest {
         val sct = Deserializer.parseSctFromBinary(
             ByteArrayInputStream(TestData.file(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE_SCT).readBytes()))
 
-        assertTrue(
-            "Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
+        assertTrue("Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
     }
 
     @Test
@@ -248,8 +253,7 @@ class LogSignatureVerifierTest {
         // the leaf cert is the first one in this test data
         val leafcert = certsChain[0] as X509Certificate
         val issuerCert = certsChain[1]
-        assertTrue(
-            "The test certificate does have embedded SCTs", leafcert.hasEmbeddedSct())
+        assertTrue("The test certificate does have embedded SCTs", leafcert.hasEmbeddedSct())
         val scts = leafcert.signedCertificateTimestamps()
         assertEquals("Expected 3 SCTs in the test certificate", 3, scts.size.toLong())
         val logInfos = logInfosGitHub

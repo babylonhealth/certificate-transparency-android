@@ -90,9 +90,7 @@ internal object Deserializer {
      */
     @JvmStatic
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
-        val auditProof = MerkleAuditProof(Version.V1, treeSize, leafIndex)
-        proof.asSequence().map(Base64::decode).forEach { node -> auditProof.pathNode.add(node) }
-        return ParsedLogEntryWithProof(entry, auditProof)
+        return ParsedLogEntryWithProof(entry, parseAuditProof(proof, leafIndex, treeSize))
     }
 
     /**
@@ -105,11 +103,8 @@ internal object Deserializer {
      * @return [MerkleAuditProof]
      */
     @JvmStatic
-    fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long): MerkleAuditProof {
-        val auditProof = MerkleAuditProof(Version.V1, treeSize, leafIndex)
-        proof.forEach { node -> auditProof.pathNode.add(Base64.decode(node)) }
-        return auditProof
-    }
+    fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long) =
+        MerkleAuditProof(Version.V1, treeSize, leafIndex, proof.map(Base64::decode))
 
     /**
      * Parses an entry retrieved from Log.

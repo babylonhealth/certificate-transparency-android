@@ -237,7 +237,7 @@ class HttpLogClientTest {
 
         assertTrue(testCert == leafCert)
         assertTrue(testChainCert == chainCert)
-        assertEquals(2, entry.auditProof.pathNode.size.toLong())
+        assertEquals(2, entry.auditProof.pathNodes.size.toLong())
         assertEquals(1, entry.auditProof.leafIndex)
         assertEquals(2, entry.auditProof.treeSize)
     }

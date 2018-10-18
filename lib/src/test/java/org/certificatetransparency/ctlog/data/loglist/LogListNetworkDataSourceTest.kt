@@ -86,7 +86,9 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then 32 items are returned
-        assertEquals(32, result?.size)
+        requireNotNull(result)
+        assertEquals(32, result.size)
+        assertEquals("pFASaQVaFVReYhGrN7wQP2KuVXakXksXFEU+GyIQaiU=", result[0].logId)
     }
 
     @Test
