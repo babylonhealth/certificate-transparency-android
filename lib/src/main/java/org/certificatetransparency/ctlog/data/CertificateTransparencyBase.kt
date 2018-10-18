@@ -39,6 +39,10 @@ internal open class CertificateTransparencyBase(
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
 ) {
+    init {
+        require(hosts.isNotEmpty()) { "Please provide at least one host to enable certificate transparency verification" }
+    }
+
     private val cleaner: CertificateChainCleaner by lazy {
         val localTrustManager = trustManager ?: (TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
             init(null as KeyStore?)
