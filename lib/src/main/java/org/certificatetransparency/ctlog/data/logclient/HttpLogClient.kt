@@ -37,7 +37,6 @@ import org.certificatetransparency.ctlog.domain.logclient.model.Version
 import org.certificatetransparency.ctlog.isPreCertificate
 import org.certificatetransparency.ctlog.isPreCertificateSigningCert
 import org.certificatetransparency.ctlog.serialization.Deserializer
-import java.io.ByteArrayInputStream
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateException
@@ -151,8 +150,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
         val response = ctService.getEntryAndProof(leafIndex, treeSize).execute()?.body()!!
 
         val logEntry = Deserializer.parseLogEntry(
-            ByteArrayInputStream(Base64.decode(response.leafInput)),
-            ByteArrayInputStream(Base64.decode(response.extraData)))
+            Base64.decode(response.leafInput).inputStream(),
+            Base64.decode(response.extraData).inputStream())
 
         return Deserializer.parseLogEntryWithProof(logEntry, response.auditPath, leafIndex, treeSize)
     }
@@ -194,8 +193,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
 
         return entries.map {
             Deserializer.parseLogEntry(
-                ByteArrayInputStream(Base64.decode(it.leafInput)),
-                ByteArrayInputStream(Base64.decode(it.extraData)))
+                Base64.decode(it.leafInput).inputStream(),
+                Base64.decode(it.extraData).inputStream())
         }
     }
 
@@ -237,7 +236,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
             treeSize = treeSize,
             timestamp = timestamp,
             sha256RootHash = sha256RootHash,
-            signature = Deserializer.parseDigitallySignedFromBinary(ByteArrayInputStream(Base64.decode(base64Signature)))
+            signature = Deserializer.parseDigitallySignedFromBinary(Base64.decode(base64Signature).inputStream())
         )
     }
 
@@ -248,9 +247,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
      */
     private fun GetRootsResponse.toRootCertificates(): List<Certificate> {
         return certificates.map {
-            val inputStream = Base64.decode(it)
             try {
-                CertificateFactory.getInstance("X509").generateCertificate(ByteArrayInputStream(inputStream))
+                CertificateFactory.getInstance("X509").generateCertificate(Base64.decode(it).inputStream())
             } catch (e: CertificateException) {
                 throw CertificateTransparencyException("Malformed data from a CT log have been received: ${e.localizedMessage}", e)
             }
@@ -268,7 +266,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
             id = LogId(Base64.decode(id)),
             timestamp = timestamp,
             extensions = if (extensions.isNotEmpty()) Base64.decode(extensions) else ByteArray(0),
-            signature = Deserializer.parseDigitallySignedFromBinary(ByteArrayInputStream(Base64.decode(signature)))
+            signature = Deserializer.parseDigitallySignedFromBinary(Base64.decode(signature).inputStream())
         )
     }
 }

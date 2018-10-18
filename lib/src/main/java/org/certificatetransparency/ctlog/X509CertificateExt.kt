@@ -23,7 +23,6 @@ import org.bouncycastle.crypto.tls.TlsUtils
 import org.certificatetransparency.ctlog.domain.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.serialization.CTConstants
 import org.certificatetransparency.ctlog.serialization.Deserializer
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.cert.X509Certificate
 
@@ -39,12 +38,12 @@ internal fun X509Certificate.signedCertificateTimestamps(): List<SignedCertifica
 @Throws(IOException::class)
 private fun parseSctsFromCertExtension(extensionValue: ByteArray): List<SignedCertificateTimestamp> {
     val sctList = mutableListOf<SignedCertificateTimestamp>()
-    val bis = ByteArrayInputStream(extensionValue)
+    val bis = extensionValue.inputStream()
     TlsUtils.readUint16(bis) // first one is the length of all SCTs concatenated, we don't actually need this
     while (bis.available() > 2) {
         val sctBytes = TlsUtils.readOpaque16(bis)
         // System.out.println("Read SCT bytes (excluding length): " + sctBytes.length);
-        sctList.add(Deserializer.parseSctFromBinary(ByteArrayInputStream(sctBytes)))
+        sctList.add(Deserializer.parseSctFromBinary(sctBytes.inputStream()))
     }
     return sctList.toList()
 }

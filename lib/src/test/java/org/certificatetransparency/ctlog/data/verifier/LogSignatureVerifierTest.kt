@@ -58,7 +58,6 @@ import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
@@ -103,17 +102,15 @@ class LogSignatureVerifierTest {
     @Test
     fun signatureVerifies() {
         val certs = loadCertificates(TEST_CERT)
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_CERT_SCT).readBytes()))
-        val verifier = verifier
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())
         assertTrue(verifier.verifySignature(sct, certs[0]))
     }
 
     @Test
     fun signatureVerifiesRSA() {
         val certs = loadCertificates(TEST_CERT)
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_CERT_SCT_RSA).readBytes()))
-        val verifier = verifierRSA
-        assertTrue(verifier.verifySignature(sct, certs[0]))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT_RSA).inputStream())
+        assertTrue(verifierRSA.verifySignature(sct, certs[0]))
     }
 
     @Test
@@ -126,7 +123,7 @@ class LogSignatureVerifierTest {
         assertEquals(1, caList.size.toLong())
         val signerCert = caList[0]
 
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_PRE_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_SCT).inputStream())
 
         val verifier = verifier
         assertTrue(
@@ -147,7 +144,7 @@ class LogSignatureVerifierTest {
         assertEquals(1, caList.size.toLong())
         val signerCert = caList[0]
 
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_PRE_SCT_RSA).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_SCT_RSA).inputStream())
 
         val verifier = verifierRSA
         assertTrue(
@@ -164,7 +161,7 @@ class LogSignatureVerifierTest {
         // Flow:
         // test-cert.pem -> ca-cert.pem
         val certs = loadCertificates(TEST_CERT)
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_CERT_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())
 
         assertTrue(verifier.verifySignature(sct, certs))
     }
@@ -177,7 +174,7 @@ class LogSignatureVerifierTest {
         certsChain.addAll(loadCertificates(TEST_INTERMEDIATE_CERT))
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_INTERMEDIATE_CERT_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_INTERMEDIATE_CERT_SCT).inputStream())
 
         assertTrue(verifier.verifySignature(sct, certsChain))
     }
@@ -190,7 +187,7 @@ class LogSignatureVerifierTest {
         certsChain.addAll(loadCertificates(TEST_PRE_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
 
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_PRE_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_SCT).inputStream())
 
         assertTrue(verifier.verifySignature(sct, certsChain))
     }
@@ -204,7 +201,7 @@ class LogSignatureVerifierTest {
         certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
 
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_PRE_CERT_PRECA_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_PRECA_SCT).inputStream())
 
         assertTrue("Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
     }
@@ -218,7 +215,7 @@ class LogSignatureVerifierTest {
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
 
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE_SCT).inputStream())
 
         assertTrue(
             "Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
@@ -235,8 +232,7 @@ class LogSignatureVerifierTest {
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
         certsChain.addAll(loadCertificates(ROOT_CA_CERT))
 
-        val sct = Deserializer.parseSctFromBinary(
-            ByteArrayInputStream(TestData.file(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE_SCT).inputStream())
 
         assertTrue("Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
     }
@@ -247,7 +243,7 @@ class LogSignatureVerifierTest {
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT))
         certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_CERT))
 
-        val sct = Deserializer.parseSctFromBinary(ByteArrayInputStream(TestData.file(TEST_PRE_CERT_PRECA_SCT).readBytes()))
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_PRECA_SCT).inputStream())
 
         try {
             verifier.verifySignature(sct, certsChain)

@@ -45,7 +45,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.ByteArrayInputStream
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
@@ -174,11 +173,11 @@ class HttpLogClientTest {
 
             val leafCertBytes = x509Entry.leafCertificate
             leafCert = CertificateFactory.getInstance("X509")
-                .generateCertificate(ByteArrayInputStream(leafCertBytes!!)) as X509Certificate
+                .generateCertificate(leafCertBytes?.inputStream()) as X509Certificate
 
             val chainCertBytes = x509Entry.certificateChain[0]
             chainCert = CertificateFactory.getInstance("X509")
-                .generateCertificate(ByteArrayInputStream(chainCertBytes)) as X509Certificate
+                .generateCertificate(chainCertBytes.inputStream()) as X509Certificate
         } catch (e: CertificateException) {
             fail()
         }
@@ -244,11 +243,11 @@ class HttpLogClientTest {
 
             val leafCertBytes = x509Entry.leafCertificate
             leafCert = CertificateFactory.getInstance("X509")
-                .generateCertificate(ByteArrayInputStream(leafCertBytes)) as X509Certificate
+                .generateCertificate(leafCertBytes?.inputStream()) as X509Certificate
 
             val chainCertBytes = x509Entry.certificateChain[0]
             chainCert = CertificateFactory.getInstance("X509")
-                .generateCertificate(ByteArrayInputStream(chainCertBytes)) as X509Certificate
+                .generateCertificate(chainCertBytes.inputStream()) as X509Certificate
         } catch (e: CertificateException) {
             fail()
         }
