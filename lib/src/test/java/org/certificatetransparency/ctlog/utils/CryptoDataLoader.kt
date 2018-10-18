@@ -2,9 +2,7 @@ package org.certificatetransparency.ctlog.utils
 
 import org.certificatetransparency.ctlog.UnsupportedCryptoPrimitiveException
 import org.certificatetransparency.ctlog.serialization.InvalidInputException
-import java.io.BufferedInputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.security.cert.Certificate
@@ -20,9 +18,8 @@ object CryptoDataLoader {
      * @return A list of certificates in the PEM file.
      */
     private fun parseCertificates(pemStream: InputStream): List<Certificate> {
-        val factory: CertificateFactory
-        try {
-            factory = CertificateFactory.getInstance("X.509")
+        val factory = try {
+            CertificateFactory.getInstance("X.509")
         } catch (e: CertificateException) {
             throw UnsupportedCryptoPrimitiveException("Failure getting X.509 factory", e)
         }
@@ -44,7 +41,7 @@ object CryptoDataLoader {
     @JvmStatic
     fun certificatesFromFile(pemCertsFile: File): List<Certificate> {
         try {
-            return parseCertificates(BufferedInputStream(FileInputStream(pemCertsFile)))
+            return parseCertificates(pemCertsFile.inputStream())
         } catch (e: FileNotFoundException) {
             throw InvalidInputException("Could not find certificate chain file $pemCertsFile.", e)
         }

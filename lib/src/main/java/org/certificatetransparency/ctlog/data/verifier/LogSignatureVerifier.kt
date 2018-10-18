@@ -44,6 +44,7 @@ import org.certificatetransparency.ctlog.serialization.CTConstants.VERSION_LENGT
 import org.certificatetransparency.ctlog.serialization.Serializer
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import java.security.Signature
@@ -267,7 +268,7 @@ class LogSignatureVerifier(private val logInfo: LogInfo) {
         return bos.toByteArray()
     }
 
-    private fun serializeCommonSctFields(sct: SignedCertificateTimestamp, bos: ByteArrayOutputStream) {
+    private fun serializeCommonSctFields(sct: SignedCertificateTimestamp, bos: OutputStream) {
         require(sct.version == Version.V1) { "Can only serialize SCT v1 for now." }
         Serializer.writeUint(bos, sct.version.number.toLong(), VERSION_LENGTH) // ct::V1
         Serializer.writeUint(bos, 0, 1) // ct::CERTIFICATE_TIMESTAMP
