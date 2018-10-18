@@ -2,8 +2,8 @@ package org.certificatetransparency.ctlog.okhttp
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.certificatetransparency.ctlog.hostnameVerifier
-import org.certificatetransparency.ctlog.okHttpInterceptor
+import org.certificatetransparency.ctlog.certificateTransparencyHostnameVerifier
+import org.certificatetransparency.ctlog.certificateTransparencyInterceptor
 import org.junit.Ignore
 import org.junit.Test
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -11,12 +11,12 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class CertificateTransparencyHostnameVerifierTest {
 
     companion object {
-        val hostnameVerifier = hostnameVerifier {
+        val hostnameVerifier = certificateTransparencyHostnameVerifier {
             +"*.babylonpartners.com"
             +"*.babylonhealth.com"
         }
 
-        val networkInterceptor = okHttpInterceptor {
+        val networkInterceptor = certificateTransparencyInterceptor {
             +"*.babylonpartners.com"
             +"*.babylonhealth.com"
         }

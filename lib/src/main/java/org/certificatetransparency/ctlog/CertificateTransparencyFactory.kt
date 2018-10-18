@@ -119,12 +119,13 @@ object CertificateTransparencyFactory {
 }
 
 @JvmSynthetic
-fun okHttpInterceptor(init: CertificateTransparencyFactory.InterceptorBuilder.() -> Unit) = CertificateTransparencyFactory.InterceptorBuilder()
-    .apply(init)
-    .build()
+fun certificateTransparencyInterceptor(init: CertificateTransparencyFactory.InterceptorBuilder.() -> Unit = {}) =
+    CertificateTransparencyFactory.InterceptorBuilder()
+        .apply(init)
+        .build()
 
 @JvmSynthetic
-fun hostnameVerifier(delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE, init: CertificateTransparencyFactory.HostnameVerifierBuilder.() -> Unit) =
+fun certificateTransparencyHostnameVerifier(delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE, init: CertificateTransparencyFactory.HostnameVerifierBuilder.() -> Unit = {}) =
     CertificateTransparencyFactory.HostnameVerifierBuilder(delegate)
         .apply(init)
         .build()

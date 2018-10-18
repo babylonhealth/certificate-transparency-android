@@ -1,4 +1,22 @@
-package org.certificatetransparency.ctlog.comm
+/*
+ * Copyright 2018 Babylon Healthcare Services Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Code derived from https://github.com/google/certificate-transparency-java
+ */
+
+package org.certificatetransparency.ctlog.data
 
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.GlobalScope
@@ -7,85 +25,25 @@ import org.certificatetransparency.ctlog.Host
 import org.certificatetransparency.ctlog.LogInfo
 import org.certificatetransparency.ctlog.PublicKeyFactory
 import org.certificatetransparency.ctlog.TestData
-import org.certificatetransparency.ctlog.data.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.data.loglist.model.LogList
 import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.IOException
 import java.net.URL
 import java.security.MessageDigest
-import java.security.cert.Certificate
 import javax.net.ssl.HttpsURLConnection
 
-/**
- * This test checks that SSL connections to servers with a known good certificate can be
- * verified and connections without can be rejected. It serves as a programming example
- * on how to use the ctlog library.
- *
- * There are three ways that certificate transparency information can be exchanged in the
- * connection handshake:
- * - X509v3 certificate extension
- * - TLS extension
- * - OSCP stapling
- * This test only demonstrates how to validate using the first approach.
- *
- * @author Warwick Hunter
- * @since 0.1.3
- */
 @RunWith(JUnit4::class)
-class SslConnectionCheckingTest {
+class CertificateTransparencyBaseIntegrationTest {
 
     @Test
     fun testBabylonHealth() {
-        checkConnection("https://babylonhealth.com", false)
-    }
-
-    @Test
-    fun testBabylonHealthPhp() {
-        checkConnection("https://app2.babylonpartners.com", true)
-    }
-
-    @Test
-    fun testBabylonHealthRuby() {
-        checkConnection("https://app.babylonpartners.com", true)
-    }
-
-    @Test
-    fun testBabylonHealthAi() {
-        checkConnection("https://services.babylonpartners.com", true)
-    }
-
-    @Test
-    fun testBabylonHealthWebApp() {
-        checkConnection("https://online.babylonhealth.com", true)
-    }
-
-    @Test
-    fun testBabylonHealthHealthReport() {
-        checkConnection("https://health-report-uk.babylonpartners.com/", true)
-    }
-
-    @Test
-    fun testBabylonHealthWeb() {
         checkConnection("https://www.babylonhealth.com", true)
-    }
-
-    @Test
-    fun testBabylonHealthSupport() {
-        checkConnection("https://support.babylonhealth.com", true)
-    }
-
-    @Test
-    @Ignore
-    // Disabled as this domain fails occassionally as there are both valid and invalid certificates
-    fun testBabylonHealthBlog() {
-        checkConnection("https://blog.babylonhealth.com", true)
     }
 
     @Test
@@ -118,9 +76,7 @@ class SslConnectionCheckingTest {
             con = url.openConnection() as HttpsURLConnection
             con.connect()
 
-            println(urlString)
-
-            assertEquals(certificateTransparencyChecker.check(con.serverCertificates.toList()), shouldPass)
+            assertEquals(certificateTransparencyChecker.verifyCertificateTransparency("ct.log", con.serverCertificates.toList()), shouldPass)
 
             val statusCode = con.responseCode
             when (statusCode) {
@@ -160,9 +116,6 @@ class SslConnectionCheckingTest {
             }
         }
 
-        private val certificateTransparencyChecker = object : CertificateTransparencyBase(setOf(Host("anonyome.com")), logListDataSource = logListDataSource()) {
-            @Suppress("unused")
-            fun check(certificates: List<Certificate>) = verifyCertificateTransparency("anonyome.com", certificates)
-        }
+        private val certificateTransparencyChecker = CertificateTransparencyBase(setOf(Host("ct.log")), logListDataSource = logListDataSource())
     }
 }
