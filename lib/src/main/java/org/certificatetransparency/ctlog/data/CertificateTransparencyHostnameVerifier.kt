@@ -36,14 +36,8 @@ internal class CertificateTransparencyHostnameVerifier(
             return false
         }
 
-        if (!checkCertificateTransparency(host)) {
-            return true
-        }
-
         try {
-            val cleanedCerts = cleaner.clean(sslSession.peerCertificates.toList(), host)
-
-            return isGood(cleanedCerts)
+            return verifyCertificateTransparency(host, sslSession.peerCertificates.toList())
         } catch (e: SSLException) {
             throw RuntimeException(e)
         }

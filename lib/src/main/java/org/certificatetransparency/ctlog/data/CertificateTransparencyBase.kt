@@ -39,7 +39,7 @@ internal open class CertificateTransparencyBase(
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
 ) {
-    protected val cleaner: CertificateChainCleaner by lazy {
+    private val cleaner: CertificateChainCleaner by lazy {
         val localTrustManager = trustManager ?: (TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
             init(null as KeyStore?)
         }.trustManagers.first { it is X509TrustManager } as X509TrustManager)
@@ -49,6 +49,15 @@ internal open class CertificateTransparencyBase(
 
     private val logListDataSource = logListDataSource ?: LogListDataSourceFactory.create()
 
+    fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): Boolean {
+        if (!enabledForCertificateTransparency(host)) {
+            return true
+        }
+
+        val cleanedCerts = cleaner.clean(certificates, host)
+        return hasValidSignedCertificateTimestamp(cleanedCerts)
+    }
+
     /**
      * Check if the certificates provided by a server contain Signed Certificate Timestamps
      * from a trusted CT log.
@@ -56,7 +65,7 @@ internal open class CertificateTransparencyBase(
      * @param certificates the certificate chain provided by the server
      * @return true if the certificates can be trusted, false otherwise.
      */
-    protected fun isGood(certificates: List<Certificate>): Boolean {
+    private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): Boolean {
 
         val verifiers = runBlocking {
             logListDataSource.get()
@@ -107,7 +116,7 @@ internal open class CertificateTransparencyBase(
         }
     }
 
-    protected fun checkCertificateTransparency(host: String) = hosts.any { it.matches(host) }
+    private fun enabledForCertificateTransparency(host: String) = hosts.any { it.matches(host) }
 
     private fun v(message: String) {
         if (VERBOSE) {

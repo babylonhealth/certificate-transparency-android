@@ -162,7 +162,7 @@ class SslConnectionCheckingTest {
 
         private val certificateTransparencyChecker = object : CertificateTransparencyBase(setOf(Host("anonyome.com")), logListDataSource = logListDataSource()) {
             @Suppress("unused")
-            fun check(certificates: List<Certificate>) = isGood(certificates)
+            fun check(certificates: List<Certificate>) = verifyCertificateTransparency("anonyome.com", certificates)
         }
     }
 }
