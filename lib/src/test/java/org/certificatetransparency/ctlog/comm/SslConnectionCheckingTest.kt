@@ -1,14 +1,16 @@
 package org.certificatetransparency.ctlog.comm
 
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.GlobalScope
 import org.certificatetransparency.ctlog.Base64
+import org.certificatetransparency.ctlog.Host
 import org.certificatetransparency.ctlog.LogInfo
-import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.PublicKeyFactory
 import org.certificatetransparency.ctlog.TestData
-import org.certificatetransparency.ctlog.TestData.TEST_LOG_LIST_JSON
-import org.certificatetransparency.ctlog.hasEmbeddedSct
-import org.certificatetransparency.ctlog.signedCertificateTimestamps
+import org.certificatetransparency.ctlog.data.CertificateTransparencyBase
+import org.certificatetransparency.ctlog.data.loglist.model.LogList
+import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
+import org.certificatetransparency.ctlog.domain.datasource.DataSource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Ignore
@@ -18,10 +20,7 @@ import org.junit.runners.JUnit4
 import java.io.IOException
 import java.net.URL
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.security.cert.Certificate
-import java.security.cert.X509Certificate
-import java.security.spec.InvalidKeySpecException
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -41,12 +40,6 @@ import javax.net.ssl.HttpsURLConnection
  */
 @RunWith(JUnit4::class)
 class SslConnectionCheckingTest {
-
-    private val verifiers = mutableMapOf<String, LogSignatureVerifier>()
-
-    init {
-        buildLogSignatureVerifiers()
-    }
 
     @Test
     fun testBabylonHealth() {
@@ -125,14 +118,15 @@ class SslConnectionCheckingTest {
             con = url.openConnection() as HttpsURLConnection
             con.connect()
 
-            v(urlString)
-            assertEquals(isGood(con.serverCertificates), shouldPass)
+            println(urlString)
+
+            assertEquals(certificateTransparencyChecker.check(con.serverCertificates.toList()), shouldPass)
 
             val statusCode = con.responseCode
             when (statusCode) {
                 200, 403 -> {
                 }
-                404 -> v("404 status code returned")
+                404 -> println("404 status code returned")
                 else -> fail(String.format("Unexpected HTTP status code: %d", statusCode))
             }
         } catch (e: IOException) {
@@ -142,114 +136,33 @@ class SslConnectionCheckingTest {
         }
     }
 
-    /**
-     * Check if the certificates provided by a server contain Signed Certificate Timestamps
-     * from a trusted CT log.
-     *
-     * @param certificates the certificate chain provided by the server
-     * @return true if the certificates can be trusted, false otherwise.
-     */
-    private fun isGood(certificates: Array<Certificate>): Boolean {
-
-        if (certificates[0] !is X509Certificate) {
-            v("  This test only supports SCTs carried in X509 certificates, of which there are none.")
-            return false
-        }
-
-        val leafCertificate = certificates[0] as X509Certificate
-
-        if (!leafCertificate.hasEmbeddedSct()) {
-            v("  This certificate does not have any Signed Certificate Timestamps in it.")
-            return false
-        }
-
-
-        try {
-            val sctsInCertificate = leafCertificate.signedCertificateTimestamps()
-            if (sctsInCertificate.size < MIN_VALID_SCTS) {
-                v("  Too few SCTs are present, I want at least $MIN_VALID_SCTS CT logs to be nominated.")
-                return false
-            }
-
-            val certificateList = certificates.toList()
-
-            var validSctCount = 0
-            for (sct in sctsInCertificate) {
-                val logId = Base64.toBase64String(sct.id.keyId)
-                if (verifiers.containsKey(logId)) {
-                    v("  SCT trusted log $logId")
-                    if (verifiers[logId]?.verifySignature(sct, certificateList) == true) {
-                        ++validSctCount
-                    }
-                } else {
-                    v("  SCT untrusted log $logId")
-                }
-            }
-
-            if (validSctCount < MIN_VALID_SCTS) {
-                v("  Too few trusted SCTs are present, I want at least $MIN_VALID_SCTS trusted CT logs.")
-            }
-            return validSctCount >= MIN_VALID_SCTS
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return false
-        }
-    }
-
-    /**
-     * Construct LogSignatureVerifiers for each of the trusted CT logs.
-     *
-     * @throws InvalidKeySpecException the CT log key isn't RSA or EC, the key is probably corrupt.
-     * @throws NoSuchAlgorithmException the crypto provider couldn't supply the hashing algorithm
-     * or the key algorithm. This probably means you are using an ancient or bad crypto provider.
-     */
-    @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
-    private fun buildLogSignatureVerifiers() {
-        val hasher = MessageDigest.getInstance(LOG_ID_HASH_ALGORITHM)
-
-        // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
-        val json = TestData.file(TEST_LOG_LIST_JSON).readText()
-        val trustedLogKeys = GsonBuilder().create().fromJson(json, LogList::class.java).logs.map { it.key }
-
-        for (trustedLogKey in trustedLogKeys) {
-            hasher.reset()
-            val keyBytes = Base64.decode(trustedLogKey)
-            val logId = Base64.toBase64String(hasher.digest(keyBytes))
-            val publicKey = PublicKeyFactory.fromByteArray(keyBytes)
-
-            verifiers[logId] = LogSignatureVerifier(LogInfo(publicKey))
-        }
-    }
-
-    data class LogList(
-        val logs: List<Log>,
-        val operators: List<Operator>
-    ) {
-        data class Log(
-            val description: String,
-            val key: String,
-            val url: String,
-            val maximum_merge_delay: Long,
-            val operated_by: List<Int>,
-            val dns_api_endpoint: String
-        )
-
-        data class Operator(
-            val name: String,
-            val id: Int
-        )
-    }
-
-    private fun v(message: String) {
-        println(message)
-    }
-
     companion object {
 
-        /** I want at least two different CT logs to verify the certificate  */
-        private const val MIN_VALID_SCTS = 2
+        private fun logListDataSource(): DataSource<Map<String, LogSignatureVerifier>> {
+            val hasher = MessageDigest.getInstance("SHA-256")
 
-        /** A CT log's Id is created by using this hash algorithm on the CT log public key  */
-        private const val LOG_ID_HASH_ALGORITHM = "SHA-256"
+            // Collection of CT logs that are trusted from https://www.gstatic.com/ct/log_list/log_list.json
+            val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
+            val trustedLogKeys = GsonBuilder().create().fromJson(json, LogList::class.java).logs.map { it.key }
+
+            val map = trustedLogKeys.map { Base64.decode(it) }.associateBy({
+                Base64.toBase64String(hasher.digest(it))
+            }) {
+                LogSignatureVerifier(LogInfo(PublicKeyFactory.fromByteArray(it)))
+            }
+
+            return object : DataSource<Map<String, LogSignatureVerifier>> {
+                override suspend fun get() = map
+
+                override suspend fun set(value: Map<String, LogSignatureVerifier>) = Unit
+
+                override val coroutineContext = GlobalScope.coroutineContext
+            }
+        }
+
+        private val certificateTransparencyChecker = object : CertificateTransparencyBase(setOf(Host("anonyome.com")), logListDataSource = logListDataSource()) {
+            @Suppress("unused")
+            fun check(certificates: List<Certificate>) = isGood(certificates)
+        }
     }
 }
