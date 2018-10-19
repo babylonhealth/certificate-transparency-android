@@ -5,7 +5,7 @@ import okhttp3.Request
 import org.certificatetransparency.ctlog.certificateTransparencyInterceptor
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.junit.Test
-import javax.net.ssl.SSLPeerUnverifiedException
+import java.net.SocketException
 
 class CertificateTransparencyInterceptorIntegrationTest {
 
@@ -43,7 +43,7 @@ class CertificateTransparencyInterceptorIntegrationTest {
         client.newCall(request).execute()
     }
 
-    @Test(expected = SSLPeerUnverifiedException::class)
+    @Test(expected = SocketException::class)
     fun invalidDisallowedWithException() {
         val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 
