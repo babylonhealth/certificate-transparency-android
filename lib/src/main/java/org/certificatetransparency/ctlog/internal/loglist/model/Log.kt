@@ -16,11 +16,15 @@
 
 package org.certificatetransparency.ctlog.internal.loglist.model
 
+/**
+ * @property operated_by List of log operators - containing Operator numeric id
+ * @property dns_api_endpoint DNS API endpoint for the log
+ */
 internal data class Log(
     val description: String,
     val key: String,
     val url: String,
     val maximum_merge_delay: Long,
     val operated_by: List<Int>,
-    val dns_api_endpoint: String
+    val dns_api_endpoint: String?
 )
