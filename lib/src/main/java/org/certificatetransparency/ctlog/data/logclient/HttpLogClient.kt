@@ -192,9 +192,19 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
         requireNotNull(this) { "Log entries response from Log should not be null." }
 
         return entries.map {
-            Deserializer.parseLogEntry(
-                Base64.decode(it.leafInput).inputStream(),
-                Base64.decode(it.extraData).inputStream())
+            val leafInput = try {
+                Base64.decode(it.leafInput)
+            } catch (e: Exception) {
+                throw CertificateTransparencyException("Bad response. The leafInput is invalid.")
+            }
+
+            val extraData = try {
+                Base64.decode(it.extraData)
+            } catch (e: Exception) {
+                throw CertificateTransparencyException("Bad response. The extraData is invalid.")
+            }
+
+            Deserializer.parseLogEntry(leafInput.inputStream(), extraData.inputStream())
         }
     }
 
@@ -224,7 +234,11 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
                 "$treeSize Timestamp: $timestamp")
         }
         val base64Signature = treeHeadSignature
-        val sha256RootHash = Base64.decode(sha256RootHash)
+        val sha256RootHash = try {
+            Base64.decode(sha256RootHash)
+        } catch (e: Exception) {
+            throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree is invalid.")
+        }
 
         if (sha256RootHash.size != 32) {
             throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. The size of the " +
