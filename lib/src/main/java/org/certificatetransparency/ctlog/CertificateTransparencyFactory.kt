@@ -18,10 +18,10 @@ package org.certificatetransparency.ctlog
 
 import okhttp3.Interceptor
 import okhttp3.internal.tls.OkHostnameVerifier
+import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyHostnameVerifier
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyInterceptor
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.X509TrustManager
