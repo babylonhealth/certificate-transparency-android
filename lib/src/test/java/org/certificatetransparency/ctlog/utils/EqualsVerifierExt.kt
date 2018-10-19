@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.utils
 
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.EqualsVerifierApi

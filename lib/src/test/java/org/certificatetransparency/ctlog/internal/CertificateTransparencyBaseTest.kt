@@ -20,10 +20,10 @@ import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.TestData
-import org.certificatetransparency.ctlog.TestData.TEST_MITMPROXY_ATTACK_CHAIN
-import org.certificatetransparency.ctlog.TestData.TEST_MITMPROXY_ORIGINAL_CHAIN
-import org.certificatetransparency.ctlog.TestData.TEST_MITMPROXY_ROOT_CERT
+import org.certificatetransparency.ctlog.utils.TestData
+import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ATTACK_CHAIN
+import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ORIGINAL_CHAIN
+import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ROOT_CERT
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory

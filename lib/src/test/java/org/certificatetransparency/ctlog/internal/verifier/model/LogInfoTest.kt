@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.internal.verifier.model
 
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory

@@ -1,6 +1,23 @@
-package org.certificatetransparency.ctlog
+/*
+ * Copyright 2018 Babylon Healthcare Services Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Code derived from https://github.com/google/certificate-transparency-java
+ */
 
-import org.certificatetransparency.ctlog.utils.CryptoDataLoader
+package org.certificatetransparency.ctlog.utils
+
 import org.junit.Ignore
 import java.io.File
 import java.security.cert.Certificate
@@ -35,7 +52,6 @@ object TestData {
     // Certificate signed by intermediate CA.
     const val TEST_INTERMEDIATE_CERT = DATA_ROOT + "test-intermediate-cert.pem"
     const val TEST_INTERMEDIATE_CERT_SCT = DATA_ROOT + "test-intermediate-cert.proof"
-    const val TEST_EMBEDDED_WITH_INTERMEDIATE_CERT = DATA_ROOT + "test-embedded-with-intermediate-cert.pem"
 
     const val TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE = DATA_ROOT + "test-embedded-with-intermediate-pre-cert.pem"
     const val TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE_SCT = DATA_ROOT + "test-embedded-with-intermediate-pre-cert.proof"

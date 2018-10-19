@@ -1,11 +1,11 @@
 package org.certificatetransparency.ctlog.internal.serialization
 
-import org.certificatetransparency.ctlog.TestData
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.logclient.model.DigitallySigned
 import org.certificatetransparency.ctlog.logclient.model.LogId
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.utils.TestData
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,7 +13,7 @@ import org.junit.runners.JUnit4
 
 /** Test serialization.  */
 @RunWith(JUnit4::class)
-class TestSerializer {
+class SerializerTest {
 
     @Test
     fun serializeSct() {

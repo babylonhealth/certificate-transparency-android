@@ -29,7 +29,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
-import org.certificatetransparency.ctlog.TestData
+import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.logclient.model.DigitallySigned
 import org.certificatetransparency.ctlog.logclient.model.LogEntry
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp

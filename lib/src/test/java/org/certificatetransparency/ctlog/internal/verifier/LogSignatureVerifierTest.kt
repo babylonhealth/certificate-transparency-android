@@ -18,39 +18,39 @@
 
 package org.certificatetransparency.ctlog.internal.verifier
 
+import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
-import org.certificatetransparency.ctlog.TestData
-import org.certificatetransparency.ctlog.TestData.INTERMEDIATE_CA_CERT
-import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_BY_INTERMEDIATE
-import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_CERT
-import org.certificatetransparency.ctlog.TestData.ROOT_CA_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_CERT_SCT
-import org.certificatetransparency.ctlog.TestData.TEST_CERT_SCT_RSA
-import org.certificatetransparency.ctlog.TestData.TEST_GITHUB_CHAIN
-import org.certificatetransparency.ctlog.TestData.TEST_INTERMEDIATE_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_INTERMEDIATE_CERT_SCT
-import org.certificatetransparency.ctlog.TestData.TEST_LOG_KEY
-import org.certificatetransparency.ctlog.TestData.TEST_LOG_KEY_DIGICERT
-import org.certificatetransparency.ctlog.TestData.TEST_LOG_KEY_PILOT
-import org.certificatetransparency.ctlog.TestData.TEST_LOG_KEY_RSA
-import org.certificatetransparency.ctlog.TestData.TEST_LOG_KEY_SKYDIVER
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_PRECA_SCT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE_SCT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE_SCT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_SCT_RSA
-import org.certificatetransparency.ctlog.TestData.loadCertificates
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.issuerInformation
-import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
+import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
+import org.certificatetransparency.ctlog.utils.TestData
+import org.certificatetransparency.ctlog.utils.TestData.INTERMEDIATE_CA_CERT
+import org.certificatetransparency.ctlog.utils.TestData.PRE_CERT_SIGNING_BY_INTERMEDIATE
+import org.certificatetransparency.ctlog.utils.TestData.PRE_CERT_SIGNING_CERT
+import org.certificatetransparency.ctlog.utils.TestData.ROOT_CA_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_CERT_SCT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_CERT_SCT_RSA
+import org.certificatetransparency.ctlog.utils.TestData.TEST_GITHUB_CHAIN
+import org.certificatetransparency.ctlog.utils.TestData.TEST_INTERMEDIATE_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_INTERMEDIATE_CERT_SCT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_LOG_KEY
+import org.certificatetransparency.ctlog.utils.TestData.TEST_LOG_KEY_DIGICERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_LOG_KEY_PILOT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_LOG_KEY_RSA
+import org.certificatetransparency.ctlog.utils.TestData.TEST_LOG_KEY_SKYDIVER
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_PRECA_SCT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE_SCT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE_SCT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT_RSA
+import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -209,7 +209,7 @@ class LogSignatureVerifierTest {
     @Test
     fun signatureOnPreCertificateSignedByIntermediateVerifies() {
         // Flow:
-        // test-embedded-with-intermediate-cert.pem -> intermediate-cert.pem -> ca-cert.pem
+        // test-embedded-with-intermediate-pre-cert.pem -> intermediate-cert.pem -> ca-cert.pem
         val certsChain = arrayListOf<Certificate>()
         certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE))
         certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))

@@ -1,12 +1,10 @@
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.internal.utils
 
-import org.certificatetransparency.ctlog.TestData.PRE_CERT_SIGNING_CERT
-import org.certificatetransparency.ctlog.TestData.ROOT_CA_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_CERT
-import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT
-import org.certificatetransparency.ctlog.TestData.loadCertificates
-import org.certificatetransparency.ctlog.internal.utils.isPreCertificate
-import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningCert
+import org.certificatetransparency.ctlog.utils.TestData.PRE_CERT_SIGNING_CERT
+import org.certificatetransparency.ctlog.utils.TestData.ROOT_CA_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_CERT
+import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT
+import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -15,7 +13,7 @@ import org.junit.runners.JUnit4
 
 /** Make sure the correct info about certificates is provided.  */
 @RunWith(JUnit4::class)
-class CertificateInfoTest {
+class CertificateExtTest {
     @Test
     fun correctlyIdentifiesPreCertificateSigningCert() {
         val preCertificateSigningCert = loadCertificates(PRE_CERT_SIGNING_CERT)[0]

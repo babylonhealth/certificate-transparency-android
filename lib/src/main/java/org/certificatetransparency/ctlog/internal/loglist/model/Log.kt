@@ -17,6 +17,8 @@
 package org.certificatetransparency.ctlog.internal.loglist.model
 
 /**
+ * @property key Base64 encoded public key
+ * @property maximum_merge_delay Maximum merge delay (MMD) in seconds; often 86400 = 24 hours
  * @property operated_by List of log operators - containing Operator numeric id
  * @property dns_api_endpoint DNS API endpoint for the log
  */

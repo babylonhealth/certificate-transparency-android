@@ -16,7 +16,7 @@
 
 package org.certificatetransparency.ctlog.logclient.model
 
-import org.certificatetransparency.ctlog.equalsVerifier
+import org.certificatetransparency.ctlog.utils.equalsVerifier
 import org.junit.Test
 
 class LogEntryTest {

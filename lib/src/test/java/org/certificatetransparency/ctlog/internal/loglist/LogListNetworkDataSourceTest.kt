@@ -26,7 +26,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.certificatetransparency.ctlog.TestData
+import org.certificatetransparency.ctlog.utils.TestData
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

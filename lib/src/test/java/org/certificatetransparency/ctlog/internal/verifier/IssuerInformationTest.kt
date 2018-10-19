@@ -17,7 +17,7 @@
 package org.certificatetransparency.ctlog.internal.verifier
 
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedTreeHead
-import org.certificatetransparency.ctlog.equalsVerifier
+import org.certificatetransparency.ctlog.utils.equalsVerifier
 import org.junit.Test
 
 class IssuerInformationTest {
