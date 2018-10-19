@@ -13,7 +13,7 @@ import java.security.MessageDigest
 
 object LogListDataSourceTestFactory {
 
-    fun logListDataSource(): DataSource<Map<String, LogSignatureVerifier>> {
+    val logListDataSource: DataSource<Map<String, LogSignatureVerifier>> by lazy {
         val hasher = MessageDigest.getInstance("SHA-256")
 
         // Collection of CT logs that are trusted from https://www.gstatic.com/ct/log_list/log_list.json
@@ -26,7 +26,7 @@ object LogListDataSourceTestFactory {
             LogSignatureVerifier(LogInfo(PublicKeyFactory.fromByteArray(it)))
         }
 
-        return object : DataSource<Map<String, LogSignatureVerifier>> {
+        object : DataSource<Map<String, LogSignatureVerifier>> {
             override suspend fun get() = map
 
             override suspend fun set(value: Map<String, LogSignatureVerifier>) = Unit
@@ -35,8 +35,8 @@ object LogListDataSourceTestFactory {
         }
     }
 
-    fun emptySource(): DataSource<Map<String, LogSignatureVerifier>> {
-        return object : DataSource<Map<String, LogSignatureVerifier>> {
+    val emptySource: DataSource<Map<String, LogSignatureVerifier>> by lazy {
+        object : DataSource<Map<String, LogSignatureVerifier>> {
             override suspend fun get() = emptyMap<String, LogSignatureVerifier>()
 
             override suspend fun set(value: Map<String, LogSignatureVerifier>) = Unit
@@ -45,8 +45,8 @@ object LogListDataSourceTestFactory {
         }
     }
 
-    fun nullSource(): DataSource<Map<String, LogSignatureVerifier>> {
-        return object : DataSource<Map<String, LogSignatureVerifier>> {
+    val nullSource: DataSource<Map<String, LogSignatureVerifier>> by lazy {
+        object : DataSource<Map<String, LogSignatureVerifier>> {
             override suspend fun get() = null
 
             override suspend fun set(value: Map<String, LogSignatureVerifier>) = Unit
