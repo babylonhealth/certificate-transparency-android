@@ -5,6 +5,8 @@ import org.certificatetransparency.ctlog.TestData.ROOT_CA_CERT
 import org.certificatetransparency.ctlog.TestData.TEST_CERT
 import org.certificatetransparency.ctlog.TestData.TEST_PRE_CERT
 import org.certificatetransparency.ctlog.TestData.loadCertificates
+import org.certificatetransparency.ctlog.internal.utils.isPreCertificate
+import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningCert
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

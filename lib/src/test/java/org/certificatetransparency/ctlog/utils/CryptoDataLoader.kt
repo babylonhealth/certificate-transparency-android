@@ -1,6 +1,6 @@
 package org.certificatetransparency.ctlog.utils
 
-import org.certificatetransparency.ctlog.serialization.InvalidInputException
+import org.certificatetransparency.ctlog.exceptions.InvalidInputException
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream

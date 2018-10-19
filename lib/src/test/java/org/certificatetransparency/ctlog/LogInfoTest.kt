@@ -1,5 +1,8 @@
 package org.certificatetransparency.ctlog
 
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
+import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith

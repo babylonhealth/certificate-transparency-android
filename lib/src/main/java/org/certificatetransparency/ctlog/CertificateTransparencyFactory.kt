@@ -18,10 +18,11 @@ package org.certificatetransparency.ctlog
 
 import okhttp3.Interceptor
 import okhttp3.internal.tls.OkHostnameVerifier
-import org.certificatetransparency.ctlog.data.CertificateTransparencyHostnameVerifier
-import org.certificatetransparency.ctlog.data.CertificateTransparencyInterceptor
-import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
-import org.certificatetransparency.ctlog.domain.datasource.DataSource
+import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyHostnameVerifier
+import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyInterceptor
+import org.certificatetransparency.ctlog.internal.verifier.model.Host
+import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.X509TrustManager
 
@@ -29,7 +30,7 @@ object CertificateTransparencyFactory {
 
     class InterceptorBuilder {
         private var trustManager: X509TrustManager? = null
-        private var logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
+        private var logListDataSource: DataSource<Map<String, SignatureVerifier>>? = null
         private val hosts = mutableSetOf<Host>()
 
         @Suppress("MemberVisibilityCanBePrivate")
@@ -40,13 +41,13 @@ object CertificateTransparencyFactory {
         fun trustManager(init: () -> X509TrustManager) = setTrustManager(init())
 
         @Suppress("MemberVisibilityCanBePrivate")
-        fun setLogListDataSource(logListDataSource: DataSource<Map<String, LogSignatureVerifier>>) = apply {
+        fun setLogListDataSource(logListDataSource: DataSource<Map<String, SignatureVerifier>>) = apply {
             this.logListDataSource = logListDataSource
         }
 
         @JvmSynthetic
         @Suppress("unused")
-        fun logListDataSource(init: () -> DataSource<Map<String, LogSignatureVerifier>>) = setLogListDataSource(init())
+        fun logListDataSource(init: () -> DataSource<Map<String, SignatureVerifier>>) = setLogListDataSource(init())
 
         /**
          * Check certificate transparency for {@code pattern}.
@@ -75,7 +76,7 @@ object CertificateTransparencyFactory {
         @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE
     ) {
         private var trustManager: X509TrustManager? = null
-        private var logListDataSource: DataSource<Map<String, LogSignatureVerifier>>? = null
+        private var logListDataSource: DataSource<Map<String, SignatureVerifier>>? = null
         private val hosts = mutableSetOf<Host>()
 
         @Suppress("MemberVisibilityCanBePrivate")
@@ -86,13 +87,13 @@ object CertificateTransparencyFactory {
         fun trustManager(init: () -> X509TrustManager) = setTrustManager(init())
 
         @Suppress("MemberVisibilityCanBePrivate")
-        fun setLogListDataSource(logListDataSource: DataSource<Map<String, LogSignatureVerifier>>) = apply {
+        fun setLogListDataSource(logListDataSource: DataSource<Map<String, SignatureVerifier>>) = apply {
             this.logListDataSource = logListDataSource
         }
 
         @JvmSynthetic
         @Suppress("unused")
-        fun logListDataSource(init: () -> DataSource<Map<String, LogSignatureVerifier>>) = setLogListDataSource(init())
+        fun logListDataSource(init: () -> DataSource<Map<String, SignatureVerifier>>) = setLogListDataSource(init())
 
         /**
          * Check certificate transparency for {@code pattern}.
