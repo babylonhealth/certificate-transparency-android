@@ -18,16 +18,8 @@
 
 package org.certificatetransparency.ctlog.data
 
-import com.google.gson.GsonBuilder
-import kotlinx.coroutines.GlobalScope
-import org.certificatetransparency.ctlog.Base64
 import org.certificatetransparency.ctlog.Host
-import org.certificatetransparency.ctlog.LogInfo
-import org.certificatetransparency.ctlog.PublicKeyFactory
-import org.certificatetransparency.ctlog.TestData
-import org.certificatetransparency.ctlog.data.loglist.model.LogList
-import org.certificatetransparency.ctlog.data.verifier.LogSignatureVerifier
-import org.certificatetransparency.ctlog.domain.datasource.DataSource
+import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
@@ -35,7 +27,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.IOException
 import java.net.URL
-import java.security.MessageDigest
 import javax.net.ssl.HttpsURLConnection
 
 @RunWith(JUnit4::class)
@@ -94,28 +85,8 @@ class CertificateTransparencyBaseIntegrationTest {
 
     companion object {
 
-        private fun logListDataSource(): DataSource<Map<String, LogSignatureVerifier>> {
-            val hasher = MessageDigest.getInstance("SHA-256")
-
-            // Collection of CT logs that are trusted from https://www.gstatic.com/ct/log_list/log_list.json
-            val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
-            val trustedLogKeys = GsonBuilder().create().fromJson(json, LogList::class.java).logs.map { it.key }
-
-            val map = trustedLogKeys.map { Base64.decode(it) }.associateBy({
-                Base64.toBase64String(hasher.digest(it))
-            }) {
-                LogSignatureVerifier(LogInfo(PublicKeyFactory.fromByteArray(it)))
-            }
-
-            return object : DataSource<Map<String, LogSignatureVerifier>> {
-                override suspend fun get() = map
-
-                override suspend fun set(value: Map<String, LogSignatureVerifier>) = Unit
-
-                override val coroutineContext = GlobalScope.coroutineContext
-            }
-        }
-
-        private val certificateTransparencyChecker = CertificateTransparencyBase(setOf(Host("ct.log")), logListDataSource = logListDataSource())
+        private val certificateTransparencyChecker = CertificateTransparencyBase(
+            hosts = setOf(Host("ct.log")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource())
     }
 }

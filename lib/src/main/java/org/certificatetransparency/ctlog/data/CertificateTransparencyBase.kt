@@ -58,6 +58,11 @@ internal open class CertificateTransparencyBase(
             return true
         }
 
+        if (certificates.isEmpty()) {
+            v("  No certificates to check against")
+            return false
+        }
+
         val cleanedCerts = cleaner.clean(certificates, host)
         return hasValidSignedCertificateTimestamp(cleanedCerts)
     }
