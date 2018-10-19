@@ -16,17 +16,19 @@
 
 package org.certificatetransparency.ctlog.internal.loglist.model
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * @property key Base64 encoded public key
- * @property maximum_merge_delay Maximum merge delay (MMD) in seconds; often 86400 = 24 hours
- * @property operated_by List of log operators - containing Operator numeric id
- * @property dns_api_endpoint DNS API endpoint for the log
+ * @property maximumMergeDelay Maximum merge delay (MMD) in seconds; often 86400 = 24 hours
+ * @property operatedBy List of log operators - containing Operator numeric id
+ * @property dnsApiEndpoint DNS API endpoint for the log
  */
 internal data class Log(
     val description: String,
     val key: String,
     val url: String,
-    val maximum_merge_delay: Long,
-    val operated_by: List<Int>,
-    val dns_api_endpoint: String?
+    @SerializedName("maximum_merge_delay") val maximumMergeDelay: Long,
+    @SerializedName("operated_by") val operatedBy: List<Int>,
+    @SerializedName("dns_api_endpoint") val dnsApiEndpoint: String?
 )

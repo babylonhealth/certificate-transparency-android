@@ -146,52 +146,49 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         }
     }
 
-    private fun createTbsForVerification(
-        preCertificate: X509Certificate, issuerInformation: IssuerInformation): TBSCertificate {
+    private fun createTbsForVerification(preCertificate: X509Certificate, issuerInformation: IssuerInformation): TBSCertificate = try {
         require(preCertificate.version >= 3)
         // We have to use bouncycastle's certificate parsing code because Java's X509 certificate
         // parsing discards the order of the extensions. The signature from SCT we're verifying
         // is over the TBSCertificate in its original form, including the order of the extensions.
         // Get the list of extensions, in its original order, minus the poison extension.
-        try {
-            ASN1InputStream(preCertificate.encoded).use { aIn ->
-                val parsedPreCertificate = org.bouncycastle.asn1.x509.Certificate.getInstance(aIn.readObject())
-                // Make sure that we have the X509akid of the real issuer if:
-                // The PreCertificate has this extension, AND:
-                // The PreCertificate was signed by a PreCertificate signing cert.
-                if (parsedPreCertificate.hasX509AuthorityKeyIdentifier() && issuerInformation.issuedByPreCertificateSigningCert) {
-                    require(issuerInformation.x509authorityKeyIdentifier != null)
-                }
-
-                val orderedExtensions = getExtensionsWithoutPoisonAndSCT(
-                    parsedPreCertificate.tbsCertificate.extensions,
-                    issuerInformation.x509authorityKeyIdentifier)
-
-                return V3TBSCertificateGenerator().apply {
-                    val tbsPart = parsedPreCertificate.tbsCertificate
-                    // Copy certificate.
-                    // Version 3 is implied by the generator.
-                    setSerialNumber(tbsPart.serialNumber)
-                    setSignature(tbsPart.signature)
-                    if (issuerInformation.name != null) {
-                        setIssuer(issuerInformation.name)
-                    } else {
-                        setIssuer(tbsPart.issuer)
-                    }
-                    setStartDate(tbsPart.startDate)
-                    setEndDate(tbsPart.endDate)
-                    setSubject(tbsPart.subject)
-                    setSubjectPublicKeyInfo(tbsPart.subjectPublicKeyInfo)
-                    setIssuerUniqueID(tbsPart.issuerUniqueId)
-                    setSubjectUniqueID(tbsPart.subjectUniqueId)
-                    setExtensions(Extensions(orderedExtensions.toTypedArray()))
-                }.generateTBSCertificate()
+        ASN1InputStream(preCertificate.encoded).use { aIn ->
+            val parsedPreCertificate = org.bouncycastle.asn1.x509.Certificate.getInstance(aIn.readObject())
+            // Make sure that we have the X509akid of the real issuer if:
+            // The PreCertificate has this extension, AND:
+            // The PreCertificate was signed by a PreCertificate signing cert.
+            if (parsedPreCertificate.hasX509AuthorityKeyIdentifier() && issuerInformation.issuedByPreCertificateSigningCert) {
+                require(issuerInformation.x509authorityKeyIdentifier != null)
             }
-        } catch (e: CertificateException) {
-            throw CertificateTransparencyException("Certificate error: ${e.message}", e)
-        } catch (e: IOException) {
-            throw CertificateTransparencyException("Error deleting extension: ${e.message}", e)
+
+            val orderedExtensions = getExtensionsWithoutPoisonAndSCT(
+                parsedPreCertificate.tbsCertificate.extensions,
+                issuerInformation.x509authorityKeyIdentifier)
+
+            return V3TBSCertificateGenerator().apply {
+                val tbsPart = parsedPreCertificate.tbsCertificate
+                // Copy certificate.
+                // Version 3 is implied by the generator.
+                setSerialNumber(tbsPart.serialNumber)
+                setSignature(tbsPart.signature)
+                if (issuerInformation.name != null) {
+                    setIssuer(issuerInformation.name)
+                } else {
+                    setIssuer(tbsPart.issuer)
+                }
+                setStartDate(tbsPart.startDate)
+                setEndDate(tbsPart.endDate)
+                setSubject(tbsPart.subject)
+                setSubjectPublicKeyInfo(tbsPart.subjectPublicKeyInfo)
+                setIssuerUniqueID(tbsPart.issuerUniqueId)
+                setSubjectUniqueID(tbsPart.subjectUniqueId)
+                setExtensions(Extensions(orderedExtensions.toTypedArray()))
+            }.generateTBSCertificate()
         }
+    } catch (e: CertificateException) {
+        throw CertificateTransparencyException("Certificate error: ${e.message}", e)
+    } catch (e: IOException) {
+        throw CertificateTransparencyException("Error deleting extension: ${e.message}", e)
     }
 
     private fun getExtensionsWithoutPoisonAndSCT(extensions: Extensions, replacementX509authorityKeyIdentifier: Extension?): List<Extension> {

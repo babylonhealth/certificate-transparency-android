@@ -2,6 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.3.0-rc-190'
+
     repositories {
         google()
         jcenter()
@@ -18,6 +19,11 @@ buildscript {
     }
 }
 
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC9.2"
+}
+
+
 allprojects {
     repositories {
         google()
@@ -30,4 +36,9 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+detekt {
+    input = files("$projectDir")
+    filters = ".*test.*,.*androidTest.*,.*/resources/.*,.*/tmp/.*"
 }

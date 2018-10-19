@@ -20,6 +20,8 @@ data class PreCertificate(
     val issuerKeyHash: ByteArray? = null,
     val tbsCertificate: ByteArray? = null
 ) {
+    
+    @Suppress("ComplexMethod")
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
