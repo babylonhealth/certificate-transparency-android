@@ -21,6 +21,8 @@ data class DigitallySigned(
     val signatureAlgorithm: SignatureAlgorithm = SignatureAlgorithm.ANONYMOUS,
     val signature: ByteArray
 ) {
+    // Numbers part of specification
+    @Suppress("MagicNumber")
     enum class HashAlgorithm(val number: Int) {
         NONE(0),
         MD5(1),
@@ -35,6 +37,8 @@ data class DigitallySigned(
         }
     }
 
+    // Numbers part of specification
+    @Suppress("MagicNumber")
     enum class SignatureAlgorithm(val number: Int) {
         ANONYMOUS(0),
         RSA(1),

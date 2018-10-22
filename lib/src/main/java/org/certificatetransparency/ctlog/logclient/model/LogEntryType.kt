@@ -19,6 +19,8 @@ package org.certificatetransparency.ctlog.logclient.model
 /**
  * @property UNKNOWN_ENTRY_TYPE Not part of the I-D, and outside the valid range.
  */
+// Numbers part of specification
+@Suppress("MagicNumber")
 enum class LogEntryType(val number: Int) {
     X509_ENTRY(0),
     PRE_CERTIFICATE_ENTRY(1),

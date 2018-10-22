@@ -19,6 +19,8 @@ package org.certificatetransparency.ctlog.logclient.model
 /**
  * @property UNKNOWN_VERSION Not part of the I-D, and outside the valid range.
  */
+// Numbers part of specification
+@Suppress("MagicNumber")
 enum class Version(val number: Int) {
     V1(0),
     UNKNOWN_VERSION(256);

@@ -41,4 +41,5 @@ task clean(type: Delete) {
 detekt {
     input = files("$projectDir")
     filters = ".*test.*,.*androidTest.*,.*/resources/.*,.*/tmp/.*"
+    config = files("detekt-config.yml")
 }
