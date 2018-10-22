@@ -1,11 +1,12 @@
 package org.certificatetransparency.ctlog.internal.serialization
 
+import org.certificatetransparency.ctlog.exceptions.SerializationException
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.logclient.model.Version
-import org.certificatetransparency.ctlog.exceptions.SerializationException
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import kotlin.math.pow
 
 /** Serializes common structure to binary format.  */
 internal object Serializer {
@@ -19,7 +20,7 @@ internal object Serializer {
     @JvmStatic
     fun writeUint(outputStream: OutputStream, value: Long, numBytes: Int) {
         require(value >= 0)
-        require(value < Math.pow(256.0, numBytes.toDouble())) { "Value $value cannot be stored in $numBytes bytes" }
+        require(value < 256.0.pow(numBytes.toDouble())) { "Value $value cannot be stored in $numBytes bytes" }
         var numBytesRemaining = numBytes
         try {
             while (numBytesRemaining > 0) {
@@ -75,9 +76,11 @@ internal object Serializer {
         writeVariableLength(bos, sct.extensions, CTConstants.MAX_EXTENSIONS_LENGTH)
         writeUint(bos, sct.signature.hashAlgorithm.number.toLong(), CTConstants.HASH_ALG_LENGTH)
         writeUint(
-            bos, sct.signature.signatureAlgorithm.number.toLong(), CTConstants.SIGNATURE_ALG_LENGTH)
+            bos, sct.signature.signatureAlgorithm.number.toLong(), CTConstants.SIGNATURE_ALG_LENGTH
+        )
         writeVariableLength(
-            bos, sct.signature.signature, CTConstants.MAX_SIGNATURE_LENGTH)
+            bos, sct.signature.signature, CTConstants.MAX_SIGNATURE_LENGTH
+        )
 
         return bos.toByteArray()
     }

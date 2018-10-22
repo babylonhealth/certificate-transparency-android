@@ -1,5 +1,6 @@
 package org.certificatetransparency.ctlog.internal.serialization
 
+import org.certificatetransparency.ctlog.exceptions.SerializationException
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.logclient.model.DigitallySigned
 import org.certificatetransparency.ctlog.logclient.model.LogEntry
@@ -14,11 +15,14 @@ import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimest
 import org.certificatetransparency.ctlog.logclient.model.SignedEntry
 import org.certificatetransparency.ctlog.logclient.model.TimestampedEntry
 import org.certificatetransparency.ctlog.logclient.model.Version
-import org.certificatetransparency.ctlog.exceptions.SerializationException
 import java.io.IOException
 import java.io.InputStream
+import kotlin.math.ceil
+import kotlin.math.log2
 
 /** Converting binary data to CT structures.  */
+//
+@Suppress("TooManyFunctions")
 internal object Deserializer {
     private const val TIMESTAMPED_ENTRY_LEAF_TYPE = 0
 
@@ -29,18 +33,17 @@ internal object Deserializer {
      * @return Built SignedCertificateTimestamp
      * @throws SerializationException if the data stream is too short.
      */
-    @JvmStatic
     fun parseSctFromBinary(inputStream: InputStream): SignedCertificateTimestamp {
-        val version = Version.forNumber(readNumber(inputStream, 1 /* single byte */).toInt())
+        val version = Version.forNumber(inputStream.readNumber(1 /* single byte */).toInt())
         if (version != Version.V1) {
             throw SerializationException("Unknown version: $version")
         }
 
-        val keyId = readFixedLength(inputStream, CTConstants.KEY_ID_LENGTH)
+        val keyId = inputStream.readFixedLength(CTConstants.KEY_ID_LENGTH)
 
-        val timestamp = readNumber(inputStream, CTConstants.TIMESTAMP_LENGTH)
+        val timestamp = inputStream.readNumber(CTConstants.TIMESTAMP_LENGTH)
 
-        val extensions = readVariableLength(inputStream, CTConstants.MAX_EXTENSIONS_LENGTH)
+        val extensions = inputStream.readVariableLength(CTConstants.MAX_EXTENSIONS_LENGTH)
 
         val signature = parseDigitallySignedFromBinary(inputStream)
 
@@ -60,17 +63,16 @@ internal object Deserializer {
      * @return Built DigitallySigned
      * @throws SerializationException if the data stream is too short.
      */
-    @JvmStatic
     fun parseDigitallySignedFromBinary(inputStream: InputStream): DigitallySigned {
-        val hashAlgorithmByte = readNumber(inputStream, 1 /* single byte */).toInt()
+        val hashAlgorithmByte = inputStream.readNumber(1 /* single byte */).toInt()
         val hashAlgorithm = DigitallySigned.HashAlgorithm.forNumber(hashAlgorithmByte)
             ?: throw SerializationException("Unknown hash algorithm: ${hashAlgorithmByte.toString(16)}")
 
-        val signatureAlgorithmByte = readNumber(inputStream, 1 /* single byte */).toInt()
+        val signatureAlgorithmByte = inputStream.readNumber(1 /* single byte */).toInt()
         val signatureAlgorithm = DigitallySigned.SignatureAlgorithm.forNumber(signatureAlgorithmByte)
             ?: throw SerializationException("Unknown signature algorithm: ${signatureAlgorithmByte.toString(16)}")
 
-        val signature = readVariableLength(inputStream, CTConstants.MAX_SIGNATURE_LENGTH)
+        val signature = inputStream.readVariableLength(CTConstants.MAX_SIGNATURE_LENGTH)
 
         return DigitallySigned(
             hashAlgorithm = hashAlgorithm,
@@ -89,7 +91,6 @@ internal object Deserializer {
      * @param treeSize The tree size of the tree for which the proof is desired.
      * @return [ParsedLogEntryWithProof]
      */
-    @JvmStatic
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         return ParsedLogEntryWithProof(entry, parseAuditProof(proof, leafIndex, treeSize))
     }
@@ -103,7 +104,6 @@ internal object Deserializer {
      * @param treeSize The tree size of the tree for which the proof is desired.
      * @return [MerkleAuditProof]
      */
-    @JvmStatic
     fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long) =
         MerkleAuditProof(Version.V1, treeSize, leafIndex, proof.map(Base64::decode))
 
@@ -114,7 +114,6 @@ internal object Deserializer {
      * @param extraData extra data, byte stream of binary encoding.
      * @return [ParsedLogEntry]
      */
-    @JvmStatic
     fun parseLogEntry(merkleTreeLeaf: InputStream, extraData: InputStream): ParsedLogEntry {
         val treeLeaf = parseMerkleTreeLeaf(merkleTreeLeaf)
 
@@ -138,12 +137,12 @@ internal object Deserializer {
      * @throws SerializationException if the data stream is too short.
      */
     private fun parseMerkleTreeLeaf(inputStream: InputStream): MerkleTreeLeaf {
-        val version = readNumber(inputStream, CTConstants.VERSION_LENGTH).toInt()
+        val version = inputStream.readNumber(CTConstants.VERSION_LENGTH).toInt()
         if (version != Version.V1.number) {
             throw SerializationException("Unknown version: $version")
         }
 
-        val leafType = readNumber(inputStream, 1).toInt()
+        val leafType = inputStream.readNumber(1).toInt()
         if (leafType != TIMESTAMPED_ENTRY_LEAF_TYPE) {
             throw SerializationException("Unknown entry type: $leafType")
         }
@@ -159,33 +158,36 @@ internal object Deserializer {
      * @throws SerializationException if the data stream is too short.
      */
     private fun parseTimestampedEntry(inputStream: InputStream): TimestampedEntry {
-        val timestamp = readNumber(inputStream, CTConstants.TIMESTAMP_LENGTH)
+        val timestamp = inputStream.readNumber(CTConstants.TIMESTAMP_LENGTH)
 
-        val entryType = readNumber(inputStream, CTConstants.LOG_ENTRY_TYPE_LENGTH).toInt()
+        val entryType = inputStream.readNumber(CTConstants.LOG_ENTRY_TYPE_LENGTH).toInt()
         val logEntryType = LogEntryType.forNumber(entryType)
 
         val signedEntry = when (logEntryType) {
             LogEntryType.X509_ENTRY -> {
-                val length = readNumber(inputStream, 3).toInt()
-                SignedEntry.X509(readFixedLength(inputStream, length))
+                val length = inputStream.readNumber(3).toInt()
+                SignedEntry.X509(inputStream.readFixedLength(length))
             }
             LogEntryType.PRE_CERTIFICATE_ENTRY -> {
-                val issuerKeyHash = readFixedLength(inputStream, 32)
+                val issuerKeyHash = inputStream.readFixedLength(32)
 
-                val length = readNumber(inputStream, 2).toInt()
-                val tbsCertificate = readFixedLength(inputStream, length)
+                val length = inputStream.readNumber(2).toInt()
+                val tbsCertificate = inputStream.readFixedLength(length)
 
                 SignedEntry.PreCertificate(
                     PreCertificate(
                         issuerKeyHash = issuerKeyHash,
-                        tbsCertificate = tbsCertificate))
+                        tbsCertificate = tbsCertificate
+                    )
+                )
             }
             else -> throw SerializationException("Unknown entry type: $entryType")
         }
 
         return TimestampedEntry(
             timestamp = timestamp,
-            signedEntry = signedEntry)
+            signedEntry = signedEntry
+        )
     }
 
     /**
@@ -200,12 +202,12 @@ internal object Deserializer {
         val certificateChain = mutableListOf<ByteArray>()
 
         try {
-            if (readNumber(inputStream, 3) != inputStream.available().toLong()) {
+            if (inputStream.readNumber(3) != inputStream.available().toLong()) {
                 throw SerializationException("Extra data corrupted.")
             }
             while (inputStream.available() > 0) {
-                val length = readNumber(inputStream, 3).toInt()
-                certificateChain.add(readFixedLength(inputStream, length))
+                val length = inputStream.readNumber(3).toInt()
+                certificateChain.add(inputStream.readFixedLength(length))
             }
         } catch (e: IOException) {
             throw SerializationException("Cannot parse xChainEntry. ${e.localizedMessage}")
@@ -228,12 +230,12 @@ internal object Deserializer {
         val preCertificateChain = mutableListOf<ByteArray>()
 
         try {
-            if (readNumber(inputStream, 3) != inputStream.available().toLong()) {
+            if (inputStream.readNumber(3) != inputStream.available().toLong()) {
                 throw SerializationException("Extra data corrupted.")
             }
             while (inputStream.available() > 0) {
-                val length = readNumber(inputStream, 3).toInt()
-                preCertificateChain.add(readFixedLength(inputStream, length))
+                val length = inputStream.readNumber(3).toInt()
+                preCertificateChain.add(inputStream.readFixedLength(length))
             }
         } catch (e: IOException) {
             throw SerializationException("Cannot parse PrecertEntryChain.${e.localizedMessage}")
@@ -246,89 +248,12 @@ internal object Deserializer {
     }
 
     /**
-     * Reads a variable-length byte array with a maximum length. The length is read (based on the
-     * number of bytes needed to represent the max data length) then the byte array itself.
-     *
-     * @param inputStream byte stream of binary encoding.
-     * @param maxDataLength Maximal data length.
-     * @return read byte array.
-     * @throws SerializationException if the data stream is too short.
-     */
-    private fun readVariableLength(inputStream: InputStream, maxDataLength: Int): ByteArray {
-        val bytesForDataLength = bytesForDataLength(maxDataLength)
-        val dataLength = readNumber(inputStream, bytesForDataLength)
-
-        val rawData = ByteArray(dataLength.toInt())
-        val bytesRead: Int
-        try {
-            bytesRead = inputStream.read(rawData)
-        } catch (e: IOException) {
-            //Note: A finer-grained exception type should be thrown if the client
-            // ever cares to handle transient I/O errors.
-            throw SerializationException("Error while reading variable-length data", e)
-        }
-
-        if (bytesRead.toLong() != dataLength) {
-            throw SerializationException("Incomplete data. Expected $dataLength bytes, had $bytesRead.")
-        }
-
-        return rawData
-    }
-
-    /**
-     * Reads a fixed-length byte array.
-     *
-     * @param inputStream byte stream of binary encoding.
-     * @param dataLength exact data length.
-     * @return read byte array.
-     * @throws SerializationException if the data stream is too short.
-     */
-    private fun readFixedLength(inputStream: InputStream, dataLength: Int): ByteArray {
-        val toReturn = ByteArray(dataLength)
-        try {
-            val bytesRead = inputStream.read(toReturn)
-            if (bytesRead < dataLength) {
-                throw SerializationException("Not enough bytes: Expected $dataLength, got $bytesRead.")
-            }
-            return toReturn
-        } catch (e: IOException) {
-            throw SerializationException("Error while reading fixed-length buffer", e)
-        }
-    }
-
-    /**
      * Calculates the number of bytes needed to hold the given number: ceil(log2(maxDataLength)) / 8
      *
      * @param maxDataLength the number that needs to be represented as bytes
      * @return Number of bytes needed to represent the given number
      */
-    @JvmStatic
     fun bytesForDataLength(maxDataLength: Int): Int {
-        return (Math.ceil(Math.log(maxDataLength.toDouble()) / Math.log(2.0)) / 8).toInt()
-    }
-
-    /**
-     * Read a number of numBytes bytes (Assuming MSB first).
-     *
-     * @param inputStream byte stream of binary encoding.
-     * @param numBytes exact number of bytes representing this number.
-     * @return a number of at most 2^numBytes
-     */
-    private fun readNumber(inputStream: InputStream, numBytes: Int): Long {
-        require(numBytes <= 8) { "Could not read a number of more than 8 bytes." }
-
-        var toReturn: Long = 0
-        try {
-            for (i in 0 until numBytes) {
-                val valRead = inputStream.read()
-                if (valRead < 0) {
-                    throw SerializationException("Missing length bytes: Expected $numBytes, got $i.")
-                }
-                toReturn = toReturn shl 8 or valRead.toLong()
-            }
-            return toReturn
-        } catch (e: IOException) {
-            throw SerializationException("IO Error when reading number", e)
-        }
+        return (ceil(log2(maxDataLength.toDouble())) / 8).toInt()
     }
 }
