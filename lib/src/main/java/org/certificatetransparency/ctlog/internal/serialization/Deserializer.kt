@@ -66,11 +66,11 @@ internal object Deserializer {
     fun parseDigitallySignedFromBinary(inputStream: InputStream): DigitallySigned {
         val hashAlgorithmByte = inputStream.readNumber(1 /* single byte */).toInt()
         val hashAlgorithm = DigitallySigned.HashAlgorithm.forNumber(hashAlgorithmByte)
-            ?: throw SerializationException("Unknown hash algorithm: ${hashAlgorithmByte.toString(16)}")
+            ?: throw SerializationException("Unknown hash algorithm: ${hashAlgorithmByte.toString(HEX_RADIX)}")
 
         val signatureAlgorithmByte = inputStream.readNumber(1 /* single byte */).toInt()
         val signatureAlgorithm = DigitallySigned.SignatureAlgorithm.forNumber(signatureAlgorithmByte)
-            ?: throw SerializationException("Unknown signature algorithm: ${signatureAlgorithmByte.toString(16)}")
+            ?: throw SerializationException("Unknown signature algorithm: ${signatureAlgorithmByte.toString(HEX_RADIX)}")
 
         val signature = inputStream.readVariableLength(CTConstants.MAX_SIGNATURE_LENGTH)
 
@@ -165,11 +165,11 @@ internal object Deserializer {
 
         val signedEntry = when (logEntryType) {
             LogEntryType.X509_ENTRY -> {
-                val length = inputStream.readNumber(3).toInt()
+                val length = inputStream.readNumber(THREE_BYTES).toInt()
                 SignedEntry.X509(inputStream.readFixedLength(length))
             }
             LogEntryType.PRE_CERTIFICATE_ENTRY -> {
-                val issuerKeyHash = inputStream.readFixedLength(32)
+                val issuerKeyHash = inputStream.readFixedLength(THIRTY_TWO_BYTES)
 
                 val length = inputStream.readNumber(2).toInt()
                 val tbsCertificate = inputStream.readFixedLength(length)
@@ -202,11 +202,11 @@ internal object Deserializer {
         val certificateChain = mutableListOf<ByteArray>()
 
         try {
-            if (inputStream.readNumber(3) != inputStream.available().toLong()) {
+            if (inputStream.readNumber(THREE_BYTES) != inputStream.available().toLong()) {
                 throw SerializationException("Extra data corrupted.")
             }
             while (inputStream.available() > 0) {
-                val length = inputStream.readNumber(3).toInt()
+                val length = inputStream.readNumber(THREE_BYTES).toInt()
                 certificateChain.add(inputStream.readFixedLength(length))
             }
         } catch (e: IOException) {
@@ -230,11 +230,11 @@ internal object Deserializer {
         val preCertificateChain = mutableListOf<ByteArray>()
 
         try {
-            if (inputStream.readNumber(3) != inputStream.available().toLong()) {
+            if (inputStream.readNumber(THREE_BYTES) != inputStream.available().toLong()) {
                 throw SerializationException("Extra data corrupted.")
             }
             while (inputStream.available() > 0) {
-                val length = inputStream.readNumber(3).toInt()
+                val length = inputStream.readNumber(THREE_BYTES).toInt()
                 preCertificateChain.add(inputStream.readFixedLength(length))
             }
         } catch (e: IOException) {
@@ -254,6 +254,11 @@ internal object Deserializer {
      * @return Number of bytes needed to represent the given number
      */
     fun bytesForDataLength(maxDataLength: Int): Int {
-        return (ceil(log2(maxDataLength.toDouble())) / 8).toInt()
+        return (ceil(log2(maxDataLength.toDouble())) / BITS_IN_BYTE).toInt()
     }
+
+    private const val HEX_RADIX = 16
+    private const val THREE_BYTES = 3
+    private const val THIRTY_TWO_BYTES = 32
+    private const val BITS_IN_BYTE = 8
 }
