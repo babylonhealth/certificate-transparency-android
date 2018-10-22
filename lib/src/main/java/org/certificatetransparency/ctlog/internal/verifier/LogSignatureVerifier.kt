@@ -80,8 +80,10 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
      */
     override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): Boolean {
         if (!logInfo.isSameLogId(sct.id.keyId)) {
-            throw CertificateTransparencyException("Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this " +
-                "log's ID (${Base64.toBase64String(logInfo.id)}).")
+            throw CertificateTransparencyException(
+                "Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this " +
+                        "log's ID (${Base64.toBase64String(logInfo.id)})."
+            )
         }
 
         val leafCert = chain[0] as X509Certificate
@@ -97,6 +99,8 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
             // If signed by the real issuing CA
             issuerCert.issuerInformation()
         } else {
+            // Must have at least 3 certificates when a pre-certificate is involved
+            @Suppress("MagicNumber")
             require(chain.size >= 3) { "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer." }
             issuerCert.issuerInformationFromPreCertificate(chain[2])
         }
@@ -133,7 +137,8 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
     internal fun verifySCTOverPreCertificate(
         sct: SignedCertificateTimestamp,
         certificate: X509Certificate,
-        issuerInfo: IssuerInformation): Boolean {
+        issuerInfo: IssuerInformation
+    ): Boolean {
         requireNotNull(issuerInfo) { "At the very least, the issuer key hash is needed." }
 
         val preCertificateTBS = createTbsForVerification(certificate, issuerInfo)
@@ -142,11 +147,13 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
             return verifySctSignatureOverBytes(sct, toVerify)
         } catch (e: IOException) {
             throw CertificateTransparencyException(
-                "TBSCertificate part could not be encoded: ${e.message}", e)
+                "TBSCertificate part could not be encoded: ${e.message}", e
+            )
         }
     }
 
     private fun createTbsForVerification(preCertificate: X509Certificate, issuerInformation: IssuerInformation): TBSCertificate = try {
+        @Suppress("MagicNumber")
         require(preCertificate.version >= 3)
         // We have to use bouncycastle's certificate parsing code because Java's X509 certificate
         // parsing discards the order of the extensions. The signature from SCT we're verifying
@@ -163,7 +170,8 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
 
             val orderedExtensions = getExtensionsWithoutPoisonAndSCT(
                 parsedPreCertificate.tbsCertificate.extensions,
-                issuerInformation.x509authorityKeyIdentifier)
+                issuerInformation.x509authorityKeyIdentifier
+            )
 
             return V3TBSCertificateGenerator().apply {
                 val tbsPart = parsedPreCertificate.tbsCertificate
@@ -256,7 +264,8 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
     }
 
     private fun serializeSignedSctDataForPreCertificate(
-        preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp?): ByteArray {
+        preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp?
+    ): ByteArray {
         val bos = ByteArrayOutputStream()
         serializeCommonSctFields(sct!!, bos)
         Serializer.writeUint(bos, PRECERT_ENTRY, LOG_ENTRY_TYPE_LENGTH)

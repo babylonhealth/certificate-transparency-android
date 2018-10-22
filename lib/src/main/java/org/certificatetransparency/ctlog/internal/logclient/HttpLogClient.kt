@@ -86,6 +86,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
 
         val isPreCertificate = certificatesChain[0].isPreCertificate()
         if (isPreCertificate && certificatesChain[1].isPreCertificateSigningCert()) {
+            // Must have a chain of at least 3 certificates when pre-certificates are involved
+            @Suppress("MagicNumber")
             require(certificatesChain.size >= 3) {
                 "When signing a PreCertificate with a PreCertificate Signing Cert, the issuer certificate must follow."
             }

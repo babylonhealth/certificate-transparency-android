@@ -4,6 +4,9 @@ import org.certificatetransparency.ctlog.exceptions.SerializationException
 import java.io.IOException
 import java.io.InputStream
 
+private const val MAX_NUMBER_BYTE_LENGTH = 8
+private const val BITS_IN_BYTE = 8
+
 /**
  * Read a number of numBytes bytes (Assuming MSB first).
  *
@@ -12,7 +15,7 @@ import java.io.InputStream
  * @return a number of at most 2^numBytes
  */
 internal fun InputStream.readNumber(numBytes: Int): Long {
-    require(numBytes <= 8) { "Could not read a number of more than 8 bytes." }
+    require(numBytes <= MAX_NUMBER_BYTE_LENGTH) { "Could not read a number of more than 8 bytes." }
 
     var toReturn: Long = 0
     try {
@@ -21,7 +24,7 @@ internal fun InputStream.readNumber(numBytes: Int): Long {
             if (valRead < 0) {
                 throw SerializationException("Missing length bytes: Expected $numBytes, got $i.")
             }
-            toReturn = toReturn shl 8 or valRead.toLong()
+            toReturn = toReturn shl BITS_IN_BYTE or valRead.toLong()
         }
         return toReturn
     } catch (e: IOException) {

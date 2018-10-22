@@ -23,6 +23,8 @@ import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.logclient.model.Version
 
+private const val MERKLE_HASH_TREE_BYTE_LENGTH = 32
+
 /**
  * @property treeSize The size of the tree, in entries, in decimal.
  * @property timestamp The timestamp, in decimal.
@@ -58,7 +60,7 @@ internal data class GetSthResponse(
             throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree is invalid.")
         }
 
-        if (sha256RootHash.size != 32) {
+        if (sha256RootHash.size != MERKLE_HASH_TREE_BYTE_LENGTH) {
             throw CertificateTransparencyException(
                 "Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. The size of the root hash is ${sha256RootHash.size}"
             )

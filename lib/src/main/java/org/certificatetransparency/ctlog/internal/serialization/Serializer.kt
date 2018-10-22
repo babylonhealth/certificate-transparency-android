@@ -10,6 +10,9 @@ import kotlin.math.pow
 
 /** Serializes common structure to binary format.  */
 internal object Serializer {
+
+    private const val BITS_IN_BYTE = 8
+
     /**
      * Write a numeric value of numBytes bytes, MSB first.
      *
@@ -20,12 +23,14 @@ internal object Serializer {
     @JvmStatic
     fun writeUint(outputStream: OutputStream, value: Long, numBytes: Int) {
         require(value >= 0)
+        @Suppress("MagicNumber")
         require(value < 256.0.pow(numBytes.toDouble())) { "Value $value cannot be stored in $numBytes bytes" }
         var numBytesRemaining = numBytes
         try {
             while (numBytesRemaining > 0) {
                 // MSB first.
-                val shiftBy = (numBytesRemaining - 1) * 8
+                val shiftBy = (numBytesRemaining - 1) * BITS_IN_BYTE
+                @Suppress("MagicNumber")
                 val mask = 0xff.toLong() shl shiftBy
                 outputStream.write((value and mask shr shiftBy).toByte().toInt())
                 numBytesRemaining--
