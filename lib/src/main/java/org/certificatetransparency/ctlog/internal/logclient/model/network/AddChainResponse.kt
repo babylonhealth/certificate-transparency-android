@@ -17,6 +17,11 @@
 package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.internal.serialization.Deserializer
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.logclient.model.LogId
+import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.logclient.model.Version
 
 /**
  * If the "sctVersion" is not v1, then a v1 client may be unable to verify the signature. It MUST NOT construe this as an error. (Note: Log
@@ -38,4 +43,20 @@ internal data class AddChainResponse(
     @SerializedName("timestamp") val timestamp: Long,
     @SerializedName("extensions") val extensions: String,
     @SerializedName("signature") val signature: String
-)
+) {
+
+    /**
+     * Parses the CT Log's json response into a SignedCertificateTimestamp.
+     *
+     * @return SCT filled from the JSON input.
+     */
+    fun toSignedCertificateTimestamp(): SignedCertificateTimestamp {
+        return SignedCertificateTimestamp(
+            version = Version.forNumber(sctVersion),
+            id = LogId(Base64.decode(id)),
+            timestamp = timestamp,
+            extensions = if (extensions.isNotEmpty()) Base64.decode(extensions) else ByteArray(0),
+            signature = Deserializer.parseDigitallySignedFromBinary(Base64.decode(signature).inputStream())
+        )
+    }
+}

@@ -18,29 +18,20 @@
 
 package org.certificatetransparency.ctlog.internal.logclient
 
-import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedTreeHead
 import org.certificatetransparency.ctlog.internal.logclient.model.network.AddChainRequest
-import org.certificatetransparency.ctlog.internal.logclient.model.network.AddChainResponse
-import org.certificatetransparency.ctlog.internal.logclient.model.network.GetEntriesResponse
-import org.certificatetransparency.ctlog.internal.logclient.model.network.GetRootsResponse
-import org.certificatetransparency.ctlog.internal.logclient.model.network.GetSthConsistencyResponse
-import org.certificatetransparency.ctlog.internal.logclient.model.network.GetSthResponse
+import org.certificatetransparency.ctlog.internal.serialization.Deserializer
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.internal.utils.isPreCertificate
+import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningCert
 import org.certificatetransparency.ctlog.logclient.LogClient
-import org.certificatetransparency.ctlog.logclient.model.LogId
 import org.certificatetransparency.ctlog.logclient.model.MerkleAuditProof
 import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntry
 import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntryWithProof
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.logclient.model.Version
-import org.certificatetransparency.ctlog.internal.utils.isPreCertificate
-import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningCert
-import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
-import java.security.cert.CertificateException
-import java.security.cert.CertificateFactory
 
 /** A CT HTTP client. Abstracts away the json encoding necessary for the server.
  *
@@ -151,7 +142,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
 
         val logEntry = Deserializer.parseLogEntry(
             Base64.decode(response.leafInput).inputStream(),
-            Base64.decode(response.extraData).inputStream())
+            Base64.decode(response.extraData).inputStream()
+        )
 
         return Deserializer.parseLogEntryWithProof(logEntry, response.auditPath, leafIndex, treeSize)
     }
@@ -181,106 +173,5 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
         require(encodedMerkleLeafHash.isNotEmpty())
         val response = ctService.getProofByHash(treeSize, encodedMerkleLeafHash).execute()?.body()!!
         return Deserializer.parseAuditProof(response.auditPath, response.leafIndex, treeSize)
-    }
-
-    /**
-     * Parses CT log's response for "get-entries" into a list of [ParsedLogEntry] objects.
-     *
-     * @return list of Log's entries.
-     */
-    private fun GetEntriesResponse.toParsedLogEntries(): List<ParsedLogEntry> {
-        requireNotNull(this) { "Log entries response from Log should not be null." }
-
-        return entries.map {
-            val leafInput = try {
-                Base64.decode(it.leafInput)
-            } catch (e: Exception) {
-                throw CertificateTransparencyException("Bad response. The leafInput is invalid.")
-            }
-
-            val extraData = try {
-                Base64.decode(it.extraData)
-            } catch (e: Exception) {
-                throw CertificateTransparencyException("Bad response. The extraData is invalid.")
-            }
-
-            Deserializer.parseLogEntry(leafInput.inputStream(), extraData.inputStream())
-        }
-    }
-
-    /**
-     * Parses CT log's response for the "get-sth-consistency" request.
-     *
-     * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
-     */
-    private fun GetSthConsistencyResponse.toMerkleTreeNodes(): List<ByteArray> {
-        requireNotNull(this) { "Merkle Consistency response should not be null." }
-
-        return consistency.map { Base64.decode(it) }
-    }
-
-    /**
-     * Parses CT log's response for "get-sth" into a signed tree head object.
-     *
-     * @return A SignedTreeHead object.
-     */
-    private fun GetSthResponse.toSignedTreeHead(): SignedTreeHead {
-        requireNotNull(this) { "Sign Tree Head response from a CT log should not be null" }
-
-        val treeSize = treeSize
-        val timestamp = timestamp
-        if (treeSize < 0 || timestamp < 0) {
-            throw CertificateTransparencyException("Bad response. Size of tree or timestamp cannot be a negative value. Log Tree size: " +
-                "$treeSize Timestamp: $timestamp")
-        }
-        val base64Signature = treeHeadSignature
-        val sha256RootHash = try {
-            Base64.decode(sha256RootHash)
-        } catch (e: Exception) {
-            throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree is invalid.")
-        }
-
-        if (sha256RootHash.size != 32) {
-            throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. The size of the " +
-                "root hash is ${sha256RootHash.size}")
-        }
-
-        return SignedTreeHead(
-            version = Version.V1,
-            treeSize = treeSize,
-            timestamp = timestamp,
-            sha256RootHash = sha256RootHash,
-            signature = Deserializer.parseDigitallySignedFromBinary(Base64.decode(base64Signature).inputStream())
-        )
-    }
-
-    /**
-     * Parses the response from "get-roots" GET method.
-     *
-     * @return a list of root certificates.
-     */
-    private fun GetRootsResponse.toRootCertificates(): List<Certificate> {
-        return certificates.map {
-            try {
-                CertificateFactory.getInstance("X509").generateCertificate(Base64.decode(it).inputStream())
-            } catch (e: CertificateException) {
-                throw CertificateTransparencyException("Malformed data from a CT log have been received: ${e.localizedMessage}", e)
-            }
-        }
-    }
-
-    /**
-     * Parses the CT Log's json response into a SignedCertificateTimestamp.
-     *
-     * @return SCT filled from the JSON input.
-     */
-    private fun AddChainResponse.toSignedCertificateTimestamp(): SignedCertificateTimestamp {
-        return SignedCertificateTimestamp(
-            version = Version.forNumber(sctVersion),
-            id = LogId(Base64.decode(id)),
-            timestamp = timestamp,
-            extensions = if (extensions.isNotEmpty()) Base64.decode(extensions) else ByteArray(0),
-            signature = Deserializer.parseDigitallySignedFromBinary(Base64.decode(signature).inputStream())
-        )
     }
 }

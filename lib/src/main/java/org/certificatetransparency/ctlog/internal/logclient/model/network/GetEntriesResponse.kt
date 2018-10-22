@@ -17,7 +17,11 @@
 package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.logclient.model.network.GetEntriesResponse.Entry
+import org.certificatetransparency.ctlog.internal.serialization.Deserializer
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntry
 
 /**
  * Note that this message is not signed -- the retrieved data can be verified by constructing the Merkle Tree Hash corresponding to a
@@ -40,4 +44,29 @@ internal data class GetEntriesResponse(
         @SerializedName("leaf_input") val leafInput: String,
         @SerializedName("extra_data") val extraData: String
     )
+
+    /**
+     * Parses CT log's response for "get-entries" into a list of [ParsedLogEntry] objects.
+     *
+     * @return list of Log's entries.
+     */
+    fun toParsedLogEntries(): List<ParsedLogEntry> {
+        requireNotNull(this) { "Log entries response from Log should not be null." }
+
+        return entries.map {
+            val leafInput = try {
+                Base64.decode(it.leafInput)
+            } catch (e: Exception) {
+                throw CertificateTransparencyException("Bad response. The leafInput is invalid.")
+            }
+
+            val extraData = try {
+                Base64.decode(it.extraData)
+            } catch (e: Exception) {
+                throw CertificateTransparencyException("Bad response. The extraData is invalid.")
+            }
+
+            Deserializer.parseLogEntry(leafInput.inputStream(), extraData.inputStream())
+        }
+    }
 }

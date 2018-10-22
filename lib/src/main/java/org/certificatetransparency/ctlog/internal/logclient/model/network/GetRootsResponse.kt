@@ -17,10 +17,31 @@
 package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import java.security.cert.Certificate
+import java.security.cert.CertificateException
+import java.security.cert.CertificateFactory
 
 /**
  * @property certificates An array of base64-encoded root certificates that are acceptable to the log.
  */
 internal data class GetRootsResponse(
     @SerializedName("certificates") val certificates: List<String>
-)
+) {
+
+    /**
+     * Parses the response from "get-roots" GET method.
+     *
+     * @return a list of root certificates.
+     */
+    fun toRootCertificates(): List<Certificate> {
+        return certificates.map {
+            try {
+                CertificateFactory.getInstance("X509").generateCertificate(Base64.decode(it).inputStream())
+            } catch (e: CertificateException) {
+                throw CertificateTransparencyException("Malformed data from a CT log have been received: ${e.localizedMessage}", e)
+            }
+        }
+    }
+}

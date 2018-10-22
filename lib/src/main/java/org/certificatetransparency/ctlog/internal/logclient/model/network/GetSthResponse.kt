@@ -17,6 +17,11 @@
 package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedTreeHead
+import org.certificatetransparency.ctlog.internal.serialization.Deserializer
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.logclient.model.Version
 
 /**
  * @property treeSize The size of the tree, in entries, in decimal.
@@ -29,4 +34,42 @@ internal data class GetSthResponse(
     @SerializedName("timestamp") val timestamp: Long,
     @SerializedName("sha256_root_hash") val sha256RootHash: String,
     @SerializedName("tree_head_signature") val treeHeadSignature: String
-)
+) {
+
+    /**
+     * Parses CT log's response for "get-sth" into a signed tree head object.
+     *
+     * @return A SignedTreeHead object.
+     */
+    fun toSignedTreeHead(): SignedTreeHead {
+        requireNotNull(this) { "Sign Tree Head response from a CT log should not be null" }
+
+        val treeSize = treeSize
+        val timestamp = timestamp
+        if (treeSize < 0 || timestamp < 0) {
+            throw CertificateTransparencyException(
+                "Bad response. Size of tree or timestamp cannot be a negative value. Log Tree size: $treeSize Timestamp: $timestamp"
+            )
+        }
+        val base64Signature = treeHeadSignature
+        val sha256RootHash = try {
+            Base64.decode(sha256RootHash)
+        } catch (e: Exception) {
+            throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree is invalid.")
+        }
+
+        if (sha256RootHash.size != 32) {
+            throw CertificateTransparencyException(
+                "Bad response. The root hash of the Merkle Hash Tree must be 32 bytes. The size of the root hash is ${sha256RootHash.size}"
+            )
+        }
+
+        return SignedTreeHead(
+            version = Version.V1,
+            treeSize = treeSize,
+            timestamp = timestamp,
+            sha256RootHash = sha256RootHash,
+            signature = Deserializer.parseDigitallySignedFromBinary(Base64.decode(base64Signature).inputStream())
+        )
+    }
+}

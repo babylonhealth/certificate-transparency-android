@@ -17,6 +17,7 @@
 package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.internal.utils.Base64
 
 /**
  * Note that no signature is required on this data, as it is used to verify an STH, which is signed.
@@ -25,4 +26,17 @@ import com.google.gson.annotations.SerializedName
  */
 internal data class GetSthConsistencyResponse(
     @SerializedName("consistency") val consistency: List<String>
-)
+) {
+
+    /**
+     * Parses CT log's response for the "get-sth-consistency" request.
+     *
+     * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
+     */
+    fun toMerkleTreeNodes(): List<ByteArray> {
+        requireNotNull(this) { "Merkle Consistency response should not be null." }
+
+        return consistency.map { Base64.decode(it) }
+    }
+
+}
