@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.internal.loglist.model_v2_beta
+package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
+
+import com.google.gson.annotations.SerializedName
 
 /**
- * @property operators CT log operators. People/organizations that run Certificate Transparency logs.
+ * @property startInclusive All certificates must expire on this date or later. (format: date-time)
+ * @property endExclusive All certificates must expire before this date. (format: date-time)
  */
-data class LogListV2Beta(
-    val operators: Map<String, Operator>
+data class TemporalInterval(
+    @SerializedName("start_inclusive") val startInclusive: String,
+    @SerializedName("end_exclusive") val endExclusive: String
 )

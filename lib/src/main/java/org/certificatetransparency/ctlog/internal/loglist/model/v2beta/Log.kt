@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.internal.loglist.model_v2_beta
+package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
 import com.google.gson.annotations.SerializedName
 
 /**
- * @property description Further details about the CT log. Any additional information that the log list distributor wishes to provide about the log.
- * @property key The public key of the CT log. The log's public key as a DER-encoded ASN.1 SubjectPublicKeyInfo structure, then encoded as base64 (https://tools.ietf.org/html/rfc5280#section-4.1.2.7).
- * @property logId The SHA-256 hash of the CT log's public key, base64-encoded. This is the LogID found in SCTs issued by this log (https://tools.ietf.org/html/rfc6962#section-3.2).
- * @property maximumMergeDelay The Maximum Merge Delay, in seconds. The CT log should not take longer than this to incorporate a certificate (https://tools.ietf.org/html/rfc6962#section-3).
- * @property url The base URL of the CT log's HTTP API. The API endpoints are defined in https://tools.ietf.org/html/rfc6962#section-4. (format: uri)
- * @property dns The domain name of the CT log's DNS API. The API endpoints are defined in https://github.com/google/certificate-transparency-rfcs/blob/master/dns/draft-ct-over-dns.md. (format: hostname)
- * @property temporalInterval The log will only accept certificates that expire (have a NotAfter date) between these dates.
+ * @property description Further details about the CT log. Any additional information that the log
+ * list distributor wishes to provide about the log.
+ * @property key The public key of the CT log. The log's public key as a DER-encoded ASN.1
+ * SubjectPublicKeyInfo structure, then encoded as base64
+ * (https://tools.ietf.org/html/rfc5280#section-4.1.2.7).
+ * @property logId The SHA-256 hash of the CT log's public key, base64-encoded. This is the LogID
+ * found in SCTs issued by this log (https://tools.ietf.org/html/rfc6962#section-3.2).
+ * @property maximumMergeDelay The Maximum Merge Delay, in seconds. The CT log should not take
+ * longer than this to incorporate a certificate (https://tools.ietf.org/html/rfc6962#section-3).
+ * @property url The base URL of the CT log's HTTP API. The API endpoints are defined in
+ * https://tools.ietf.org/html/rfc6962#section-4. (format: uri)
+ * @property dns The domain name of the CT log's DNS API. The API endpoints are defined in
+ * https://github.com/google/certificate-transparency-rfcs/blob/master/dns/draft-ct-over-dns.md.
+ * @property temporalInterval The log will only accept certificates that expire (have a NotAfter
+ * date) between these dates.
  * @property logType The purpose of this log, e.g. test.
  * @property state The state of the log from the log list distributor's perspective.
  */
@@ -42,6 +50,7 @@ data class Log(
 ) {
     init {
         require(description == null || description.isNotEmpty())
+        @Suppress("MagicNumber")
         require(logId.length == 44)
         require(maximumMergeDelay >= 1)
     }

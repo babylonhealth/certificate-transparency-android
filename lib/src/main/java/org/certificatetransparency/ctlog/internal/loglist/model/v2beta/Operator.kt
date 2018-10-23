@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.internal.loglist.model_v2_beta
+package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
-import com.google.gson.annotations.SerializedName
-
-data class FinalTreeHead(
-    @SerializedName("tree_size") val treeSize: Int,
-    @SerializedName("sha256_root_hash") val sha256RootHash: String
+/**
+ * @property email CT log operator email addresses. The log operator can be contacted using any of these email addresses. (format: email)
+ * @property logs Details of Certificate Transparency logs run by this operator.
+ */
+data class Operator(
+    val email: List<String>,
+    val logs: Map<String, Log>
 ) {
     init {
-        require(treeSize >= 0)
-        require(sha256RootHash.length == 44)
+        require(email.isNotEmpty())
+        require(logs.isNotEmpty())
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.internal.loglist.model_v2_beta
+package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
 import com.google.gson.GsonBuilder
 import org.certificatetransparency.ctlog.utils.TestData

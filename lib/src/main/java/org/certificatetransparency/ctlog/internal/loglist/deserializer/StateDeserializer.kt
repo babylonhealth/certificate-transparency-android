@@ -19,7 +19,7 @@ package org.certificatetransparency.ctlog.internal.loglist.deserializer
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import org.certificatetransparency.ctlog.internal.loglist.model_v2_beta.State
+import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.State
 import java.lang.reflect.Type
 
 class StateDeserializer : JsonDeserializer<State> {
