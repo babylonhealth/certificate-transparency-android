@@ -16,8 +16,9 @@
 
 package org.certificatetransparency.ctlog.internal.verifier
 
-import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLException
@@ -39,7 +40,7 @@ internal class CertificateTransparencyHostnameVerifier(
         try {
             return verifyCertificateTransparency(host, sslSession.peerCertificates.toList())
         } catch (e: SSLException) {
-            throw RuntimeException(e)
+            throw CertificateTransparencyException("Unable to verify certificate transparency", e)
         }
     }
 }

@@ -179,11 +179,7 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
                 // Version 3 is implied by the generator.
                 setSerialNumber(tbsPart.serialNumber)
                 setSignature(tbsPart.signature)
-                if (issuerInformation.name != null) {
-                    setIssuer(issuerInformation.name)
-                } else {
-                    setIssuer(tbsPart.issuer)
-                }
+                setIssuer(issuerInformation.name ?: tbsPart.issuer)
                 setStartDate(tbsPart.startDate)
                 setEndDate(tbsPart.endDate)
                 setSubject(tbsPart.subject)
@@ -231,10 +227,10 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         }
 
         try {
-            val signature = Signature.getInstance(sigAlg)
-            signature.initVerify(logInfo.key)
-            signature.update(toVerify)
-            return signature.verify(sct.signature.signature)
+            return Signature.getInstance(sigAlg).apply {
+                initVerify(logInfo.key)
+                update(toVerify)
+            }.verify(sct.signature.signature)
         } catch (e: SignatureException) {
             throw CertificateTransparencyException("Signature object not properly initialized or signature from SCT is improperly encoded.", e)
         } catch (e: InvalidKeyException) {

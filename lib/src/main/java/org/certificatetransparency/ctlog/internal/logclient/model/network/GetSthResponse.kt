@@ -44,8 +44,6 @@ internal data class GetSthResponse(
      * @return A SignedTreeHead object.
      */
     fun toSignedTreeHead(): SignedTreeHead {
-        requireNotNull(this) { "Sign Tree Head response from a CT log should not be null" }
-
         val treeSize = treeSize
         val timestamp = timestamp
         if (treeSize < 0 || timestamp < 0) {
@@ -56,7 +54,7 @@ internal data class GetSthResponse(
         val base64Signature = treeHeadSignature
         val sha256RootHash = try {
             Base64.decode(sha256RootHash)
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             throw CertificateTransparencyException("Bad response. The root hash of the Merkle Hash Tree is invalid.")
         }
 

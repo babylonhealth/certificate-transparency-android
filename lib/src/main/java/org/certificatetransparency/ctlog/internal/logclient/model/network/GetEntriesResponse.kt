@@ -51,18 +51,16 @@ internal data class GetEntriesResponse(
      * @return list of Log's entries.
      */
     fun toParsedLogEntries(): List<ParsedLogEntry> {
-        requireNotNull(this) { "Log entries response from Log should not be null." }
-
         return entries.map {
             val leafInput = try {
                 Base64.decode(it.leafInput)
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 throw CertificateTransparencyException("Bad response. The leafInput is invalid.")
             }
 
             val extraData = try {
                 Base64.decode(it.extraData)
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 throw CertificateTransparencyException("Bad response. The extraData is invalid.")
             }
 

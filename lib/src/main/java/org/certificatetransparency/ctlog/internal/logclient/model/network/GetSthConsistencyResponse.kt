@@ -34,8 +34,6 @@ internal data class GetSthConsistencyResponse(
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
     fun toMerkleTreeNodes(): List<ByteArray> {
-        requireNotNull(this) { "Merkle Consistency response should not be null." }
-
         return consistency.map { Base64.decode(it) }
     }
 

@@ -19,12 +19,12 @@ package org.certificatetransparency.ctlog.internal.loglist
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
-import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
-import org.certificatetransparency.ctlog.internal.loglist.model.LogList
-import org.certificatetransparency.ctlog.internal.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.internal.loglist.model.LogList
+import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
+import org.certificatetransparency.ctlog.internal.verifier.LogSignatureVerifier
+import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.loglist.LogServer
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -51,7 +51,8 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
            4VusfX6BRR/qaadB+bqEArF/TzuDUr6FvOR4o8lUUxgLuZ/7HO+bHnaPFKYHHSm+
            +z1lVDhhYuSZ8ax3T0C3FZpb7HMjZtpEorSV5ElKJEJwrhrBCMOD8L01EoSPrGlS
            1w22i9uGHMn/uGQKo28u7AsCAwEAAQ==
-           -----END PUBLIC KEY-----""")
+           -----END PUBLIC KEY-----"""
+    )
 
     override suspend fun get(): List<LogServer>? {
         try {
@@ -65,7 +66,7 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
                 val logList = GsonBuilder().setLenient().create().fromJson(logListJson, LogList::class.java)
                 return buildLogSignatureVerifiers(logList)
             }
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             println("Exception loading log-list.json from network. ${e.message}")
         }
 
@@ -77,12 +78,11 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
     private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): Boolean {
         return try {
             // signature is not thread-safe
-            val sig = Signature.getInstance("SHA256WithRSA")
-            sig.initVerify(publicKey)
-            sig.update(message.toByteArray())
-
-            sig.verify(signature)
-        } catch (e: Exception) {
+            Signature.getInstance("SHA256WithRSA").apply {
+                initVerify(publicKey)
+                update(message.toByteArray())
+            }.verify(signature)
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             println("Exception loading signature")
             false
         }
