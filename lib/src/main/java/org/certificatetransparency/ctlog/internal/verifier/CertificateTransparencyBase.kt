@@ -30,7 +30,6 @@ import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
-import java.security.cert.X509Certificate
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
@@ -58,13 +57,13 @@ internal open class CertificateTransparencyBase(
             return true
         }
 
-        if (certificates.isEmpty()) {
+        return if (certificates.isEmpty()) {
             v("  No certificates to check against")
-            return false
+            false
+        } else {
+            val cleanedCerts = cleaner.clean(certificates, host)
+            hasValidSignedCertificateTimestamp(cleanedCerts)
         }
-
-        val cleanedCerts = cleaner.clean(certificates, host)
-        return hasValidSignedCertificateTimestamp(cleanedCerts)
     }
 
     /**
@@ -85,12 +84,7 @@ internal open class CertificateTransparencyBase(
             return false
         }
 
-        if (certificates[0] !is X509Certificate) {
-            v("  This test only supports SCTs carried in X509 certificates, of which there are none.")
-            return false
-        }
-
-        val leafCertificate = certificates[0] as X509Certificate
+        val leafCertificate = certificates[0]
 
         if (!leafCertificate.hasEmbeddedSct()) {
             v("  This certificate does not have any Signed Certificate Timestamps in it.")

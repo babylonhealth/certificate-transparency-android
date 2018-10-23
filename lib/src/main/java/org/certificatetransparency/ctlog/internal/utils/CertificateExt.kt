@@ -6,22 +6,29 @@ import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.exceptions.UnsupportedCryptoPrimitiveException
-import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformation
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.POISON_EXTENSION_OID
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.PRECERTIFICATE_SIGNING_OID
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.SCT_CERTIFICATE_OID
+import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformation
 import java.io.IOException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateParsingException
 import java.security.cert.X509Certificate
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /** Helper class for finding out all kinds of information about a certificate.  */
 
+private const val X509_AUTHORITY_KEY_IDENTIFIER = "2.5.29.35"
+
+@UseExperimental(ExperimentalContracts::class)
 internal fun Certificate.isPreCertificateSigningCert(): Boolean {
+    contract {
+        returns(true) implies (this@isPreCertificateSigningCert is X509Certificate)
+    }
     try {
         return this is X509Certificate && extendedKeyUsage?.contains(PRECERTIFICATE_SIGNING_OID) == true
     } catch (e: CertificateParsingException) {
@@ -29,11 +36,19 @@ internal fun Certificate.isPreCertificateSigningCert(): Boolean {
     }
 }
 
+@UseExperimental(ExperimentalContracts::class)
 internal fun Certificate.isPreCertificate(): Boolean {
+    contract {
+        returns(true) implies (this@isPreCertificate is X509Certificate)
+    }
     return this is X509Certificate && criticalExtensionOIDs?.contains(POISON_EXTENSION_OID) == true
 }
 
+@UseExperimental(ExperimentalContracts::class)
 internal fun Certificate.hasEmbeddedSct(): Boolean {
+    contract {
+        returns(true) implies (this@hasEmbeddedSct is X509Certificate)
+    }
     return this is X509Certificate && nonCriticalExtensionOIDs?.contains(SCT_CERTIFICATE_OID) == true
 }
 
@@ -61,8 +76,6 @@ internal fun Certificate.issuerInformationFromPreCertificate(preCertificate: Cer
         throw CertificateTransparencyException("Error during ASN.1 parsing of certificate: ${e.message}", e)
     }
 }
-
-private const val X509_AUTHORITY_KEY_IDENTIFIER = "2.5.29.35"
 
 private fun Certificate.keyHash(): ByteArray {
     try {

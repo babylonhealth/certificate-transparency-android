@@ -86,7 +86,7 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
             )
         }
 
-        val leafCert = chain[0] as X509Certificate
+        val leafCert = chain[0]
         if (!leafCert.isPreCertificate() && !leafCert.hasEmbeddedSct()) {
             // When verifying final cert without embedded SCTs, we don't need the issuer but can verify directly
             val toVerify = serializeSignedSctData(leafCert, sct)

@@ -22,3 +22,10 @@ dependencies {
 
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.0'
 }
+
+compileKotlin {
+    kotlinOptions {
+        allWarningsAsErrors = true
+        freeCompilerArgs = ["-Xuse-experimental=kotlin.Experimental"]
+    }
+}
