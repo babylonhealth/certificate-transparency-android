@@ -1,0 +1,111 @@
+{
+  "$schema": "https://www.gstatic.com/ct/log_list/v2_beta/log_list_schema.json",
+  "operators": {
+    "Google": {
+      "email": [
+        "google-ct-logs@google.com"
+      ],
+      "logs": {
+        "google_xenon2018": {
+          "description": ["Google 'Xenon2018' log", "Chromium inclusion bug: https://crbug.com/833350"],
+          "log_id": "sQzVWabWeEaBH335pRUyc5rEjXA76gMj2l04dVvArU4=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1syJvwQdrv0a8dM2VAnK/SmHJNw/+FxC+CncFcnXMX2jNH9Xs7Q56FiV3taG5G2CokMsizhpcm7xXzuR3IHmag==",
+          "mmd": 86400,
+          "url": "https://ct.googleapis.com/logs/xenon2018/",
+          "temporal_interval": {
+            "start_inclusive": "2018-01-01T00:00:00Z",
+            "end_exclusive": "2019-01-01T00:00:00Z"
+          },
+          "state": {
+            "pending": {
+              "timestamp": "2018-04-16T10:04:55Z"
+            }
+          }
+        },
+        "google_aviator": {
+          "description": ["Google 'Aviator' log", "Chromium inclusion bug: https://crbug.com/389514"],
+          "log_id": "aPaY+B9kgr46jO65KB1M/HFRXWeT1ETRCmesu09P+8Q=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1/TMabLkDpCjiupacAlP7xNi0I1JYP8bQFAHDG1xhtolSY1l4QgNRzRrvSe8liE+NPWHdjGxfx3JhTsN9x8/6Q==",
+          "mmd": 86400,
+          "url": "https://ct.googleapis.com/aviator/",
+          "dns": "aviator.ct.googleapis.com",
+          "state": {
+            "frozen": {
+              "timestamp": "2016-11-29T13:09:00Z",
+              "final_tree_head": {
+                "tree_size": 46466472,
+                "sha256_root_hash": "LcGcZRsm+LGYmrlyC5LXhV1T6OD8iH5dNlb0sEJl9bA="
+              }
+            }
+          }
+        },
+        "google_argon2017": {
+          "description": ["Google 'Argon2017' log", "Chromium inclusion bug: https://crbug.com/756813"],
+          "log_id": "+tTJfMSe4vishcXqXOoJ0CINu/TknGtQZi/4aPhrjCg=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVG18id3qnfC6X/RtYHo3TwIlvxz2b4WurxXfaW7t26maKZfymXYe5jNGHif0vnDdWde6z/7Qco6wVw+dN4liow==",
+          "mmd": 86400,
+          "url": "https://ct.googleapis.com/logs/argon2017/",
+          "temporal_interval": {
+            "start_inclusive": "2017-01-01T00:00:00Z",
+            "end_exclusive": "2018-01-01T00:00:00Z"
+          },
+          "state": {
+            "rejected": {
+              "timestamp": "2018-02-27T00:00:00Z"
+            }
+          }
+        }
+      }
+    },
+    "Cloudflare": {
+      "email": [
+        "ct-logs@cloudflare.com",
+        "brendan@cloudflare.com",
+        "nick@cloudflare.com",
+        "pat@cloudflare.com",
+        "zi@cloudflare.com",
+        "ivan@cloudflare.com"
+      ],
+      "logs": {
+        "cloudflare_nimbus2018": {
+          "description": ["Cloudflare 'Nimbus2018' Log", "Chromium inclusion bug: https://crbug.com/780654"],
+          "log_id": "23Sv7ssp7LH+yj5xbSzluaq7NveEcYPHXZ1PN7Yfv2Q=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEAsVpWvrH3Ke0VRaMg9ZQoQjb5g/xh1z3DDa6IuxY5DyPsk6brlvrUNXZzoIg0DcvFiAn2kd6xmu4Obk5XA/nRg==",
+          "mmd": 86400,
+          "url": "https://ct.cloudflare.com/logs/nimbus2018/",
+          "dns": "cloudflare-nimbus2018.ct.googleapis.com",
+          "temporal_interval": {
+            "start_inclusive": "2018-01-01T00:00:00Z",
+            "end_exclusive": "2019-01-01T00:00:00Z"
+          },
+          "log_type": "prod",
+          "state": {
+            "usable": {
+              "timestamp": "2018-08-12T17:42:42Z"
+            }
+          }
+        }
+      }
+    },
+    "Certly": {
+      "email": [
+        "ian@certly.io"
+      ],
+      "logs": {
+        "certly_io": {
+          "description": ["Certly.IO log", "Chromium inclusion bug: https://crbug.com/442173"],
+          "log_id": "zbUXm3/BwEb+6jETaj+PAC5hgvr4iW/syLL1tatgSQA=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECyPLhWKYYUgEc+tUXfPQB4wtGS2MNvXrjwFCCnyYJifBtd2Sk7Cu+Js9DNhMTh35FftHaHu6ZrclnNBKwmbbSA==",
+          "mmd": 86400,
+          "url": "https://log.certly.io/",
+          "dns": "certly.ct.googleapis.com",
+          "state": {
+            "retired": {
+              "timestamp": "2016-04-15T00:00:00Z"
+            }
+          }
+        }
+      }
+    }
+  }
+}
