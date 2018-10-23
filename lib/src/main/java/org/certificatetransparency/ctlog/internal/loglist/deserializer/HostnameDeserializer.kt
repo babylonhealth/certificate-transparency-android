@@ -19,25 +19,10 @@ package org.certificatetransparency.ctlog.internal.loglist.deserializer
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.State
+import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.Hostname
 import java.lang.reflect.Type
 
-class StateDeserializer : JsonDeserializer<State> {
+class HostnameDeserializer : JsonDeserializer<Hostname> {
 
-    override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): State {
-        // Schema specifies there is exactly 1 element
-        val (stateType, data) = jsonElement.asJsonObject.entrySet().first()
-
-        val stateClass = when (stateType) {
-            "pending" -> State.Pending::class
-            "qualified" -> State.Qualified::class
-            "usable" -> State.Usable::class
-            "frozen" -> State.Frozen::class
-            "retired" -> State.Retired::class
-            "rejected" -> State.Rejected::class
-            else -> throw IllegalStateException("Unknown state")
-        }
-
-        return context.deserialize(data, stateClass.java)
-    }
+    override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext) = Hostname(jsonElement.asString)
 }
