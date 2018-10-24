@@ -40,6 +40,7 @@ internal data class LogInfo(val key: PublicKey) {
 
     companion object {
 
+        // A CT log's Id is created by using this hash algorithm on the CT log public key
         private fun calculateLogId(logKey: PublicKey): ByteArray {
             try {
                 val sha256 = MessageDigest.getInstance("SHA-256")

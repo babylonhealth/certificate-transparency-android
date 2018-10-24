@@ -26,7 +26,6 @@ import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
 import org.certificatetransparency.ctlog.internal.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.loglist.LogServer
-import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
 import java.security.Signature
@@ -97,15 +96,12 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
      */
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
     private fun buildLogSignatureVerifiers(logList: LogList): List<LogServer> {
-        // A CT log's Id is created by using this hash algorithm on the CT log public key
-        val hasher = MessageDigest.getInstance("SHA-256")
-
         return logList.logs.map { Base64.decode(it.key) }.map {
-            hasher.reset()
-            val id = Base64.toBase64String(hasher.digest(it))
+            val logInfo = LogInfo(PublicKeyFactory.fromByteArray(it))
 
-            val publicKey = PublicKeyFactory.fromByteArray(it)
-            val verifier = LogSignatureVerifier(LogInfo(publicKey))
+            val id = Base64.toBase64String(logInfo.id)
+
+            val verifier = LogSignatureVerifier(logInfo)
 
             LogServer(id, verifier)
         }
