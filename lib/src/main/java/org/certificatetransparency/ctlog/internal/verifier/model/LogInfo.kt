@@ -38,17 +38,14 @@ internal data class LogInfo(val key: PublicKey) {
 
     fun isSameLogId(idToCheck: ByteArray): Boolean = id.contentEquals(idToCheck)
 
-    companion object {
-
-        // A CT log's Id is created by using this hash algorithm on the CT log public key
-        private fun calculateLogId(logKey: PublicKey): ByteArray {
-            try {
-                val sha256 = MessageDigest.getInstance("SHA-256")
-                sha256.update(logKey.encoded)
-                return sha256.digest()
-            } catch (e: NoSuchAlgorithmException) {
-                throw UnsupportedCryptoPrimitiveException("Missing SHA-256", e)
-            }
+    // A CT log's Id is created by using this hash algorithm on the CT log public key
+    private fun calculateLogId(logKey: PublicKey): ByteArray {
+        try {
+            val sha256 = MessageDigest.getInstance("SHA-256")
+            sha256.update(logKey.encoded)
+            return sha256.digest()
+        } catch (e: NoSuchAlgorithmException) {
+            throw UnsupportedCryptoPrimitiveException("Missing SHA-256", e)
         }
     }
 }
