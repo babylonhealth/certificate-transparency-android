@@ -17,6 +17,7 @@
 package org.certificatetransparency.ctlog.internal.loglist.model
 
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.Hostname
 
 /**
  * @property key Base64 encoded public key
@@ -30,5 +31,12 @@ internal data class Log(
     val url: String,
     @SerializedName("maximum_merge_delay") val maximumMergeDelay: Long,
     @SerializedName("operated_by") val operatedBy: List<Int>,
-    @SerializedName("dns_api_endpoint") val dnsApiEndpoint: String?
-)
+    @SerializedName("dns_api_endpoint") val dnsApiEndpoint: Hostname?,
+    @SerializedName("final_sth") val finalSignedTreeHead: FinalSignedTreeHead?,
+    @SerializedName("disqualified_at") val disqualifiedAt: Long?
+) {
+    init {
+        require(maximumMergeDelay > 0)
+        require(disqualifiedAt == null || disqualifiedAt > 0)
+    }
+}
