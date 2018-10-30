@@ -21,7 +21,7 @@ import okhttp3.Request
 import org.certificatetransparency.ctlog.certificateTransparencyInterceptor
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.junit.Test
-import java.net.SocketException
+import javax.net.ssl.SSLPeerUnverifiedException
 
 class CertificateTransparencyInterceptorIntegrationTest {
 
@@ -59,7 +59,7 @@ class CertificateTransparencyInterceptorIntegrationTest {
         client.newCall(request).execute()
     }
 
-    @Test(expected = SocketException::class)
+    @Test(expected = SSLPeerUnverifiedException::class)
     fun invalidDisallowedWithException() {
         val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 
@@ -72,14 +72,15 @@ class CertificateTransparencyInterceptorIntegrationTest {
 
     @Test
     fun invalidAllowedWhenSctNotChecked() {
-        val client = OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
-            +"*.babylonhealth.com"
+        val client =
+            OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
+                +"*.babylonhealth.com"
 
-            logListDataSource {
-                LogListDataSourceTestFactory.logListDataSource
-            }
+                logListDataSource {
+                    LogListDataSourceTestFactory.logListDataSource
+                }
 
-        }).build()
+            }).build()
 
         val request = Request.Builder()
             .url("https://invalid-expected-sct.badssl.com/")

@@ -22,6 +22,7 @@ import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.security.cert.X509Certificate
+import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyInterceptor(
@@ -31,12 +32,13 @@ internal class CertificateTransparencyInterceptor(
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-
         val host = chain.request()?.url()?.host()!!
-        val certs = chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate } ?: emptyList()
+        val certs =
+            chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate }
+                ?: emptyList()
 
         if (!verifyCertificateTransparency(host, certs)) {
-            chain.call().cancel()
+            throw SSLPeerUnverifiedException("Certificate transparency failed")
         }
 
         return chain.proceed(chain.request())
