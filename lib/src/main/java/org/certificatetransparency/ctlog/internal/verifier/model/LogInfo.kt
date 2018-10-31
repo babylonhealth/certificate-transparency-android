@@ -48,4 +48,6 @@ internal data class LogInfo(val key: PublicKey) {
             throw UnsupportedCryptoPrimitiveException("Missing SHA-256", e)
         }
     }
+
+    companion object
 }
