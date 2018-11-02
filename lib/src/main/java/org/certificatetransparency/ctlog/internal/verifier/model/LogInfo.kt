@@ -19,6 +19,9 @@
 package org.certificatetransparency.ctlog.internal.verifier.model
 
 import org.certificatetransparency.ctlog.exceptions.UnsupportedCryptoPrimitiveException
+import org.certificatetransparency.ctlog.internal.verifier.LogSignatureVerifier
+import org.certificatetransparency.ctlog.loglist.LogServer
+import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
@@ -30,20 +33,20 @@ import java.security.PublicKey
  * @constructor C'tor.
  * @property key Public key of the log.
  */
-internal data class LogInfo(val key: PublicKey) {
+internal data class LogInfo(val key: PublicKey, override val validUntil: Long? = null) : LogServer {
 
-    val id: ByteArray = calculateLogId(key)
-
-    val signatureAlgorithm: String = key.algorithm
+    override val id: ByteArray = calculateLogId(key)
 
     fun isSameLogId(idToCheck: ByteArray): Boolean = id.contentEquals(idToCheck)
+
+    override val signatureVerifier: SignatureVerifier by lazy {
+        LogSignatureVerifier(this)
+    }
 
     // A CT log's Id is created by using this hash algorithm on the CT log public key
     private fun calculateLogId(logKey: PublicKey): ByteArray {
         try {
-            val sha256 = MessageDigest.getInstance("SHA-256")
-            sha256.update(logKey.encoded)
-            return sha256.digest()
+            return MessageDigest.getInstance("SHA-256").digest(logKey.encoded)
         } catch (e: NoSuchAlgorithmException) {
             throw UnsupportedCryptoPrimitiveException("Missing SHA-256", e)
         }

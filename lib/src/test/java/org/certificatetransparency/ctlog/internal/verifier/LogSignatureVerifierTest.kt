@@ -18,6 +18,7 @@
 
 package org.certificatetransparency.ctlog.internal.verifier
 
+import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
@@ -51,66 +52,60 @@ import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_CERT_SIGNED_BY_
 import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
+import org.hamcrest.core.StringStartsWith
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.rules.ExpectedException
 import java.io.File
-import java.security.cert.Certificate
 import java.security.cert.X509Certificate
 
 /**
  * This test verifies that the data is correctly serialized for signature comparison, so signature
  * verification is actually effective.
  */
-@RunWith(JUnit4::class)
 class LogSignatureVerifierTest {
+
+    @get:Rule
+    var thrown: ExpectedException = ExpectedException.none()
+
     /** Returns a LogSignatureVerifier for the test log with an EC key  */
-    private val verifier: LogSignatureVerifier
-        get() {
-            val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
-            return LogSignatureVerifier(logInfo)
-        }
+    private val verifier by lazy {
+        val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
+        LogSignatureVerifier(logInfo)
+    }
 
     /** Returns a LogSignatureVerifier for the test log with an RSA key  */
-    private val verifierRSA: LogSignatureVerifier
-        get() {
-            val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_RSA))
-            return LogSignatureVerifier(logInfo)
-        }
+    private val verifierRSA by lazy {
+        val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_RSA))
+        LogSignatureVerifier(logInfo)
+    }
 
     /** Returns a Map of LogInfos with all log keys to verify the Github certificate  */
-    private val logInfosGitHub: Map<String, LogInfo>
-        get() {
-            val logInfos = mutableMapOf<String, LogInfo>()
-            var logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_PILOT))
-            var id = Base64.toBase64String(logInfo.id)
-            logInfos[id] = logInfo
-            logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_SKYDIVER))
-            id = Base64.toBase64String(logInfo.id)
-            logInfos[id] = logInfo
-            logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_DIGICERT))
-            id = Base64.toBase64String(logInfo.id)
-            logInfos[id] = logInfo
-            return logInfos
-        }
+    private val logInfosGitHub by lazy {
+        listOf(
+            LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_PILOT)),
+            LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_SKYDIVER)),
+            LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_DIGICERT))
+        ).associateBy { Base64.toBase64String(it.id) }
+    }
 
-    /** Tests for package-visible methods.  */
     @Test
     fun signatureVerifies() {
         val certs = loadCertificates(TEST_CERT)
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())
-        assertTrue(verifier.verifySignature(sct, certs[0]))
+        assertTrue(verifier.verifySignature(sct, certs))
     }
 
     @Test
     fun signatureVerifiesRSA() {
         val certs = loadCertificates(TEST_CERT)
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT_RSA).inputStream())
-        assertTrue(verifierRSA.verifySignature(sct, certs[0]))
+        assertTrue(verifierRSA.verifySignature(sct, certs))
     }
 
     @Test
@@ -128,10 +123,8 @@ class LogSignatureVerifierTest {
         val verifier = verifier
         assertTrue(
             "Expected signature to verify OK",
-            verifier.verifySCTOverPreCertificate(
-                sct,
-                preCertificate as X509Certificate,
-                signerCert.issuerInformation()))
+            verifier.verifySCTOverPreCertificate(sct, preCertificate as X509Certificate, signerCert.issuerInformation())
+        )
     }
 
     @Test
@@ -149,10 +142,8 @@ class LogSignatureVerifierTest {
         val verifier = verifierRSA
         assertTrue(
             "Expected signature to verify OK",
-            verifier.verifySCTOverPreCertificate(
-                sct,
-                preCertificate as X509Certificate,
-                signerCert.issuerInformation()))
+            verifier.verifySCTOverPreCertificate(sct, preCertificate as X509Certificate, signerCert.issuerInformation())
+        )
     }
 
     /** Tests for the public verifySignature method taking a chain of certificates.  */
@@ -170,10 +161,8 @@ class LogSignatureVerifierTest {
     fun signatureOnCertSignedByIntermediateVerifies() {
         // Flow:
         // test-intermediate-cert.pem -> intermediate-cert.pem -> ca-cert.pem
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_INTERMEDIATE_CERT))
-        certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
-        certsChain.addAll(loadCertificates(ROOT_CA_CERT))
+        val certsChain = listOf(TEST_INTERMEDIATE_CERT, INTERMEDIATE_CA_CERT, ROOT_CA_CERT).flatMap(::loadCertificates)
+
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_INTERMEDIATE_CERT_SCT).inputStream())
 
         assertTrue(verifier.verifySignature(sct, certsChain))
@@ -183,9 +172,7 @@ class LogSignatureVerifierTest {
     fun signatureOnPreCertificateCertsChainVerifies() {
         // Flow:
         // test-embedded-pre-cert.pem -> ca-cert.pem
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_PRE_CERT))
-        certsChain.addAll(loadCertificates(ROOT_CA_CERT))
+        val certsChain = listOf(TEST_PRE_CERT, ROOT_CA_CERT).flatMap(::loadCertificates)
 
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_SCT).inputStream())
 
@@ -196,10 +183,7 @@ class LogSignatureVerifierTest {
     fun signatureOnPreCertificateSignedByPreCertificateSigningCertVerifies() {
         // Flow:
         // test-embedded-with-preca-pre-cert.pem -> ca-pre-cert.pem -> ca-cert.pem
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT))
-        certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_CERT))
-        certsChain.addAll(loadCertificates(ROOT_CA_CERT))
+        val certsChain = listOf(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT, PRE_CERT_SIGNING_CERT, ROOT_CA_CERT).flatMap(::loadCertificates)
 
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_PRECA_SCT).inputStream())
 
@@ -210,15 +194,11 @@ class LogSignatureVerifierTest {
     fun signatureOnPreCertificateSignedByIntermediateVerifies() {
         // Flow:
         // test-embedded-with-intermediate-pre-cert.pem -> intermediate-cert.pem -> ca-cert.pem
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE))
-        certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
-        certsChain.addAll(loadCertificates(ROOT_CA_CERT))
+        val certsChain = listOf(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE, INTERMEDIATE_CA_CERT, ROOT_CA_CERT).flatMap(::loadCertificates)
 
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_SIGNED_BY_INTERMEDIATE_SCT).inputStream())
 
-        assertTrue(
-            "Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
+        assertTrue("Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
     }
 
     @Test
@@ -226,11 +206,8 @@ class LogSignatureVerifierTest {
         // Flow:
         // test-embedded-with-intermediate-preca-pre-cert.pem -> intermediate-pre-cert.pem
         //   -> intermediate-cert.pem -> ca-cert.pem
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE))
-        certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_BY_INTERMEDIATE))
-        certsChain.addAll(loadCertificates(INTERMEDIATE_CA_CERT))
-        certsChain.addAll(loadCertificates(ROOT_CA_CERT))
+        val certsChain = listOf(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE, PRE_CERT_SIGNING_BY_INTERMEDIATE, INTERMEDIATE_CA_CERT, ROOT_CA_CERT)
+            .flatMap(::loadCertificates)
 
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_SIGNED_BY_PRECA_INTERMEDIATE_SCT).inputStream())
 
@@ -239,9 +216,7 @@ class LogSignatureVerifierTest {
 
     @Test
     fun throwsWhenChainWithPreCertificateSignedByPreCertificateSigningCertMissingIssuer() {
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT))
-        certsChain.addAll(loadCertificates(PRE_CERT_SIGNING_CERT))
+        val certsChain = listOf(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT, PRE_CERT_SIGNING_CERT).flatMap(::loadCertificates)
 
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_PRECA_SCT).inputStream())
 
@@ -250,9 +225,7 @@ class LogSignatureVerifierTest {
             fail("Expected verifySignature to throw since the issuer certificate is missing.")
         } catch (expected: IllegalArgumentException) {
             assertNotNull("Exception should have message, but was: $expected", expected.message)
-            assertTrue(
-                "Expected exception to warn about missing issuer cert",
-                expected.message?.contains("must contain issuer") == true)
+            assertTrue("Expected exception to warn about missing issuer cert", expected.message?.contains("must contain issuer") == true)
         }
     }
 
@@ -261,30 +234,53 @@ class LogSignatureVerifierTest {
         // Flow:
         // github-chain.txt contains leaf certificate signed by issuing CA.
         // Leafcert contains three embedded SCTs, we verify them all
-        val certsChain = arrayListOf<Certificate>()
-        certsChain.addAll(loadCertificates(TEST_GITHUB_CHAIN))
+        val certsChain = loadCertificates(TEST_GITHUB_CHAIN)
 
         // the leaf cert is the first one in this test data
         val leafcert = certsChain[0] as X509Certificate
         val issuerCert = certsChain[1]
         assertTrue("The test certificate does have embedded SCTs", leafcert.hasEmbeddedSct())
+
         val scts = leafcert.signedCertificateTimestamps()
         assertEquals("Expected 3 SCTs in the test certificate", 3, scts.size.toLong())
-        val logInfos = logInfosGitHub
+
         for (sct in scts) {
             val id = Base64.toBase64String(sct.id.keyId)
-            val logInfo = logInfos[id]
-            println(id)
+            val logInfo = logInfosGitHub[id]
             val verifier = LogSignatureVerifier(logInfo!!)
 
-            assertTrue(
-                "Expected signature to verify OK",
-                verifier.verifySCTOverPreCertificate(
-                    sct,
-                    leafcert,
-                    issuerCert.issuerInformation()))
+            assertTrue("Expected signature to verify OK", verifier.verifySCTOverPreCertificate(sct, leafcert, issuerCert.issuerInformation()))
             assertTrue("Expected PreCertificate to verify OK", verifier.verifySignature(sct, certsChain))
         }
+    }
+
+    @Test
+    fun throwsWhenSctTimestampInFuture() {
+        // expect exception
+        thrown.expect(CertificateTransparencyException::class.java)
+        thrown.expectMessage(StringStartsWith("SCT timestamp is in the future"))
+
+        // given we have an SCT with a future timestamp
+        val certs = loadCertificates(TEST_CERT)
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())
+        val futureSct = sct.copy(timestamp = System.currentTimeMillis() + 10000)
+
+        // when the signature is verified
+        verifier.verifySignature(futureSct, certs)
+    }
+
+    @Test
+    fun signatureInvalidWhenLogServerNoLongerTrusted() {
+        // given we have an SCT
+        val certs = loadCertificates(TEST_CERT)
+        val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())
+
+        // when we have a log server which is no longer valid
+        val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
+        val verifier = LogSignatureVerifier(logInfo.copy(validUntil = sct.timestamp - 10000))
+
+        // then the signature is rejected
+        assertFalse(verifier.verifySignature(sct, certs))
     }
 
     /**

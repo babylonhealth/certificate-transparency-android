@@ -63,6 +63,7 @@ object TestData {
     const val TEST_GITHUB_CHAIN = DATA_ROOT + "github-chain.pem"
 
     const val TEST_LOG_LIST_JSON = DATA_ROOT + "loglist/log_list.json"
+    const val TEST_LOG_LIST_JSON_VALID_UNTIL = DATA_ROOT + "loglist/log_list_valid_until.json"
     const val TEST_LOG_LIST_JSON_INCOMPLETE = DATA_ROOT + "loglist/log_list_incomplete.json"
     const val TEST_LOG_LIST_SIG = DATA_ROOT + "loglist/log_list.sig"
 
@@ -82,7 +83,6 @@ object TestData {
     }
 
     fun fileName(name: String): String {
-        println(name)
         return TestData::class.java.getResource(name)!!.file
     }
 }

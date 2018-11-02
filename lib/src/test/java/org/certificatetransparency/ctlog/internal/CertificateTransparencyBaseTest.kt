@@ -18,15 +18,15 @@ package org.certificatetransparency.ctlog.internal
 
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
+import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.utils.Base64
+import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
+import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ATTACK_CHAIN
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ORIGINAL_CHAIN
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ROOT_CERT
-import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
-import org.certificatetransparency.ctlog.internal.serialization.CTConstants
-import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.certificatetransparency.ctlog.utils.TrustedSocketFactory
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -44,7 +44,8 @@ class CertificateTransparencyBaseTest {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
             trustManager = trustManager,
-            logListDataSource = LogListDataSourceTestFactory.logListDataSource)
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ATTACK_CHAIN)
 
@@ -58,7 +59,8 @@ class CertificateTransparencyBaseTest {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.random.com")),
             trustManager = trustManager,
-            logListDataSource = LogListDataSourceTestFactory.logListDataSource)
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ATTACK_CHAIN)
 
@@ -69,7 +71,8 @@ class CertificateTransparencyBaseTest {
     fun originalChainAllowedWhenHostNotChecked() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.random.com")),
-            logListDataSource = LogListDataSourceTestFactory.logListDataSource)
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
@@ -80,7 +83,8 @@ class CertificateTransparencyBaseTest {
     fun originalChainAllowedWhenHostChecked() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
-            logListDataSource = LogListDataSourceTestFactory.logListDataSource)
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
@@ -91,11 +95,12 @@ class CertificateTransparencyBaseTest {
     fun untrustedCertificateThrowsException() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
-            logListDataSource = LogListDataSourceTestFactory.logListDataSource)
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ATTACK_CHAIN)
 
-        println(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -107,7 +112,8 @@ class CertificateTransparencyBaseTest {
     fun originalChainDisallowedWhenEmptyLogs() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
-            logListDataSource = LogListDataSourceTestFactory.emptySource)
+            logListDataSource = LogListDataSourceTestFactory.emptySource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
@@ -118,7 +124,8 @@ class CertificateTransparencyBaseTest {
     fun originalChainDisallowedWhenNullLogs() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
-            logListDataSource = LogListDataSourceTestFactory.nullSource)
+            logListDataSource = LogListDataSourceTestFactory.nullSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
@@ -129,7 +136,8 @@ class CertificateTransparencyBaseTest {
     fun originalChainDisallowedWhenOnlyOneSct() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
-            logListDataSource = LogListDataSourceTestFactory.logListDataSource)
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
@@ -144,7 +152,8 @@ class CertificateTransparencyBaseTest {
     fun noCertificatesDisallowed() {
         val ctb = CertificateTransparencyBase(
             hosts = setOf(Host("*.babylonhealth.com")),
-            logListDataSource = LogListDataSourceTestFactory.nullSource)
+            logListDataSource = LogListDataSourceTestFactory.nullSource
+        )
 
         assertFalse(ctb.verifyCertificateTransparency("www.babylonhealth.com", emptyList()))
     }

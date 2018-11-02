@@ -8,11 +8,8 @@ import org.certificatetransparency.ctlog.logclient.model.Version
 import org.certificatetransparency.ctlog.utils.TestData
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 /** Test serialization.  */
-@RunWith(JUnit4::class)
 class SerializerTest {
 
     @Test

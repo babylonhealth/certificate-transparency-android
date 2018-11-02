@@ -64,25 +64,20 @@ import java.security.cert.X509Certificate
  */
 internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVerifier {
 
-    /**
-     * Verifies the CT Log's signature over the SCT and certificate. Works for the following cases:
-     *
-     *
-     *  * Ordinary X509 certificate sent to the log.
-     *  * PreCertificate signed by an ordinary CA certificate.
-     *  * PreCertificate signed by a PreCertificate Signing Cert. In this case the PreCertificate
-     * signing certificate must be 2nd on the chain, the CA cert itself 3rd.
-     *
-     *
-     * @param sct SignedCertificateTimestamp received from the log.
-     * @param chain The certificates chain as sent to the log.
-     * @return true if the log's signature over this SCT can be verified, false otherwise.
-     */
     override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): Boolean {
+
+        // If the timestamp is in the future then we have to reject it
+        if (sct.timestamp > System.currentTimeMillis()) {
+            throw CertificateTransparencyException("SCT timestamp is in the future")
+        }
+
+        if (logInfo.validUntil != null && sct.timestamp > logInfo.validUntil) {
+            return false
+        }
+
         if (!logInfo.isSameLogId(sct.id.keyId)) {
             throw CertificateTransparencyException(
-                "Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this " +
-                        "log's ID (${Base64.toBase64String(logInfo.id)})."
+                "Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this log's ID (${Base64.toBase64String(logInfo.id)})."
             )
         }
 
@@ -105,22 +100,6 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
             issuerCert.issuerInformationFromPreCertificate(chain[2])
         }
         return verifySCTOverPreCertificate(sct, leafCert, issuerInformation)
-    }
-
-    /**
-     * Verifies the CT Log's signature over the SCT and leaf certificate.
-     *
-     * @param sct SignedCertificateTimestamp received from the log.
-     * @param leafCert leaf certificate sent to the log.
-     * @return true if the log's signature over this SCT can be verified, false otherwise.
-     */
-    override fun verifySignature(sct: SignedCertificateTimestamp, leafCert: Certificate): Boolean {
-        if (!logInfo.isSameLogId(sct.id.keyId)) {
-            throw CertificateTransparencyException("Log ID of SCT (${sct.id.keyId}) does not match this log's ID.")
-        }
-        val toVerify = serializeSignedSctData(leafCert, sct)
-
-        return verifySctSignatureOverBytes(sct, toVerify)
     }
 
     /**
@@ -216,14 +195,14 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
                 outputExtensions.add(extensions.getExtension(extn))
             }
         }
-        return outputExtensions
+        return outputExtensions.toList()
     }
 
     private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): Boolean {
         val sigAlg = when {
-            logInfo.signatureAlgorithm == "EC" -> "SHA256withECDSA"
-            logInfo.signatureAlgorithm == "RSA" -> "SHA256withRSA"
-            else -> throw CertificateTransparencyException("Unsupported signature algorithm ${logInfo.signatureAlgorithm}")
+            logInfo.key.algorithm == "EC" -> "SHA256withECDSA"
+            logInfo.key.algorithm == "RSA" -> "SHA256withRSA"
+            else -> throw CertificateTransparencyException("Unsupported signature algorithm ${logInfo.key.algorithm}")
         }
 
         try {
@@ -244,9 +223,9 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         return tbsCertificate.extensions.getExtension(ASN1ObjectIdentifier(X509_AUTHORITY_KEY_IDENTIFIER)) != null
     }
 
-    private fun serializeSignedSctData(certificate: Certificate, sct: SignedCertificateTimestamp?): ByteArray {
+    private fun serializeSignedSctData(certificate: Certificate, sct: SignedCertificateTimestamp): ByteArray {
         val bos = ByteArrayOutputStream()
-        serializeCommonSctFields(sct!!, bos)
+        serializeCommonSctFields(sct, bos)
         Serializer.writeUint(bos, X509_ENTRY, LOG_ENTRY_TYPE_LENGTH)
         try {
             Serializer.writeVariableLength(bos, certificate.encoded, MAX_CERTIFICATE_LENGTH)
@@ -260,10 +239,10 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
     }
 
     private fun serializeSignedSctDataForPreCertificate(
-        preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp?
+        preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp
     ): ByteArray {
         val bos = ByteArrayOutputStream()
-        serializeCommonSctFields(sct!!, bos)
+        serializeCommonSctFields(sct, bos)
         Serializer.writeUint(bos, PRECERT_ENTRY, LOG_ENTRY_TYPE_LENGTH)
         Serializer.writeFixedBytes(bos, issuerKeyHash)
         Serializer.writeVariableLength(bos, preCertBytes, MAX_CERTIFICATE_LENGTH)

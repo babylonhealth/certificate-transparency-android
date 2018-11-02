@@ -21,7 +21,16 @@ import java.security.cert.Certificate
 
 interface SignatureVerifier {
 
+    /**
+     * Verifies the CT Log's signature over the SCT and certificate. Works for the following cases:
+     *   Ordinary X509 certificate sent to the log.
+     *   PreCertificate signed by an ordinary CA certificate.
+     *   PreCertificate signed by a PreCertificate Signing Cert. In this case the PreCertificate signing certificate must be 2nd on the chain,
+     *   the CA cert itself 3rd.
+     *
+     * @param sct SignedCertificateTimestamp received from the log.
+     * @param chain The certificates chain as sent to the log.
+     * @return true if the log's signature over this SCT can be verified, false otherwise.
+     */
     fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): Boolean
-
-    fun verifySignature(sct: SignedCertificateTimestamp, leafCert: Certificate): Boolean
 }

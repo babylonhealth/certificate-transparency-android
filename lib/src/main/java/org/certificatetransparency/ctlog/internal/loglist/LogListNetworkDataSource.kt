@@ -23,7 +23,6 @@ import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.model.LogList
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
-import org.certificatetransparency.ctlog.internal.verifier.LogSignatureVerifier
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.loglist.LogServer
 import java.security.NoSuchAlgorithmException
@@ -32,26 +31,12 @@ import java.security.Signature
 import java.security.spec.InvalidKeySpecException
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
-internal class LogListNetworkDataSource(private val logService: LogListService) : DataSource<List<LogServer>> {
+internal class LogListNetworkDataSource(
+    private val logService: LogListService,
+    private val publicKey: PublicKey = GoogleLogListPublicKey
+) : DataSource<List<LogServer>> {
 
     override val coroutineContext = GlobalScope.coroutineContext
-
-    private val publicKey = PublicKeyFactory.fromPemString(
-        """-----BEGIN PUBLIC KEY-----
-           MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAsu0BHGnQ++W2CTdyZyxv
-           HHRALOZPlnu/VMVgo2m+JZ8MNbAOH2cgXb8mvOj8flsX/qPMuKIaauO+PwROMjiq
-           fUpcFm80Kl7i97ZQyBDYKm3MkEYYpGN+skAR2OebX9G2DfDqFY8+jUpOOWtBNr3L
-           rmVcwx+FcFdMjGDlrZ5JRmoJ/SeGKiORkbbu9eY1Wd0uVhz/xI5bQb0OgII7hEj+
-           i/IPbJqOHgB8xQ5zWAJJ0DmG+FM6o7gk403v6W3S8qRYiR84c50KppGwe4YqSMkF
-           bLDleGQWLoaDSpEWtESisb4JiLaY4H+Kk0EyAhPSb+49JfUozYl+lf7iFN3qRq/S
-           IXXTh6z0S7Qa8EYDhKGCrpI03/+qprwy+my6fpWHi6aUIk4holUCmWvFxZDfixox
-           K0RlqbFDl2JXMBquwlQpm8u5wrsic1ksIv9z8x9zh4PJqNpCah0ciemI3YGRQqSe
-           /mRRXBiSn9YQBUPcaeqCYan+snGADFwHuXCd9xIAdFBolw9R9HTedHGUfVXPJDiF
-           4VusfX6BRR/qaadB+bqEArF/TzuDUr6FvOR4o8lUUxgLuZ/7HO+bHnaPFKYHHSm+
-           +z1lVDhhYuSZ8ax3T0C3FZpb7HMjZtpEorSV5ElKJEJwrhrBCMOD8L01EoSPrGlS
-           1w22i9uGHMn/uGQKo28u7AsCAwEAAQ==
-           -----END PUBLIC KEY-----"""
-    )
 
     override suspend fun get(): List<LogServer>? {
         try {
@@ -76,13 +61,13 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
 
     private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): Boolean {
         return try {
-            // signature is not thread-safe
             Signature.getInstance("SHA256WithRSA").apply {
                 initVerify(publicKey)
                 update(message.toByteArray())
             }.verify(signature)
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             println("Exception loading signature")
+            e.printStackTrace()
             false
         }
     }
@@ -96,14 +81,11 @@ internal class LogListNetworkDataSource(private val logService: LogListService) 
      */
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
     private fun buildLogSignatureVerifiers(logList: LogList): List<LogServer> {
-        return logList.logs.map { Base64.decode(it.key) }.map {
-            val logInfo = LogInfo(PublicKeyFactory.fromByteArray(it))
+        return logList.logs.map {
+            val key = Base64.decode(it.key)
+            val validUntil = it.disqualifiedAt ?: it.finalSignedTreeHead?.timestamp
 
-            val id = Base64.toBase64String(logInfo.id)
-
-            val verifier = LogSignatureVerifier(logInfo)
-
-            LogServer(id, verifier)
+            LogInfo(PublicKeyFactory.fromByteArray(key), validUntil)
         }
     }
 }

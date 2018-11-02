@@ -18,7 +18,12 @@ package org.certificatetransparency.ctlog.loglist
 
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 
-data class LogServer(
-    val logId: String,
-    val verifier: SignatureVerifier
-)
+/**
+ * @property validUntil Timestamp denoting when a log server is valid until, or null if it is valid
+ * for all time
+ */
+interface LogServer {
+    val id: ByteArray
+    val signatureVerifier: SignatureVerifier
+    val validUntil: Long?
+}

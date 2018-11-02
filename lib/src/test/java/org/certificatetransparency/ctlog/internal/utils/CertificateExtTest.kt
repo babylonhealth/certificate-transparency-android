@@ -8,11 +8,8 @@ import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 /** Make sure the correct info about certificates is provided.  */
-@RunWith(JUnit4::class)
 class CertificateExtTest {
     @Test
     fun correctlyIdentifiesPreCertificateSigningCert() {

@@ -115,7 +115,7 @@ object CertificateTransparencyFactory {
             forEach { addHosts(it) }
         }
 
-        fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(delegate, hosts, trustManager, logListDataSource)
+        fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(delegate, hosts.toSet(), trustManager, logListDataSource)
     }
 }
 
