@@ -16,13 +16,15 @@
 
 package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.internal.loglist.deserializer.Rfc3339Deserializer
 
 /**
  * @property startInclusive All certificates must expire on this date or later. (format: date-time)
  * @property endExclusive All certificates must expire before this date. (format: date-time)
  */
 data class TemporalInterval(
-    @SerializedName("start_inclusive") val startInclusive: String,
-    @SerializedName("end_exclusive") val endExclusive: String
+    @JsonAdapter(Rfc3339Deserializer::class) @SerializedName("start_inclusive") val startInclusive: Long,
+    @JsonAdapter(Rfc3339Deserializer::class) @SerializedName("end_exclusive") val endExclusive: Long
 )

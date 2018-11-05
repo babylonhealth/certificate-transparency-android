@@ -20,7 +20,8 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.internal.loglist.model.LogList
+import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.LogListV2Beta
+import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.State
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
@@ -31,7 +32,7 @@ import java.security.Signature
 import java.security.spec.InvalidKeySpecException
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
-internal class LogListNetworkDataSource(
+internal class LogListNetworkDataSourceV2(
     private val logService: LogListService,
     private val publicKey: PublicKey = GoogleLogListPublicKey
 ) : DataSource<List<LogServer>> {
@@ -47,7 +48,7 @@ internal class LogListNetworkDataSource(
             val signature = requireNotNull(signatureJob.await())
 
             if (verify(logListJson, signature, publicKey)) {
-                val logList = GsonBuilder().setLenient().create().fromJson(logListJson, LogList::class.java)
+                val logList = GsonBuilder().setLenient().create().fromJson(logListJson, LogListV2Beta::class.java)
                 return buildLogServerList(logList)
             }
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
@@ -67,6 +68,7 @@ internal class LogListNetworkDataSource(
             }.verify(signature)
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             println("Exception loading signature")
+            e.printStackTrace()
             false
         }
     }
@@ -79,12 +81,20 @@ internal class LogListNetworkDataSource(
      * or the key algorithm. This probably means you are using an ancient or bad crypto provider.
      */
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
-    private fun buildLogServerList(logList: LogList): List<LogServer> {
-        return logList.logs.map {
-            val key = Base64.decode(it.key)
-            val validUntil = it.disqualifiedAt ?: it.finalSignedTreeHead?.timestamp
+    private fun buildLogServerList(logList: LogListV2Beta): List<LogServer> {
+        return logList.operators
+            .flatMap { it.value.logs.values }
+            // null, PENDING, REJECTED -> An SCT associated with this log server would be treated as untrusted
+            .filterNot { it.state == null || it.state is State.Pending || it.state is State.Rejected }
+            .map {
+                val key = Base64.decode(it.key)
 
-            LogInfo(PublicKeyFactory.fromByteArray(key), validUntil)
-        }
+                // FROZEN, RETIRED -> Validate SCT against this if it was issued before the state timestamp, otherwise SCT is untrusted
+                // QUALIFIED, USABLE -> Validate SCT against this (any timestamp okay)
+                val validUntil = if (it.state is State.Retired || it.state is State.Frozen) it.state.timestamp else null
+
+                LogInfo(PublicKeyFactory.fromByteArray(key), validUntil)
+            }
     }
 }
+

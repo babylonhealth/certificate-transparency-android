@@ -50,5 +50,6 @@ class LogListV2BetaTest {
         val nimbusLog = logList.operators["Cloudflare"]!!.logs["cloudflare_nimbus2018"]!!
         assertEquals(LogType.PROD, nimbusLog.logType)
         assertEquals(86400, nimbusLog.maximumMergeDelay)
+        assertEquals(1534095762000, nimbusLog.state?.timestamp)
     }
 }

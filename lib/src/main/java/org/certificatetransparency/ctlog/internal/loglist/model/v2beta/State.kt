@@ -18,6 +18,7 @@ package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import org.certificatetransparency.ctlog.internal.loglist.deserializer.Rfc3339Deserializer
 import org.certificatetransparency.ctlog.internal.loglist.deserializer.StateDeserializer
 
 /**
@@ -25,23 +26,49 @@ import org.certificatetransparency.ctlog.internal.loglist.deserializer.StateDese
  */
 @JsonAdapter(StateDeserializer::class)
 sealed class State {
-    abstract val timestamp: String
-
-    data class Pending(override val timestamp: String) : State()
-
-    data class Qualified(override val timestamp: String) : State()
-
-    data class Usable(override val timestamp: String) : State()
+    abstract val timestamp: Long
 
     /**
+     * An SCT associated with this log server would be treated as untrusted
+     */
+    data class Pending(
+        @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long
+    ) : State()
+
+    /**
+     * Validate SCT against this (any timestamp okay)
+     */
+    data class Qualified(
+        @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long
+    ) : State()
+
+    /**
+     * Validate SCT against this (any timestamp okay)
+     */
+    data class Usable(
+        @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long
+    ) : State()
+
+    /**
+     * Validate SCT against this if it was issued before the timestamp, otherwise SCT is untrusted
      * @property finalTreeHead The tree head (tree size and root hash) at which the log was frozen.
      */
     data class Frozen(
-        override val timestamp: String,
+        @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long,
         @SerializedName("final_tree_head") val finalTreeHead: FinalTreeHead
     ) : State()
 
-    data class Retired(override val timestamp: String) : State()
+    /**
+     * Validate SCT against this if it was issued before the state timestamp, otherwise SCT is untrusted
+     */
+    data class Retired(
+        @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long
+    ) : State()
 
-    data class Rejected(override val timestamp: String) : State()
+    /**
+     * An SCT associated with this log server would be treated as untrusted
+     */
+    data class Rejected(
+        @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long
+    ) : State()
 }
