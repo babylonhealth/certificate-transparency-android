@@ -26,6 +26,7 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
+import org.certificatetransparency.ctlog.internal.verifier.model.Result
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.io.IOException
 import java.security.KeyStore
@@ -36,7 +37,8 @@ import javax.net.ssl.X509TrustManager
 internal open class CertificateTransparencyBase(
     private val hosts: Set<Host>,
     trustManager: X509TrustManager? = null,
-    logListDataSource: DataSource<Map<String, SignatureVerifier>>? = null
+    logListDataSource: DataSource<Map<String, SignatureVerifier>>? = null,
+    private val minimumValidSignedCertificateTimestamps: Int = 2
 ) {
     init {
         require(hosts.isNotEmpty()) { "Please provide at least one host to enable certificate transparency verification" }
@@ -52,14 +54,13 @@ internal open class CertificateTransparencyBase(
 
     private val logListDataSource = logListDataSource ?: LogListDataSourceFactory.create()
 
-    fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): Boolean {
+    fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): Result {
         if (!enabledForCertificateTransparency(host)) {
-            return true
+            return Result.Success.DisabledForHost(host)
         }
 
         return if (certificates.isEmpty()) {
-            v("  No certificates to check against")
-            false
+            Result.Failure.NoCertificates
         } else {
             val cleanedCerts = cleaner.clean(certificates, host)
             hasValidSignedCertificateTimestamp(cleanedCerts)
@@ -73,64 +74,41 @@ internal open class CertificateTransparencyBase(
      * @param certificates the certificate chain provided by the server
      * @return true if the certificates can be trusted, false otherwise.
      */
-    private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): Boolean {
+    private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): Result {
 
         val verifiers = runBlocking {
             logListDataSource.get()
-        }
-
-        if (verifiers == null) {
-            v("  No verifiers to check against")
-            return false
-        }
+        } ?: return Result.Failure.NoVerifiers
 
         val leafCertificate = certificates[0]
 
         if (!leafCertificate.hasEmbeddedSct()) {
-            v("  This certificate does not have any Signed Certificate Timestamps in it.")
-            return false
+            return Result.Failure.NoScts
         }
 
         try {
             val sctsInCertificate = leafCertificate.signedCertificateTimestamps()
-            if (sctsInCertificate.size < MIN_VALID_SCTS) {
-                v("  Too few SCTs are present, I want at least $MIN_VALID_SCTS CT logs to be nominated.")
-                return false
+            if (sctsInCertificate.size < minimumValidSignedCertificateTimestamps) {
+                return Result.Failure.TooFewSctsPresent(sctsInCertificate.size, minimumValidSignedCertificateTimestamps)
             }
 
-            val validSctCount = sctsInCertificate.asSequence().map { sct ->
+            val validScts = sctsInCertificate.map { sct ->
                 Pair(sct, Base64.toBase64String(sct.id.keyId))
             }.filter { (_, logId) ->
                 verifiers.containsKey(logId)
-            }.count { (sct, logId) ->
-                v("  SCT trusted log $logId")
+            }.filter { (sct, logId) ->
                 verifiers[logId]?.verifySignature(sct, certificates) == true
             }
 
-            if (validSctCount < MIN_VALID_SCTS) {
-                v("  Too few trusted SCTs are present, I want at least $MIN_VALID_SCTS trusted CT logs.")
+            if (validScts.size < minimumValidSignedCertificateTimestamps) {
+                return Result.Failure.TooFewSctsTrusted(validScts.size, minimumValidSignedCertificateTimestamps)
             }
-            return validSctCount >= MIN_VALID_SCTS
+
+            return Result.Success.Trusted(validScts.map { (_, logId) -> logId })
         } catch (e: IOException) {
-            if (VERBOSE) {
-                e.printStackTrace()
-            }
-            return false
+            return Result.Failure.UnknownIoException(e)
         }
     }
 
     private fun enabledForCertificateTransparency(host: String) = hosts.any { it.matches(host) }
-
-    private fun v(message: String) {
-        if (VERBOSE) {
-            println(message)
-        }
-    }
-
-    companion object {
-        /** I want at least two different CT logs to verify the certificate  */
-        private const val MIN_VALID_SCTS = 2
-
-        private const val VERBOSE = true
-    }
 }

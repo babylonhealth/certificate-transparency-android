@@ -20,6 +20,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
+import org.certificatetransparency.ctlog.internal.verifier.model.Result
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -38,7 +39,8 @@ internal class CertificateTransparencyInterceptor(
             chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate }
                 ?: emptyList()
 
-        if (!verifyCertificateTransparency(host, certs)) {
+        val result = verifyCertificateTransparency(host, certs)
+        if (result is Result.Failure) {
             if (failOnError) {
                 throw SSLPeerUnverifiedException("Certificate transparency failed")
             } else {
