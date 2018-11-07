@@ -26,9 +26,11 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.loglist.LogServer
+import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
 import java.security.Signature
+import java.security.SignatureException
 import java.security.spec.InvalidKeySpecException
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
@@ -66,9 +68,11 @@ internal class LogListNetworkDataSourceV2(
                 initVerify(publicKey)
                 update(message.toByteArray())
             }.verify(signature)
-        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-            println("Exception loading signature")
-            e.printStackTrace()
+        } catch (e: SignatureException) {
+            false
+        } catch (e: InvalidKeyException) {
+            false
+        } catch (e: NoSuchAlgorithmException) {
             false
         }
     }

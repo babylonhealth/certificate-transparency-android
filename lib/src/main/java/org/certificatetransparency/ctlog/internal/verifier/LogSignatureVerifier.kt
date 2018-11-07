@@ -26,7 +26,6 @@ import org.bouncycastle.asn1.x509.TBSCertificate
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator
 import org.bouncycastle.util.encoders.Base64
 import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
-import org.certificatetransparency.ctlog.exceptions.UnsupportedCryptoPrimitiveException
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.LOG_ENTRY_TYPE_LENGTH
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.MAX_CERTIFICATE_LENGTH
@@ -43,6 +42,7 @@ import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformati
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -64,21 +64,20 @@ import java.security.cert.X509Certificate
  */
 internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVerifier {
 
-    override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): Boolean {
+    override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult {
 
         // If the timestamp is in the future then we have to reject it
-        if (sct.timestamp > System.currentTimeMillis()) {
-            throw CertificateTransparencyException("SCT timestamp is in the future")
+        val now = System.currentTimeMillis()
+        if (sct.timestamp > now) {
+            return SctResult.Invalid.FutureTimestamp(sct.timestamp, now)
         }
 
         if (logInfo.validUntil != null && sct.timestamp > logInfo.validUntil) {
-            return false
+            return SctResult.Invalid.LogServerUntrusted(sct.timestamp, logInfo.validUntil)
         }
 
         if (!logInfo.isSameLogId(sct.id.keyId)) {
-            throw CertificateTransparencyException(
-                "Log ID of SCT (${Base64.toBase64String(sct.id.keyId)}) does not match this log's ID (${Base64.toBase64String(logInfo.id)})."
-            )
+            return LogIdMismatch(Base64.toBase64String(sct.id.keyId), Base64.toBase64String(logInfo.id))
         }
 
         val leafCert = chain[0]
@@ -117,9 +116,7 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         sct: SignedCertificateTimestamp,
         certificate: X509Certificate,
         issuerInfo: IssuerInformation
-    ): Boolean {
-        requireNotNull(issuerInfo) { "At the very least, the issuer key hash is needed." }
-
+    ): SctResult {
         val preCertificateTBS = createTbsForVerification(certificate, issuerInfo)
         try {
             val toVerify = serializeSignedSctDataForPreCertificate(preCertificateTBS.encoded, issuerInfo.keyHash, sct)
@@ -198,24 +195,26 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         return outputExtensions.toList()
     }
 
-    private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): Boolean {
+    private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): SctResult {
         val sigAlg = when {
             logInfo.key.algorithm == "EC" -> "SHA256withECDSA"
             logInfo.key.algorithm == "RSA" -> "SHA256withRSA"
-            else -> throw CertificateTransparencyException("Unsupported signature algorithm ${logInfo.key.algorithm}")
+            else -> return UnsupportedSignatureAlgorithm(logInfo.key.algorithm)
         }
 
-        try {
-            return Signature.getInstance(sigAlg).apply {
+        return try {
+            val result = Signature.getInstance(sigAlg).apply {
                 initVerify(logInfo.key)
                 update(toVerify)
             }.verify(sct.signature.signature)
+
+            if (result) SctResult.Valid else SctResult.Invalid.FailedVerification
         } catch (e: SignatureException) {
-            throw CertificateTransparencyException("Signature object not properly initialized or signature from SCT is improperly encoded.", e)
+            org.certificatetransparency.ctlog.internal.verifier.SignatureException(e)
         } catch (e: InvalidKeyException) {
-            throw CertificateTransparencyException("Log's public key cannot be used", e)
+            LogPublicKeyException(e)
         } catch (e: NoSuchAlgorithmException) {
-            throw UnsupportedCryptoPrimitiveException("$sigAlg not supported by this JVM", e)
+            UnsupportedSignatureAlgorithm(sigAlg, e)
         }
     }
 

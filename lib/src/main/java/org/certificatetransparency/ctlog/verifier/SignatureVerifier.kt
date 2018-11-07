@@ -32,5 +32,5 @@ interface SignatureVerifier {
      * @param chain The certificates chain as sent to the log.
      * @return true if the log's signature over this SCT can be verified, false otherwise.
      */
-    fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): Boolean
+    fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult
 }

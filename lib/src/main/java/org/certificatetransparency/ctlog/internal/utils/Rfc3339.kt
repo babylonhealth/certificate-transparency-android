@@ -24,7 +24,7 @@ import java.util.*
 private val GMT = TimeZone.getTimeZone("GMT")
 
 /** Regular expression for parsing RFC3339 date/times.  */
-private val RFC3339_PATTERN = Regex(
+private val Rfc3339Pattern = Regex(
     // yyyy-MM-dd
     "^(\\d{4})-(\\d{2})-(\\d{2})"
             // 'T'HH:mm:ss.milliseconds
@@ -46,11 +46,13 @@ private val RFC3339_PATTERN = Regex(
  *
  * @receiver Date/time string in RFC3339 format
  * @throws NumberFormatException if `str` doesn't match the RFC3339 standard format; an
- * exception is thrown if `str` doesn't match `RFC3339_REGEX` or if it contains a time zone shift but no time.
+ * exception is thrown if `str` doesn't match `Rfc3339Pattern` or if it contains a time zone shift but no time.
  */
+// Magic numbers accepted as very much linked to the pattern
+@Suppress("MagicNumber")
 @Throws(NumberFormatException::class)
 fun String.toRfc3339Long(): Long {
-    val results = RFC3339_PATTERN.matchEntire(this) ?: throw NumberFormatException("Invalid RFC3339 date/time format: $this")
+    val results = Rfc3339Pattern.matchEntire(this) ?: throw NumberFormatException("Invalid RFC3339 date/time format: $this")
 
     val year = results.groupValues[1].toInt() // yyyy
     val month = results.groupValues[2].toInt() - 1 // MM

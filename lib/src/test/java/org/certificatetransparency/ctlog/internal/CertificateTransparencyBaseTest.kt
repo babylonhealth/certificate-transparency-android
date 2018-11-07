@@ -23,14 +23,15 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.internal.verifier.model.Result
+import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ATTACK_CHAIN
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ORIGINAL_CHAIN
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ROOT_CERT
 import org.certificatetransparency.ctlog.utils.TrustedSocketFactory
+import org.certificatetransparency.ctlog.utils.assertIsA
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -92,8 +93,7 @@ class CertificateTransparencyBaseTest {
         val result = ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck)
 
         require(result is Result.Success.Trusted)
-        assertEquals(2, result.trustedLogIds.size)
-
+        assertEquals(2, result.scts.count { it is SctResult.Valid })
     }
 
     @Test(expected = SSLPeerUnverifiedException::class)
@@ -150,7 +150,7 @@ class CertificateTransparencyBaseTest {
 
         val filtered = listOf(certWithSingleSct, *certsToCheck.drop(1).toTypedArray())
 
-        assertIsA<Result.Failure.TooFewSctsPresent>(ctb.verifyCertificateTransparency("www.babylonhealth.com", filtered))
+        assertIsA<Result.Failure.TooFewSctsTrusted>(ctb.verifyCertificateTransparency("www.babylonhealth.com", filtered))
     }
 
     @Test
@@ -172,9 +172,5 @@ class CertificateTransparencyBaseTest {
         whenever(getExtensionValue(CTConstants.SCT_CERTIFICATE_OID)).thenAnswer {
             Base64.decode("BHwEegB4AHYAu9nfvB+KcbWTlCOXqpJ7RzhXlQqrUugakJZkNo4e0YUAAAFj7ztQ3wAABAMARzBFAiEA53gntK6Dnr6ROwYGBjqjt5dS4tWM6Zw/TtxIxOvobW8CIF3n4XjIX7/w66gThQD47iF7YmxelwgUQgPzEWNlHQiu")
         }
-    }
-
-    private inline fun <reified T> assertIsA(result: Result) {
-        assertTrue(result is T)
     }
 }

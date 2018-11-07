@@ -27,6 +27,7 @@ import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.internal.verifier.model.Result
+import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.io.IOException
 import java.security.KeyStore
@@ -87,24 +88,17 @@ internal open class CertificateTransparencyBase(
         }
 
         try {
-            val sctsInCertificate = leafCertificate.signedCertificateTimestamps()
-            if (sctsInCertificate.size < minimumValidSignedCertificateTimestamps) {
-                return Result.Failure.TooFewSctsPresent(sctsInCertificate.size, minimumValidSignedCertificateTimestamps)
+            val sctResults = leafCertificate.signedCertificateTimestamps().map { sct ->
+                val logId = Base64.toBase64String(sct.id.keyId)
+
+                verifiers[logId]?.verifySignature(sct, certificates) ?: SctResult.Invalid.NoVerifierFound
             }
 
-            val validScts = sctsInCertificate.map { sct ->
-                Pair(sct, Base64.toBase64String(sct.id.keyId))
-            }.filter { (_, logId) ->
-                verifiers.containsKey(logId)
-            }.filter { (sct, logId) ->
-                verifiers[logId]?.verifySignature(sct, certificates) == true
+            if (sctResults.count { it is SctResult.Valid } < minimumValidSignedCertificateTimestamps) {
+                return Result.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
             }
 
-            if (validScts.size < minimumValidSignedCertificateTimestamps) {
-                return Result.Failure.TooFewSctsTrusted(validScts.size, minimumValidSignedCertificateTimestamps)
-            }
-
-            return Result.Success.Trusted(validScts.map { (_, logId) -> logId })
+            return Result.Success.Trusted(sctResults)
         } catch (e: IOException) {
             return Result.Failure.UnknownIoException(e)
         }
