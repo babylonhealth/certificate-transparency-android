@@ -28,7 +28,8 @@ import javax.net.ssl.X509TrustManager
 internal class CertificateTransparencyInterceptor(
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<Map<String, SignatureVerifier>>?
+    logListDataSource: DataSource<Map<String, SignatureVerifier>>?,
+    private val failOnError: Boolean = true
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -38,7 +39,11 @@ internal class CertificateTransparencyInterceptor(
                 ?: emptyList()
 
         if (!verifyCertificateTransparency(host, certs)) {
-            throw SSLPeerUnverifiedException("Certificate transparency failed")
+            if (failOnError) {
+                throw SSLPeerUnverifiedException("Certificate transparency failed")
+            } else {
+                // just log the failure
+            }
         }
 
         return chain.proceed(chain.request())

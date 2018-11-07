@@ -35,6 +35,18 @@ class CertificateTransparencyInterceptorIntegrationTest {
                 LogListDataSourceTestFactory.logListDataSource
             }
         }
+
+        val networkInterceptorAllowFails = certificateTransparencyInterceptor {
+            +"*.babylonhealth.com"
+            +"letsencrypt.org"
+            +"invalid-expected-sct.badssl.com"
+
+            logListDataSource {
+                LogListDataSourceTestFactory.logListDataSource
+            }
+
+            failOnError = false
+        }
     }
 
     @Test
@@ -69,6 +81,18 @@ class CertificateTransparencyInterceptorIntegrationTest {
 
         client.newCall(request).execute()
     }
+
+    @Test
+    fun invalidAllowedWhenFailsAllowed() {
+        val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptorAllowFails).build()
+
+        val request = Request.Builder()
+            .url("https://invalid-expected-sct.badssl.com/")
+            .build()
+
+        client.newCall(request).execute()
+    }
+
 
     @Test
     fun invalidAllowedWhenSctNotChecked() {

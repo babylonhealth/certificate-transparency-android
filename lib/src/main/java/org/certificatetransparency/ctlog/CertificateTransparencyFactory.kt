@@ -33,6 +33,12 @@ object CertificateTransparencyFactory {
         private var logListDataSource: DataSource<Map<String, SignatureVerifier>>? = null
         private val hosts = mutableSetOf<Host>()
 
+        // public for access in DSL
+        @Suppress("MemberVisibilityCanBePrivate")
+        var failOnError: Boolean = true
+            @JvmSynthetic get
+            @JvmSynthetic set
+
         @Suppress("MemberVisibilityCanBePrivate")
         fun setTrustManager(trustManager: X509TrustManager) = apply { this.trustManager = trustManager }
 
@@ -48,6 +54,9 @@ object CertificateTransparencyFactory {
         @JvmSynthetic
         @Suppress("unused")
         fun logListDataSource(init: () -> DataSource<Map<String, SignatureVerifier>>) = setLogListDataSource(init())
+
+        @Suppress("unused")
+        fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
 
         /**
          * Check certificate transparency for {@code pattern}.
@@ -69,7 +78,7 @@ object CertificateTransparencyFactory {
             forEach { addHosts(it) }
         }
 
-        fun build(): Interceptor = CertificateTransparencyInterceptor(hosts, trustManager, logListDataSource)
+        fun build(): Interceptor = CertificateTransparencyInterceptor(hosts, trustManager, logListDataSource, failOnError)
     }
 
     class HostnameVerifierBuilder(
