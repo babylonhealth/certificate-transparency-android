@@ -56,11 +56,9 @@ internal open class CertificateTransparencyBase(
     private val logListDataSource = logListDataSource ?: LogListDataSourceFactory.create()
 
     fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): Result {
-        if (!enabledForCertificateTransparency(host)) {
-            return Result.Success.DisabledForHost(host)
-        }
-
-        return if (certificates.isEmpty()) {
+        return if (!enabledForCertificateTransparency(host)) {
+            Result.Success.DisabledForHost(host)
+        } else if (certificates.isEmpty()) {
             Result.Failure.NoCertificates
         } else {
             val cleanedCerts = cleaner.clean(certificates, host)
@@ -87,20 +85,19 @@ internal open class CertificateTransparencyBase(
             return Result.Failure.NoScts
         }
 
-        try {
+        return try {
             val sctResults = leafCertificate.signedCertificateTimestamps().map { sct ->
                 val logId = Base64.toBase64String(sct.id.keyId)
-
                 verifiers[logId]?.verifySignature(sct, certificates) ?: SctResult.Invalid.NoVerifierFound
             }
 
             if (sctResults.count { it is SctResult.Valid } < minimumValidSignedCertificateTimestamps) {
-                return Result.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
+                Result.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
+            } else {
+                Result.Success.Trusted(sctResults)
             }
-
-            return Result.Success.Trusted(sctResults)
         } catch (e: IOException) {
-            return Result.Failure.UnknownIoException(e)
+            Result.Failure.UnknownIoException(e)
         }
     }
 
