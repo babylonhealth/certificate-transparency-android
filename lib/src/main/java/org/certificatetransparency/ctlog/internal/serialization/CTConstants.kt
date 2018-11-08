@@ -9,8 +9,6 @@ internal object CTConstants {
     const val TIMESTAMP_LENGTH = 8
     const val VERSION_LENGTH = 1
     const val LOG_ENTRY_TYPE_LENGTH = 2
-    const val HASH_ALG_LENGTH = 1
-    const val SIGNATURE_ALG_LENGTH = 1
     const val MAX_CERTIFICATE_LENGTH = (1 shl 24) - 1
 
     // Useful OIDs

@@ -1,7 +1,5 @@
 package org.certificatetransparency.ctlog.verifier
 
-import org.certificatetransparency.ctlog.internal.utils.stringStackTrace
-
 sealed class SctResult {
     object Valid : SctResult()
 
@@ -19,10 +17,10 @@ sealed class SctResult {
             override fun toString() = "SCT timestamp, $timestamp, is greater than the log server validity, $logServerValidUntil."
         }
 
-        abstract class Exception() : Invalid() {
-            abstract val exception: kotlin.Exception?
+        abstract class Generic : Invalid()
 
-            override fun toString() = "Unknown exception with ${exception?.stringStackTrace()}"
+        abstract class Exception : Invalid() {
+            abstract val exception: kotlin.Exception?
         }
     }
 }

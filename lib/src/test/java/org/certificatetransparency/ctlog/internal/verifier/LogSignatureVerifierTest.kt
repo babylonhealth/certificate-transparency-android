@@ -25,7 +25,6 @@ import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.issuerInformation
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
-import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.utils.TestData.INTERMEDIATE_CA_CERT
 import org.certificatetransparency.ctlog.utils.TestData.PRE_CERT_SIGNING_BY_INTERMEDIATE
@@ -53,10 +52,9 @@ import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
 import org.certificatetransparency.ctlog.utils.assertIsA
+import org.certificatetransparency.ctlog.verifier.SctResult
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -214,18 +212,12 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    fun throwsWhenChainWithPreCertificateSignedByPreCertificateSigningCertMissingIssuer() {
+    fun returnNoIssuerWithPreCertWhenChainWithPreCertificateSignedByPreCertificateSigningCertMissingIssuer() {
         val certsChain = listOf(TEST_PRE_CERT_SIGNED_BY_PRECA_CERT, PRE_CERT_SIGNING_CERT).flatMap(::loadCertificates)
 
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_PRE_CERT_PRECA_SCT).inputStream())
 
-        try {
-            verifier.verifySignature(sct, certsChain)
-            fail("Expected verifySignature to throw since the issuer certificate is missing.")
-        } catch (expected: IllegalArgumentException) {
-            assertNotNull("Exception should have message, but was: $expected", expected.message)
-            assertTrue("Expected exception to warn about missing issuer cert", expected.message?.contains("must contain issuer") == true)
-        }
+        assertIsA<NoIssuerWithPreCert>(verifier.verifySignature(sct, certsChain))
     }
 
     @Test
@@ -257,7 +249,7 @@ class LogSignatureVerifierTest {
     }
 
     @Test
-    fun throwsWhenSctTimestampInFuture() {
+    fun returnInvalidFutureTimestampWhenSctTimestampInFuture() {
         // given we have an SCT with a future timestamp
         val certs = loadCertificates(TEST_CERT)
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())

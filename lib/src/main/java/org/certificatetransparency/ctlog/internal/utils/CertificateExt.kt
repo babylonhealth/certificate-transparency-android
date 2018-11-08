@@ -5,14 +5,11 @@ package org.certificatetransparency.ctlog.internal.utils
 import org.bouncycastle.asn1.ASN1InputStream
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
-import org.certificatetransparency.ctlog.exceptions.UnsupportedCryptoPrimitiveException
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.POISON_EXTENSION_OID
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.PRECERTIFICATE_SIGNING_OID
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.SCT_CERTIFICATE_OID
 import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformation
 import java.io.IOException
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateParsingException
@@ -77,10 +74,4 @@ internal fun Certificate.issuerInformationFromPreCertificate(preCertificate: Cer
     }
 }
 
-private fun Certificate.keyHash(): ByteArray {
-    try {
-        return MessageDigest.getInstance("SHA-256").digest(publicKey.encoded)
-    } catch (e: NoSuchAlgorithmException) {
-        throw UnsupportedCryptoPrimitiveException("SHA-256 not supported: ${e.message}", e)
-    }
-}
+private fun Certificate.keyHash() = publicKey.hash()

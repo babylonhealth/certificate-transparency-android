@@ -8,9 +8,10 @@ import org.certificatetransparency.ctlog.logclient.model.Version
 import org.certificatetransparency.ctlog.utils.TestData
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
+import java.io.ByteArrayOutputStream
 
 /** Test serialization.  */
-class SerializerTest {
+class OutputStreamExtTest {
 
     @Test
     fun serializeSct() {
@@ -32,12 +33,30 @@ class SerializerTest {
             extensions = ByteArray(0)
         )
 
-        val generatedBytes = Serializer.serializeSctToBinary(sct)
+        val generatedBytes = serializeSctToBinary(sct)
         val readBytes = TestData.file(TEST_CERT_SCT).readBytes()
         assertArrayEquals(readBytes, generatedBytes)
     }
 
+    private fun serializeSctToBinary(sct: SignedCertificateTimestamp): ByteArray {
+        return ByteArrayOutputStream().use {
+            it.writeUint(sct.version.number.toLong(), CTConstants.VERSION_LENGTH)
+            it.write(sct.id.keyId)
+            it.writeUint(sct.timestamp, CTConstants.TIMESTAMP_LENGTH)
+            it.writeVariableLength(sct.extensions, CTConstants.MAX_EXTENSIONS_LENGTH)
+            it.writeUint(sct.signature.hashAlgorithm.number.toLong(), HASH_ALG_LENGTH)
+            it.writeUint(sct.signature.signatureAlgorithm.number.toLong(), SIGNATURE_ALG_LENGTH)
+            it.writeVariableLength(sct.signature.signature, CTConstants.MAX_SIGNATURE_LENGTH)
+
+            it.toByteArray()
+        }
+    }
+
+
     companion object {
         const val TEST_CERT_SCT = "/testdata/test-cert.proof"
+
+        const val HASH_ALG_LENGTH = 1
+        const val SIGNATURE_ALG_LENGTH = 1
     }
 }

@@ -13,23 +13,20 @@ private const val BITS_IN_BYTE = 8
  * @receiver byte stream of binary encoding
  * @param numBytes exact number of bytes representing this number.
  * @return a number of at most 2^numBytes
+ * @throws IOException
  */
 internal fun InputStream.readNumber(numBytes: Int): Long {
     require(numBytes <= MAX_NUMBER_BYTE_LENGTH) { "Could not read a number of more than 8 bytes." }
 
     var toReturn: Long = 0
-    try {
-        for (i in 0 until numBytes) {
-            val valRead = read()
-            if (valRead < 0) {
-                throw SerializationException("Missing length bytes: Expected $numBytes, got $i.")
-            }
-            toReturn = toReturn shl BITS_IN_BYTE or valRead.toLong()
+    for (i in 0 until numBytes) {
+        val valRead = read()
+        if (valRead < 0) {
+            throw IOException("Missing length bytes: Expected $numBytes, got $i.")
         }
-        return toReturn
-    } catch (e: IOException) {
-        throw SerializationException("IO Error when reading number", e)
+        toReturn = toReturn shl BITS_IN_BYTE or valRead.toLong()
     }
+    return toReturn
 }
 
 /**
@@ -38,19 +35,15 @@ internal fun InputStream.readNumber(numBytes: Int): Long {
  * @receiver byte stream of binary encoding
  * @param dataLength exact data length.
  * @return read byte array.
- * @throws SerializationException if the data stream is too short.
+ * @throws IOException if the data stream is too short.
  */
 internal fun InputStream.readFixedLength(dataLength: Int): ByteArray {
     val toReturn = ByteArray(dataLength)
-    try {
-        val bytesRead = read(toReturn)
-        if (bytesRead < dataLength) {
-            throw SerializationException("Not enough bytes: Expected $dataLength, got $bytesRead.")
-        }
-        return toReturn
-    } catch (e: IOException) {
-        throw SerializationException("Error while reading fixed-length buffer", e)
+    val bytesRead = read(toReturn)
+    if (bytesRead < dataLength) {
+        throw IOException("Not enough bytes: Expected $dataLength, got $bytesRead.")
     }
+    return toReturn
 }
 
 

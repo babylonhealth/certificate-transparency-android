@@ -25,14 +25,14 @@ import org.bouncycastle.asn1.x509.Extensions
 import org.bouncycastle.asn1.x509.TBSCertificate
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator
 import org.bouncycastle.util.encoders.Base64
-import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.LOG_ENTRY_TYPE_LENGTH
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.MAX_CERTIFICATE_LENGTH
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.MAX_EXTENSIONS_LENGTH
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.TIMESTAMP_LENGTH
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.VERSION_LENGTH
-import org.certificatetransparency.ctlog.internal.serialization.Serializer
+import org.certificatetransparency.ctlog.internal.serialization.writeUint
+import org.certificatetransparency.ctlog.internal.serialization.writeVariableLength
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.isPreCertificate
 import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningCert
@@ -83,10 +83,20 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         val leafCert = chain[0]
         if (!leafCert.isPreCertificate() && !leafCert.hasEmbeddedSct()) {
             // When verifying final cert without embedded SCTs, we don't need the issuer but can verify directly
-            val toVerify = serializeSignedSctData(leafCert, sct)
-            return verifySctSignatureOverBytes(sct, toVerify)
+            return try {
+                val toVerify = serializeSignedSctData(leafCert, sct)
+                verifySctSignatureOverBytes(sct, toVerify)
+            } catch (e: IOException) {
+                CertificateEncodingFailed(e)
+            } catch (e: CertificateEncodingException) {
+                CertificateEncodingFailed(e)
+            }
         }
-        require(chain.size >= 2) { "Chain with PreCertificate or Certificate must contain issuer." }
+
+        if (chain.size < 2) {
+            return NoIssuer
+        }
+
         // PreCertificate or final certificate with embedded SCTs, we want the issuerInformation
         val issuerCert = chain[1]
         val issuerInformation = if (!issuerCert.isPreCertificateSigningCert()) {
@@ -95,7 +105,10 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         } else {
             // Must have at least 3 certificates when a pre-certificate is involved
             @Suppress("MagicNumber")
-            require(chain.size >= 3) { "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer." }
+            if (chain.size < 3) {
+                return NoIssuerWithPreCert
+            }
+
             issuerCert.issuerInformationFromPreCertificate(chain[2])
         }
         return verifySCTOverPreCertificate(sct, leafCert, issuerInformation)
@@ -117,39 +130,43 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         certificate: X509Certificate,
         issuerInfo: IssuerInformation
     ): SctResult {
-        val preCertificateTBS = createTbsForVerification(certificate, issuerInfo)
-        try {
+        return try {
+            val preCertificateTBS = createTbsForVerification(certificate, issuerInfo)
             val toVerify = serializeSignedSctDataForPreCertificate(preCertificateTBS.encoded, issuerInfo.keyHash, sct)
-            return verifySctSignatureOverBytes(sct, toVerify)
+            verifySctSignatureOverBytes(sct, toVerify)
         } catch (e: IOException) {
-            throw CertificateTransparencyException(
-                "TBSCertificate part could not be encoded: ${e.message}", e
-            )
+            CertificateEncodingFailed(e)
+        } catch (e: CertificateException) {
+            CertificateEncodingFailed(e)
         }
     }
 
-    private fun createTbsForVerification(preCertificate: X509Certificate, issuerInformation: IssuerInformation): TBSCertificate = try {
+    /**
+     * @throws CertificateException Certificate error
+     * @throws IOException Error deleting extension
+     */
+    private fun createTbsForVerification(preCertificate: X509Certificate, issuerInformation: IssuerInformation): TBSCertificate {
         @Suppress("MagicNumber")
         require(preCertificate.version >= 3)
         // We have to use bouncycastle's certificate parsing code because Java's X509 certificate
         // parsing discards the order of the extensions. The signature from SCT we're verifying
         // is over the TBSCertificate in its original form, including the order of the extensions.
         // Get the list of extensions, in its original order, minus the poison extension.
-        ASN1InputStream(preCertificate.encoded).use { aIn ->
+        return ASN1InputStream(preCertificate.encoded).use { aIn ->
             val parsedPreCertificate = org.bouncycastle.asn1.x509.Certificate.getInstance(aIn.readObject())
-            // Make sure that we have the X509akid of the real issuer if:
+            // Make sure that we have the X509AuthorityKeyIdentifier of the real issuer if:
             // The PreCertificate has this extension, AND:
             // The PreCertificate was signed by a PreCertificate signing cert.
             if (parsedPreCertificate.hasX509AuthorityKeyIdentifier() && issuerInformation.issuedByPreCertificateSigningCert) {
                 require(issuerInformation.x509authorityKeyIdentifier != null)
             }
 
-            val orderedExtensions = getExtensionsWithoutPoisonAndSCT(
+            val orderedExtensions = getExtensionsWithoutPoisonAndSct(
                 parsedPreCertificate.tbsCertificate.extensions,
                 issuerInformation.x509authorityKeyIdentifier
             )
 
-            return V3TBSCertificateGenerator().apply {
+            V3TBSCertificateGenerator().apply {
                 val tbsPart = parsedPreCertificate.tbsCertificate
                 // Copy certificate.
                 // Version 3 is implied by the generator.
@@ -165,34 +182,24 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
                 setExtensions(Extensions(orderedExtensions.toTypedArray()))
             }.generateTBSCertificate()
         }
-    } catch (e: CertificateException) {
-        throw CertificateTransparencyException("Certificate error: ${e.message}", e)
-    } catch (e: IOException) {
-        throw CertificateTransparencyException("Error deleting extension: ${e.message}", e)
     }
 
-    private fun getExtensionsWithoutPoisonAndSCT(extensions: Extensions, replacementX509authorityKeyIdentifier: Extension?): List<Extension> {
-        val extensionsOidsArray = extensions.extensionOIDs
-        val extensionsOids = extensionsOidsArray.iterator()
-
+    private fun getExtensionsWithoutPoisonAndSct(extensions: Extensions, replacementX509authorityKeyIdentifier: Extension?): List<Extension> {
         // Order is important, which is why a list is used.
-        val outputExtensions = mutableListOf<Extension>()
-        while (extensionsOids.hasNext()) {
-            val extn = extensionsOids.next()
-            val extnId = extn.id
-            if (extnId == CTConstants.POISON_EXTENSION_OID) {
-                // Do nothing - skip copying this extension
-            } else if (extnId == CTConstants.SCT_CERTIFICATE_OID) {
-                // Do nothing - skip copying this extension
-            } else if (extnId == X509_AUTHORITY_KEY_IDENTIFIER && replacementX509authorityKeyIdentifier != null) {
-                // Use the real issuer's authority key identifier, since it's present.
-                outputExtensions.add(replacementX509authorityKeyIdentifier)
-            } else {
-                // Copy the extension as-is.
-                outputExtensions.add(extensions.getExtension(extn))
+        return extensions.extensionOIDs
+            // Do nothing - skip copying this extension
+            .filterNot { it.id == CTConstants.POISON_EXTENSION_OID }
+            // Do nothing - skip copying this extension
+            .filterNot { it.id == CTConstants.SCT_CERTIFICATE_OID }
+            .map {
+                if (it.id == X509_AUTHORITY_KEY_IDENTIFIER && replacementX509authorityKeyIdentifier != null) {
+                    // Use the real issuer's authority key identifier, since it's present.
+                    replacementX509authorityKeyIdentifier
+                } else {
+                    // Copy the extension as-is.
+                    extensions.getExtension(it)
+                }
             }
-        }
-        return outputExtensions.toList()
     }
 
     private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): SctResult {
@@ -210,9 +217,9 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
 
             if (result) SctResult.Valid else SctResult.Invalid.FailedVerification
         } catch (e: SignatureException) {
-            org.certificatetransparency.ctlog.internal.verifier.SignatureException(e)
+            SignatureNotValid(e)
         } catch (e: InvalidKeyException) {
-            LogPublicKeyException(e)
+            LogPublicKeyNotValid(e)
         } catch (e: NoSuchAlgorithmException) {
             UnsupportedSignatureAlgorithm(sigAlg, e)
         }
@@ -222,38 +229,44 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
         return tbsCertificate.extensions.getExtension(ASN1ObjectIdentifier(X509_AUTHORITY_KEY_IDENTIFIER)) != null
     }
 
+    /**
+     * @throws IOException
+     * @throws CertificateEncodingException
+     */
     private fun serializeSignedSctData(certificate: Certificate, sct: SignedCertificateTimestamp): ByteArray {
-        val bos = ByteArrayOutputStream()
-        serializeCommonSctFields(sct, bos)
-        Serializer.writeUint(bos, X509_ENTRY, LOG_ENTRY_TYPE_LENGTH)
-        try {
-            Serializer.writeVariableLength(bos, certificate.encoded, MAX_CERTIFICATE_LENGTH)
-        } catch (e: CertificateEncodingException) {
-            throw CertificateTransparencyException("Error encoding certificate", e)
+        return ByteArrayOutputStream().use {
+            it.serializeCommonSctFields(sct)
+            it.writeUint(X509_ENTRY, LOG_ENTRY_TYPE_LENGTH)
+            it.writeVariableLength(certificate.encoded, MAX_CERTIFICATE_LENGTH)
+            it.writeVariableLength(sct.extensions, MAX_EXTENSIONS_LENGTH)
+            it.toByteArray()
         }
-
-        Serializer.writeVariableLength(bos, sct.extensions, MAX_EXTENSIONS_LENGTH)
-
-        return bos.toByteArray()
     }
 
+    /**
+     * @throws IOException
+     */
     private fun serializeSignedSctDataForPreCertificate(
         preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp
     ): ByteArray {
-        val bos = ByteArrayOutputStream()
-        serializeCommonSctFields(sct, bos)
-        Serializer.writeUint(bos, PRECERT_ENTRY, LOG_ENTRY_TYPE_LENGTH)
-        Serializer.writeFixedBytes(bos, issuerKeyHash)
-        Serializer.writeVariableLength(bos, preCertBytes, MAX_CERTIFICATE_LENGTH)
-        Serializer.writeVariableLength(bos, sct.extensions, MAX_EXTENSIONS_LENGTH)
-        return bos.toByteArray()
+        return ByteArrayOutputStream().use {
+            it.serializeCommonSctFields(sct)
+            it.writeUint(PRECERT_ENTRY, LOG_ENTRY_TYPE_LENGTH)
+            it.write(issuerKeyHash)
+            it.writeVariableLength(preCertBytes, MAX_CERTIFICATE_LENGTH)
+            it.writeVariableLength(sct.extensions, MAX_EXTENSIONS_LENGTH)
+            it.toByteArray()
+        }
     }
 
-    private fun serializeCommonSctFields(sct: SignedCertificateTimestamp, bos: OutputStream) {
+    /**
+     * @throws IOException
+     */
+    private fun OutputStream.serializeCommonSctFields(sct: SignedCertificateTimestamp) {
         require(sct.version == Version.V1) { "Can only serialize SCT v1 for now." }
-        Serializer.writeUint(bos, sct.version.number.toLong(), VERSION_LENGTH) // ct::V1
-        Serializer.writeUint(bos, 0, 1) // ct::CERTIFICATE_TIMESTAMP
-        Serializer.writeUint(bos, sct.timestamp, TIMESTAMP_LENGTH) // Timestamp
+        writeUint(sct.version.number.toLong(), VERSION_LENGTH) // ct::V1
+        writeUint(0, 1) // ct::CERTIFICATE_TIMESTAMP
+        writeUint(sct.timestamp, TIMESTAMP_LENGTH) // Timestamp
     }
 
     companion object {

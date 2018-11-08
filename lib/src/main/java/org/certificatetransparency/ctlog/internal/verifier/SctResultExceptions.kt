@@ -12,24 +12,33 @@ internal data class UnsupportedSignatureAlgorithm(
 ) : SctResult.Invalid.Exception() {
 
     override fun toString() = if (exception != null) {
-        "Unsupported signature algorithm ${algorithm} with: ${exception.stringStackTrace()}"
+        "Unsupported signature algorithm $algorithm with: ${exception.stringStackTrace()}"
     } else {
-        "Unsupported signature algorithm ${algorithm}"
+        "Unsupported signature algorithm $algorithm"
     }
 }
 
-internal data class LogPublicKeyException(override val exception: InvalidKeyException) : SctResult.Invalid.Exception() {
+internal data class LogPublicKeyNotValid(override val exception: InvalidKeyException) : SctResult.Invalid.Exception() {
     override fun toString() = "Log's public key cannot be used with ${exception.stringStackTrace()}"
 }
 
-internal data class SignatureException(override val exception: SignatureException) : SctResult.Invalid.Exception() {
+internal data class SignatureNotValid(override val exception: SignatureException) : SctResult.Invalid.Exception() {
     override fun toString() =
         "Signature object not properly initialized or signature from SCT is improperly encoded with: ${exception.stringStackTrace()}"
 }
 
-internal data class LogIdMismatch(val sctLogId: String, val logServerId: String) : SctResult.Invalid.Exception() {
-    override val exception: kotlin.Exception? = null
+internal data class LogIdMismatch(val sctLogId: String, val logServerId: String) : SctResult.Invalid.Generic() {
+    override fun toString() = "Log ID of SCT, $sctLogId, does not match this log's ID, $logServerId"
+}
 
-    override fun toString() =
-        "Log ID of SCT ($sctLogId) does not match this log's ID ($logServerId)."
+internal object NoIssuer : SctResult.Invalid.Generic() {
+    override fun toString() = "Chain with PreCertificate or Certificate must contain issuer"
+}
+
+internal object NoIssuerWithPreCert : SctResult.Invalid.Generic() {
+    override fun toString() = "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer"
+}
+
+internal data class CertificateEncodingFailed(override val exception: kotlin.Exception) : SctResult.Invalid.Exception() {
+    override fun toString() = "Certificate could not be encoded with: ${exception.stringStackTrace()}"
 }
