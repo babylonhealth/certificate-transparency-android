@@ -17,7 +17,7 @@
 package com.babylonhealth.certificatetransparency
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Call
 import okhttp3.Callback

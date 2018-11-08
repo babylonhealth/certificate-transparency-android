@@ -16,7 +16,7 @@
 
 package com.babylonhealth.certificatetransparency
 
-import android.support.multidex.MultiDexApplication
+import androidx.multidex.MultiDexApplication
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.security.ProviderInstaller
