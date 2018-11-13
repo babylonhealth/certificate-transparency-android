@@ -19,10 +19,13 @@ package org.certificatetransparency.ctlog.verifier
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import java.security.cert.Certificate
 
+/**
+ * A [SignatureVerifier] verifies a Signed Certificate Timestamp is trusted by a particular log server
+ */
 interface SignatureVerifier {
 
     /**
-     * Verifies the CT Log's signature over the SCT and certificate. Works for the following cases:
+     * Verifies the signature of a Signed Certificate Timestamp and certificate. Works for the following cases:
      *   Ordinary X509 certificate sent to the log.
      *   PreCertificate signed by an ordinary CA certificate.
      *   PreCertificate signed by a PreCertificate Signing Cert. In this case the PreCertificate signing certificate must be 2nd on the chain,
@@ -30,7 +33,7 @@ interface SignatureVerifier {
      *
      * @param sct SignedCertificateTimestamp received from the log.
      * @param chain The certificates chain as sent to the log.
-     * @return true if the log's signature over this SCT can be verified, false otherwise.
+     * @return [SctResult.Valid] if the log's signature over this SCT can be verified, [SctResult.Invalid] otherwise.
      */
     fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult
 }

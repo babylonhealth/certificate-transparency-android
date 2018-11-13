@@ -17,10 +17,13 @@
 package org.certificatetransparency.ctlog.loglist
 
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
+import java.security.PublicKey
 
 /**
- * @property validUntil Timestamp denoting when a log server is valid until, or null if it is valid
- * for all time
+ * Representation of a log server, usually loaded from log-list.json
+ * @property id The log servers id. A SHA-256 hash of the log servers [PublicKey]
+ * @property signatureVerifier A [SignatureVerifier] for this log server that can verify a Signed Certificate Timestamp
+ * @property validUntil Timestamp denoting when a log server is valid until, or null if it is valid for all time
  */
 interface LogServer {
     val id: ByteArray

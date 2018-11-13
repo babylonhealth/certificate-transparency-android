@@ -22,6 +22,9 @@ import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntryWithProof
 import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import java.security.cert.Certificate
 
+/**
+ * [LogClient] represents a log server which can be used, for example, to ensure a Signed Certificate Timestamp really has been logged
+ */
 interface LogClient {
     /**
      * Adds a certificate to the log.

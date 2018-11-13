@@ -16,27 +16,66 @@
 
 package org.certificatetransparency.ctlog.verifier
 
+/**
+ * Abstract class providing the results of verifying a Signed Certificate Timestamp
+ */
 sealed class SctResult {
+    /**
+     * Signed Certificate Timestamp checks passed
+     */
     object Valid : SctResult()
 
-
+    /**
+     * Abstract class representing Signed Certificate Timestamp checks failed
+     */
     sealed class Invalid : SctResult() {
+        /**
+         * Signed Certificate Timestamp checks failed as the signature could not be verified
+         */
         object FailedVerification : Invalid()
 
+        /**
+         * Signed Certificate Timestamp checks failed as there was no [SignatureVerifier] we trust in the log-list.json
+         */
         object NoVerifierFound : Invalid()
 
+        /**
+         * Signed Certificate Timestamp checks failed as the [timestamp] of the SCT is in the future
+         * @param timestamp The timestamp of the SCT
+         * @param now The time now
+         */
         data class FutureTimestamp(val timestamp: Long, val now: Long) : Invalid() {
+            /**
+             * Returns a string representation of the object.
+             */
             override fun toString() = "SCT timestamp, $timestamp, is in the future, current timestamp is $now."
         }
 
+        /**
+         * Signed Certificate Timestamp checks failed as the log server is no longer trusted
+         * @param timestamp The timestamp of the SCT
+         * @param logServerValidUntil The time the log server was valid till
+         */
         data class LogServerUntrusted(val timestamp: Long, val logServerValidUntil: Long) : Invalid() {
+            /**
+             * Returns a string representation of the object.
+             */
             override fun toString() = "SCT timestamp, $timestamp, is greater than the log server validity, $logServerValidUntil."
         }
 
+        /**
+         * Signed Certificate Timestamp checks failed for an unspecified reason
+         */
         abstract class Generic : Invalid()
 
+        /**
+         * Signed Certificate Timestamp checks failed as an [exception] was detected
+         */
         abstract class Exception : Invalid() {
-            abstract val exception: kotlin.Exception?
+            /**
+             * The [Exception] that occurred
+             */
+            abstract val exception: kotlin.Exception
         }
     }
 }

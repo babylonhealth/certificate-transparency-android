@@ -16,6 +16,12 @@
 
 package org.certificatetransparency.ctlog
 
+/**
+ * A [Logger] object is used to log the results of performing certificate transparency for a particular host
+ */
 interface Logger {
+    /**
+     * Log a [host] and its [result] from performing certificate transparency
+     */
     fun log(host: String, result: Result)
 }
