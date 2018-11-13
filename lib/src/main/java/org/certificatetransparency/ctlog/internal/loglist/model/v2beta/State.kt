@@ -25,7 +25,7 @@ import org.certificatetransparency.ctlog.internal.loglist.deserializer.StateDese
  * @property timestamp The time at which the log entered this state.
  */
 @JsonAdapter(StateDeserializer::class)
-sealed class State {
+internal sealed class State {
     abstract val timestamp: Long
 
     /**

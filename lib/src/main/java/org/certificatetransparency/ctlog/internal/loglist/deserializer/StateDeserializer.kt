@@ -22,7 +22,7 @@ import com.google.gson.JsonElement
 import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.State
 import java.lang.reflect.Type
 
-class StateDeserializer : JsonDeserializer<State> {
+internal class StateDeserializer : JsonDeserializer<State> {
 
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): State {
         // Schema specifies there is exactly 1 element

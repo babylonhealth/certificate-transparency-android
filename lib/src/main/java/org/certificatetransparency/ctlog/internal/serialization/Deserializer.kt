@@ -32,6 +32,7 @@ internal object Deserializer {
      * @param inputStream byte stream of binary encoding.
      * @return Built SignedCertificateTimestamp
      * @throws SerializationException if the data stream is too short.
+     * TODO IOException
      */
     fun parseSctFromBinary(inputStream: InputStream): SignedCertificateTimestamp {
         val version = Version.forNumber(inputStream.readNumber(1 /* single byte */).toInt())
@@ -62,6 +63,7 @@ internal object Deserializer {
      * @param inputStream byte stream of binary encoding.
      * @return Built DigitallySigned
      * @throws SerializationException if the data stream is too short.
+     * TODO IOException
      */
     fun parseDigitallySignedFromBinary(inputStream: InputStream): DigitallySigned {
         val hashAlgorithmByte = inputStream.readNumber(1 /* single byte */).toInt()

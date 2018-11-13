@@ -22,7 +22,7 @@ import com.google.gson.JsonElement
 import okhttp3.HttpUrl
 import java.lang.reflect.Type
 
-class HttpUrlDeserializer : JsonDeserializer<HttpUrl> {
+internal class HttpUrlDeserializer : JsonDeserializer<HttpUrl> {
 
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext) = HttpUrl.parse(jsonElement.asString)!!
 }

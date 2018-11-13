@@ -24,7 +24,7 @@ import org.certificatetransparency.ctlog.internal.loglist.deserializer.Rfc3339De
  * @property startInclusive All certificates must expire on this date or later. (format: date-time)
  * @property endExclusive All certificates must expire before this date. (format: date-time)
  */
-data class TemporalInterval(
+internal data class TemporalInterval(
     @JsonAdapter(Rfc3339Deserializer::class) @SerializedName("start_inclusive") val startInclusive: Long,
     @JsonAdapter(Rfc3339Deserializer::class) @SerializedName("end_exclusive") val endExclusive: Long
 )

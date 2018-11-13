@@ -16,8 +16,10 @@
 
 package com.babylonhealth.certificatetransparency
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -48,15 +50,19 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
             client.newCall(request).enqueue(object : Callback {
+
                 override fun onFailure(call: Call, e: IOException) {
-                    println("onFailure")
-                    e.printStackTrace()
-                    //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    Snackbar.make(container, "Failure", Snackbar.LENGTH_LONG).run {
+                        view.setBackgroundColor(Color.parseColor("#FF5252"))
+                        show()
+                    }
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    println("onResponse")
-                    //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    Snackbar.make(container, "Success", Snackbar.LENGTH_LONG).run {
+                        view.setBackgroundColor(Color.parseColor("#4CAF50"))
+                        show()
+                    }
                 }
             })
         }

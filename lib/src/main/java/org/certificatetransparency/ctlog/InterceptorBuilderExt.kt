@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.internal.loglist.deserializer
+package org.certificatetransparency.ctlog
 
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import org.certificatetransparency.ctlog.internal.utils.toRfc3339Long
-import java.lang.reflect.Type
+import okhttp3.Interceptor
 
-internal class Rfc3339Deserializer : JsonDeserializer<Long> {
-
-    override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext) = jsonElement.asString.toRfc3339Long()
-}
+/**
+ * DSL to create an OkHttp network [Interceptor] that will verify a host is
+ * trusted using certificate transparency
+ * @param init Block to execute as a [InterceptorBuilder]
+ */
+@JvmSynthetic
+fun certificateTransparencyInterceptor(
+    init: InterceptorBuilder.() -> Unit = {}
+) = InterceptorBuilder()
+    .apply(init)
+    .build()

@@ -22,7 +22,7 @@ import com.google.gson.JsonElement
 import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.Hostname
 import java.lang.reflect.Type
 
-class HostnameDeserializer : JsonDeserializer<Hostname> {
+internal class HostnameDeserializer : JsonDeserializer<Hostname> {
 
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext) = Hostname(jsonElement.asString)
 }

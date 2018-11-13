@@ -37,7 +37,7 @@ import org.certificatetransparency.ctlog.internal.loglist.deserializer.HttpUrlDe
  * @property logType The purpose of this log, e.g. test.
  * @property state The state of the log from the log list distributor's perspective.
  */
-data class Log(
+internal data class Log(
     val description: List<String>?,
     val key: String,
     @SerializedName("log_id") val logId: String,

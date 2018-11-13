@@ -18,7 +18,7 @@ package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
 import com.google.gson.annotations.SerializedName
 
-enum class LogType {
+internal enum class LogType {
     @SerializedName("prod")
     PROD,
 

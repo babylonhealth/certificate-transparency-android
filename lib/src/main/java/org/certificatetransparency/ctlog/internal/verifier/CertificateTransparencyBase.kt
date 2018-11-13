@@ -26,7 +26,7 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.internal.verifier.model.Result
+import org.certificatetransparency.ctlog.Result
 import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.io.IOException

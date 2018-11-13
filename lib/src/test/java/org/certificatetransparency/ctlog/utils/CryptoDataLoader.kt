@@ -18,7 +18,6 @@
 
 package org.certificatetransparency.ctlog.utils
 
-import org.certificatetransparency.ctlog.exceptions.InvalidInputException
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -43,14 +42,11 @@ object CryptoDataLoader {
      *
      * @param pemCertsFile File to parse.
      * @return A list of certificates from the certificates in the file.
-     * @throws InvalidInputException If the file is not present.
+     * @throws FileNotFoundException If the file is not present.
      */
-    @JvmStatic
     fun certificatesFromFile(pemCertsFile: File): List<Certificate> {
-        try {
-            return parseCertificates(pemCertsFile.inputStream())
-        } catch (e: FileNotFoundException) {
-            throw InvalidInputException("Could not find certificate chain file $pemCertsFile.", e)
+        return pemCertsFile.inputStream().use {
+            parseCertificates(it)
         }
     }
 }

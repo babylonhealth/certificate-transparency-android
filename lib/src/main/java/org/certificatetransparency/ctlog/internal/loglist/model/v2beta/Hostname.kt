@@ -5,7 +5,7 @@ import okhttp3.HttpUrl
 import org.certificatetransparency.ctlog.internal.loglist.deserializer.HostnameDeserializer
 
 @JsonAdapter(HostnameDeserializer::class)
-data class Hostname(
+internal data class Hostname(
     val value: String
 ) {
     init {

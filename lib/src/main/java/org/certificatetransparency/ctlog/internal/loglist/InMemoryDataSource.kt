@@ -19,7 +19,7 @@ package org.certificatetransparency.ctlog.internal.loglist
 import kotlinx.coroutines.GlobalScope
 import org.certificatetransparency.ctlog.datasource.DataSource
 
-class InMemoryDataSource<Value : Any> : DataSource<Value> {
+internal class InMemoryDataSource<Value : Any> : DataSource<Value> {
     private var cachedValue: Value? = null
 
     override suspend fun get(): Value? = cachedValue

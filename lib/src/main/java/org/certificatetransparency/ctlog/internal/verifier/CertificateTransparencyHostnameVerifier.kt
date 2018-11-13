@@ -16,13 +16,12 @@
 
 package org.certificatetransparency.ctlog.internal.verifier
 
+import org.certificatetransparency.ctlog.Logger
 import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.internal.verifier.model.Result
+import org.certificatetransparency.ctlog.Result
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLException
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
@@ -30,7 +29,9 @@ internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<Map<String, SignatureVerifier>>?
+    logListDataSource: DataSource<Map<String, SignatureVerifier>>?,
+    private val failOnError: Boolean = true,
+    private val logger: Logger? = null
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
@@ -38,10 +39,10 @@ internal class CertificateTransparencyHostnameVerifier(
             return false
         }
 
-        try {
-            return verifyCertificateTransparency(host, sslSession.peerCertificates.toList()) is Result.Success
-        } catch (e: SSLException) {
-            throw CertificateTransparencyException("Unable to verify certificate transparency", e)
-        }
+        val result = verifyCertificateTransparency(host, sslSession.peerCertificates.toList())
+
+        logger?.log(host, result)
+
+        return !(result is Result.Failure && failOnError)
     }
 }

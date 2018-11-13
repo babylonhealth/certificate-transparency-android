@@ -18,7 +18,7 @@ package org.certificatetransparency.ctlog.internal.loglist.model
 
 import com.google.gson.annotations.SerializedName
 
-data class FinalSignedTreeHead(
+internal data class FinalSignedTreeHead(
     @SerializedName("tree_size") val treeSize: Int,
     @SerializedName("timestamp") val timestamp: Long,
     @SerializedName("sha256_root_hash") val sha256RootHash: String,

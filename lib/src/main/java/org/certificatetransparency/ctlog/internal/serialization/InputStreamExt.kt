@@ -1,6 +1,5 @@
 package org.certificatetransparency.ctlog.internal.serialization
 
-import org.certificatetransparency.ctlog.exceptions.SerializationException
 import java.io.IOException
 import java.io.InputStream
 
@@ -46,7 +45,6 @@ internal fun InputStream.readFixedLength(dataLength: Int): ByteArray {
     return toReturn
 }
 
-
 /**
  * Reads a variable-length byte array with a maximum length. The length is read (based on the
  * number of bytes needed to represent the max data length) then the byte array itself.
@@ -54,7 +52,7 @@ internal fun InputStream.readFixedLength(dataLength: Int): ByteArray {
  * @receiver byte stream of binary encoding
  * @param maxDataLength Maximal data length.
  * @return read byte array.
- * @throws SerializationException if the data stream is too short.
+ * @throws IOException if the data stream is too short.
  */
 internal fun InputStream.readVariableLength(maxDataLength: Int): ByteArray {
     val bytesForDataLength = Deserializer.bytesForDataLength(maxDataLength)
@@ -67,11 +65,11 @@ internal fun InputStream.readVariableLength(maxDataLength: Int): ByteArray {
     } catch (e: IOException) {
         //Note: A finer-grained exception type should be thrown if the client
         // ever cares to handle transient I/O errors.
-        throw SerializationException("Error while reading variable-length data", e)
+        throw IOException("Error while reading variable-length data", e)
     }
 
     if (bytesRead != dataLength) {
-        throw SerializationException("Incomplete data. Expected $dataLength bytes, had $bytesRead.")
+        throw IOException("Incomplete data. Expected $dataLength bytes, had $bytesRead.")
     }
 
     return rawData

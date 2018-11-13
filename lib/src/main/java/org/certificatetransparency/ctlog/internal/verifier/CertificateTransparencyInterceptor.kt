@@ -18,9 +18,10 @@ package org.certificatetransparency.ctlog.internal.verifier
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import org.certificatetransparency.ctlog.Logger
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.internal.verifier.model.Result
+import org.certificatetransparency.ctlog.Result
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -30,21 +31,20 @@ internal class CertificateTransparencyInterceptor(
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<Map<String, SignatureVerifier>>?,
-    private val failOnError: Boolean = true
+    private val failOnError: Boolean = true,
+    private val logger: Logger? = null
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val host = chain.request()?.url()?.host()!!
-        val certs =
-            chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate }
-                ?: emptyList()
+        chain.request()?.url()?.host()?.let { host ->
+            val certs = chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate } ?: emptyList()
 
-        val result = verifyCertificateTransparency(host, certs)
-        if (result is Result.Failure) {
-            if (failOnError) {
+            val result = verifyCertificateTransparency(host, certs)
+
+            logger?.log(host, result)
+
+            if (result is Result.Failure && failOnError) {
                 throw SSLPeerUnverifiedException("Certificate transparency failed")
-            } else {
-                // just log the failure
             }
         }
 

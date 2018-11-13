@@ -54,6 +54,7 @@ import java.security.SignatureException
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateException
+import java.security.cert.CertificateParsingException
 import java.security.cert.X509Certificate
 
 /**
@@ -99,9 +100,20 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
 
         // PreCertificate or final certificate with embedded SCTs, we want the issuerInformation
         val issuerCert = chain[1]
-        val issuerInformation = if (!issuerCert.isPreCertificateSigningCert()) {
+
+        val isPreCertificateSigningCert = try {
+            issuerCert.isPreCertificateSigningCert()
+        } catch (e: CertificateParsingException) {
+            return CertificateParsingFailed(e)
+        }
+
+        val issuerInformation = if (!isPreCertificateSigningCert) {
             // If signed by the real issuing CA
-            issuerCert.issuerInformation()
+            try {
+                issuerCert.issuerInformation()
+            } catch (e: NoSuchAlgorithmException) {
+                return UnsupportedSignatureAlgorithm("SHA-256", e)
+            }
         } else {
             // Must have at least 3 certificates when a pre-certificate is involved
             @Suppress("MagicNumber")
@@ -109,8 +121,17 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
                 return NoIssuerWithPreCert
             }
 
-            issuerCert.issuerInformationFromPreCertificate(chain[2])
+            try {
+                issuerCert.issuerInformationFromPreCertificate(chain[2])
+            } catch (e: CertificateEncodingException) {
+                return CertificateEncodingFailed(e)
+            } catch (e: NoSuchAlgorithmException) {
+                return UnsupportedSignatureAlgorithm("SHA-256", e)
+            } catch (e: IOException) {
+                return ASN1ParsingFailed(e)
+            }
         }
+
         return verifySCTOverPreCertificate(sct, leafCert, issuerInformation)
     }
 

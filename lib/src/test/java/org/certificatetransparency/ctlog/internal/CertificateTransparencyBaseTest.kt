@@ -22,7 +22,7 @@ import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.internal.verifier.model.Result
+import org.certificatetransparency.ctlog.Result
 import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.certificatetransparency.ctlog.utils.TestData

@@ -20,7 +20,6 @@ package org.certificatetransparency.ctlog.internal.verifier
 
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.issuerInformation
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
@@ -52,6 +51,7 @@ import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT
 import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
 import org.certificatetransparency.ctlog.utils.assertIsA
+import org.certificatetransparency.ctlog.utils.readPemFile
 import org.certificatetransparency.ctlog.verifier.SctResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -280,7 +280,7 @@ class LogSignatureVerifierTest {
      * @return new LogInfo instance.
      */
     private fun LogInfo.Companion.fromKeyFile(pemKeyFilePath: String): LogInfo {
-        val logPublicKey = PublicKeyFactory.fromPemFile(File(pemKeyFilePath))
+        val logPublicKey = File(pemKeyFilePath).readPemFile()
         return LogInfo(logPublicKey)
     }
 }

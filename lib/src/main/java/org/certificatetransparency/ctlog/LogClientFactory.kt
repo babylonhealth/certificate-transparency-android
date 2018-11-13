@@ -23,7 +23,15 @@ import org.certificatetransparency.ctlog.logclient.LogClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Factory to create a [LogClient] for querying a log server
+ */
 object LogClientFactory {
+
+    /**
+     * Create a [LogClient] for the log server [baseUrl]
+     * @param baseUrl Url of the log server
+     */
     fun create(baseUrl: String): LogClient {
         val client = OkHttpClient.Builder().build()
         val retrofit = Retrofit.Builder().client(client).addConverterFactory(GsonConverterFactory.create()).baseUrl(baseUrl).build()

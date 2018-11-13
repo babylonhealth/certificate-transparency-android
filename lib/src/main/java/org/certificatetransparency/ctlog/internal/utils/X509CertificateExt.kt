@@ -22,13 +22,15 @@ import org.bouncycastle.asn1.ASN1OctetString
 import org.bouncycastle.asn1.ASN1Primitive
 import org.bouncycastle.asn1.DEROctetString
 import org.bouncycastle.crypto.tls.TlsUtils
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
+import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
 import java.io.IOException
 import java.security.cert.X509Certificate
 
-@Throws(IOException::class)
+/**
+ * @throws IOException
+ */
 internal fun X509Certificate.signedCertificateTimestamps(): List<SignedCertificateTimestamp> {
     val bytes = getExtensionValue(CTConstants.SCT_CERTIFICATE_OID)
     val p = ASN1Primitive.fromByteArray(ASN1OctetString.getInstance(bytes).octets) as DEROctetString
@@ -37,14 +39,15 @@ internal fun X509Certificate.signedCertificateTimestamps(): List<SignedCertifica
     return parseSctsFromCertExtension(p.octets)
 }
 
-@Throws(IOException::class)
+/**
+ * @throws IOException
+ */
 private fun parseSctsFromCertExtension(extensionValue: ByteArray): List<SignedCertificateTimestamp> {
     val sctList = mutableListOf<SignedCertificateTimestamp>()
     val bis = extensionValue.inputStream()
     TlsUtils.readUint16(bis) // first one is the length of all SCTs concatenated, we don't actually need this
     while (bis.available() > 2) {
         val sctBytes = TlsUtils.readOpaque16(bis)
-        // System.out.println("Read SCT bytes (excluding length): " + sctBytes.length);
         sctList.add(Deserializer.parseSctFromBinary(sctBytes.inputStream()))
     }
     return sctList.toList()

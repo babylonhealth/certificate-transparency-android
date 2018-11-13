@@ -19,6 +19,6 @@ package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 /**
  * @property operators CT log operators. People/organizations that run Certificate Transparency logs.
  */
-data class LogListV2Beta(
+internal data class LogListV2Beta(
     val operators: Map<String, Operator>
 )
