@@ -284,8 +284,8 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
      * @throws IOException
      */
     private fun OutputStream.serializeCommonSctFields(sct: SignedCertificateTimestamp) {
-        require(sct.version == Version.V1) { "Can only serialize SCT v1 for now." }
-        writeUint(sct.version.number.toLong(), VERSION_LENGTH) // ct::V1
+        require(sct.sctVersion == Version.V1) { "Can only serialize SCT v1 for now." }
+        writeUint(sct.sctVersion.number.toLong(), VERSION_LENGTH) // ct::V1
         writeUint(0, 1) // ct::CERTIFICATE_TIMESTAMP
         writeUint(sct.timestamp, TIMESTAMP_LENGTH) // Timestamp
     }

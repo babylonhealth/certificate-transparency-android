@@ -52,7 +52,7 @@ internal data class AddChainResponse(
      */
     fun toSignedCertificateTimestamp(): SignedCertificateTimestamp {
         return SignedCertificateTimestamp(
-            version = Version.forNumber(sctVersion),
+            sctVersion = Version.forNumber(sctVersion),
             id = LogId(Base64.decode(id)),
             timestamp = timestamp,
             extensions = if (extensions.isNotEmpty()) Base64.decode(extensions) else ByteArray(0),

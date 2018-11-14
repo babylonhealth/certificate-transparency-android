@@ -49,7 +49,7 @@ internal object Deserializer {
         val signature = parseDigitallySignedFromBinary(inputStream)
 
         return SignedCertificateTimestamp(
-            version = version,
+            sctVersion = version,
             id = LogId(keyId),
             timestamp = timestamp,
             extensions = extensions,

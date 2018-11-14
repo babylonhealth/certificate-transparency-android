@@ -17,10 +17,19 @@
 package org.certificatetransparency.ctlog.logclient.model
 
 /**
- * @property timestamp UTC time in milliseconds, since January 1, 1970, 00:00.
+ * A signed certificate timestamp. If the [sctVersion] is not [Version.V1], then a v1 client may be unable to verify the signature.
+ *
+ * @property sctVersion The version of the [SignedCertificateTimestamp] structure, in decimal.  A compliant v1 implementation MUST NOT expect
+ * this to be 0 (i.e., [Version.V1]).
+ * @property id The log ID, base64 encoded.  Since log clients who request an SCT for inclusion in TLS handshakes are not required to verify
+ * it, we do not assume they know the ID of the log.
+ * @property timestamp The SCT timestamp, in decimal. UTC time in milliseconds, since January 1, 1970, 00:00.
+ * @property signature The SCT signature, base64 encoded.
+ * @property extensions An opaque type for future expansion.  It is likely that not all participants will need to understand data in this
+ * field.  Logs should set this to the empty string.  Clients should decode the base64-encoded data and include it in the SCT.
  */
 data class SignedCertificateTimestamp(
-    val version: Version = Version.UNKNOWN_VERSION,
+    val sctVersion: Version = Version.UNKNOWN_VERSION,
     val id: LogId,
     val timestamp: Long,
     val signature: DigitallySigned,
@@ -32,7 +41,7 @@ data class SignedCertificateTimestamp(
 
         other as SignedCertificateTimestamp
 
-        if (version != other.version) return false
+        if (sctVersion != other.sctVersion) return false
         if (id != other.id) return false
         if (timestamp != other.timestamp) return false
         if (signature != other.signature) return false
@@ -42,7 +51,7 @@ data class SignedCertificateTimestamp(
     }
 
     override fun hashCode(): Int {
-        var result = version.hashCode()
+        var result = sctVersion.hashCode()
         result = 31 * result + id.hashCode()
         result = 31 * result + timestamp.hashCode()
         result = 31 * result + signature.hashCode()

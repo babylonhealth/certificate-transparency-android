@@ -16,6 +16,10 @@
 
 package org.certificatetransparency.ctlog.logclient.model
 
+/**
+ * @property timestamp [timestamp] is the timestamp of the corresponding SCT issued for this certificate.
+ * @property signedEntry [signedEntry] is the [SignedEntry] of the corresponding SCT.
+ */
 data class TimestampedEntry(
     val timestamp: Long = 0,
     val signedEntry: SignedEntry

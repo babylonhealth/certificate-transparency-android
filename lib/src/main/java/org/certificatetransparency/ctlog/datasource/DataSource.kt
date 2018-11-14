@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Derived from https://github.com/appmattus/layercache/
  */
 
 package org.certificatetransparency.ctlog.datasource
@@ -22,10 +24,24 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
+/**
+ * A standard cache which stores and retrieves data
+ */
 interface DataSource<Value : Any> : CoroutineScope {
+    /**
+     * Return the value associated with this data source or null if not present
+     */
     suspend fun get(): Value?
+
+    /**
+     * Save the value to this data source
+     */
     suspend fun set(value: Value)
 
+    /**
+     * Compose two data sources. Try to fetch from the first data source and, failing that, request the data from the second data source.
+     * After being retrieved from the second data source, the data is saved to the first data source for future retrieval.
+     */
     fun compose(b: DataSource<Value>): DataSource<Value> {
         return object : DataSource<Value> {
             override suspend fun get(): Value? {
@@ -42,8 +58,15 @@ interface DataSource<Value : Any> : CoroutineScope {
         }
     }
 
+    /**
+     * Compose two data sources. Try to fetch from the first data source and, failing that, request the data from the second data source.
+     * After being retrieved from the second data source, the data is saved to the first data source for future retrieval.
+     */
     operator fun plus(b: DataSource<Value>) = compose(b)
 
+    /**
+     * If a get call is already in flight then this ensures the original request is returned
+     */
     fun reuseInflight(): DataSource<Value> {
         return object : DataSource<Value> {
             private var job: Deferred<Value?>? = null
@@ -65,6 +88,9 @@ interface DataSource<Value : Any> : CoroutineScope {
         }
     }
 
+    /**
+     * Map values from one type to another. As this is a one way transform calling set on the resulting cache is no-op
+     */
     fun <MappedValue : Any> oneWayTransform(transform: (Value) -> MappedValue): DataSource<MappedValue> {
         return object : DataSource<MappedValue> {
             override suspend fun get(): MappedValue? {

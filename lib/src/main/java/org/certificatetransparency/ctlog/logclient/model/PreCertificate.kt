@@ -16,11 +16,26 @@
 
 package org.certificatetransparency.ctlog.logclient.model
 
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
+
+/**
+ * @property issuerKeyHash [issuerKeyHash] is the SHA-256 hash of the certificate issuer's public key, calculated over the DER encoding of the
+ * key represented as [SubjectPublicKeyInfo].  This is needed to bind the issuer to the final certificate.
+ * @property tbsCertificate [tbsCertificate] is the DER-encoded TBSCertificate (see (https://tools.ietf.org/html/rfc5280)[RFC5280]) component of
+ * the Precertificate -- that is, without the signature and the poison extension.  If the Precertificate is not signed with the CA certificate
+ * that will issue the final certificate, then the TBSCertificate also has its issuer changed to that of the CA that will issue the final
+ * certificate.  Note that it is also possible to reconstruct this TBSCertificate from the final certificate by extracting the TBSCertificate
+ * from it and deleting the SCT extension. Also note that since the TBSCertificate contains an AlgorithmIdentifier that must match both the
+ * Precertificate signature algorithm and final certificate signature algorithm, they must be signed with the same algorithm and parameters.  If
+ * the Precertificate is issued using a Precertificate Signing Certificate and an Authority Key Identifier extension is present in the
+ * TBSCertificate, the corresponding extension must also be present in the Precertificate Signing Certificate -- in this case, the
+ * TBSCertificate also has its Authority Key Identifier changed to match the final issuer.
+ */
 data class PreCertificate(
     val issuerKeyHash: ByteArray? = null,
     val tbsCertificate: ByteArray? = null
 ) {
-    
+
     @Suppress("ComplexMethod")
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

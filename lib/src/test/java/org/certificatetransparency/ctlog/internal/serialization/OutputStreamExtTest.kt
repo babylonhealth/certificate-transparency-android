@@ -26,7 +26,7 @@ class OutputStreamExtTest {
         )
 
         val sct = SignedCertificateTimestamp(
-            version = Version.V1,
+            sctVersion = Version.V1,
             timestamp = 1365181456089L,
             id = LogId(Base64.decode(keyIdBase64)),
             signature = signature,
@@ -40,7 +40,7 @@ class OutputStreamExtTest {
 
     private fun serializeSctToBinary(sct: SignedCertificateTimestamp): ByteArray {
         return ByteArrayOutputStream().use {
-            it.writeUint(sct.version.number.toLong(), CTConstants.VERSION_LENGTH)
+            it.writeUint(sct.sctVersion.number.toLong(), CTConstants.VERSION_LENGTH)
             it.write(sct.id.keyId)
             it.writeUint(sct.timestamp, CTConstants.TIMESTAMP_LENGTH)
             it.writeVariableLength(sct.extensions, CTConstants.MAX_EXTENSIONS_LENGTH)

@@ -17,12 +17,20 @@
 package org.certificatetransparency.ctlog.logclient.model
 
 /**
+ * [LogEntryType] is the type of this entry. Future revisions of this protocol version may add new LogEntryType values.
  * @property UNKNOWN_ENTRY_TYPE Not part of the I-D, and outside the valid range.
  */
 // Numbers part of specification
 @Suppress("MagicNumber")
 enum class LogEntryType(val number: Int) {
+    /**
+     * Type specifying [LogEntry] is [LogEntry.X509ChainEntry]
+     */
     X509_ENTRY(0),
+
+    /**
+     * Type specifying [LogEntry] is [LogEntry.PreCertificateChainEntry]
+     */
     PRE_CERTIFICATE_ENTRY(1),
     UNKNOWN_ENTRY_TYPE(65536);
 

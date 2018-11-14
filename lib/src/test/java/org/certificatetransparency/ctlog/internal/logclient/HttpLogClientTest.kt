@@ -86,7 +86,7 @@ class HttpLogClientTest {
     }
 
     private fun SignedCertificateTimestamp?.verifySctContents() {
-        assertEquals(Version.V1, this?.version)
+        assertEquals(Version.V1, this?.sctVersion)
         assertArrayEquals(LOG_ID, this?.id?.keyId)
         assertEquals(1373015623951L, this?.timestamp)
         assertEquals(DigitallySigned.HashAlgorithm.SHA256, this?.signature?.hashAlgorithm)

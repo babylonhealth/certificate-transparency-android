@@ -18,8 +18,12 @@ package org.certificatetransparency.ctlog.logclient.model
 
 sealed class LogEntry {
     /**
-     * @property leafCertificate For V1 this entry just includes the certificate in the leaf_certificate field
-     * @property certificateChain A chain from the leaf to a trusted root (excluding leaf and possibly root).
+     * @property leafCertificate [leafCertificate] is the end-entity certificate submitted for auditing. For V1 this entry just includes the
+     * certificate in the [leafCertificate] field
+     * @property certificateChain [certificateChain] is a chain of additional certificates required to verify the end-entity certificate.  The
+     * first certificate MUST certify the end-entity certificate.  Each following certificate MUST directly certify the one preceding it.  The
+     * final certificate MUST be a root certificate accepted by the log. A chain from the leaf to a trusted root (excluding leaf and possibly
+     * root).
      */
     data class X509ChainEntry(
         val leafCertificate: ByteArray? = null,
@@ -48,6 +52,12 @@ sealed class LogEntry {
         }
     }
 
+    /**
+     * @property preCertificateChain [preCertificateChain] is a chain of additional certificates required to verify the Precertificate
+     * submission.  The first certificate MAY be a valid Precertificate Signing Certificate and MUST certify the first certificate.  Each
+     * following certificate MUST directly certify the one preceding it.  The final certificate MUST be a root certificate accepted by the log.
+     * @property preCertificate [preCertificate] is the [PreCertificate] submitted for auditing.
+     */
     data class PreCertificateChainEntry(
         // The chain certifying the pre-certificate, as submitted by the CA.
         val preCertificateChain: List<ByteArray> = emptyList(),
