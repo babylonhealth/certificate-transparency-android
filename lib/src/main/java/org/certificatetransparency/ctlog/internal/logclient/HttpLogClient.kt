@@ -18,7 +18,7 @@
 
 package org.certificatetransparency.ctlog.internal.logclient
 
-import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedTreeHead
 import org.certificatetransparency.ctlog.internal.logclient.model.network.AddChainRequest
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer

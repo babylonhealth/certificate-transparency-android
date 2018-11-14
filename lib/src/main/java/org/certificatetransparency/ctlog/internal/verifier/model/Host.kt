@@ -40,8 +40,10 @@ internal data class Host(
     fun matches(hostname: String): Boolean {
         if (pattern.startsWith(WILDCARD)) {
             val firstDot = hostname.indexOf('.')
-            return hostname.length - firstDot - 1 == canonicalHostname.length && hostname.regionMatches(firstDot + 1, canonicalHostname, 0,
-                canonicalHostname.length, ignoreCase = false)
+            return hostname.length - firstDot - 1 == canonicalHostname.length && hostname.regionMatches(
+                firstDot + 1, canonicalHostname, 0,
+                canonicalHostname.length, ignoreCase = false
+            )
         }
 
         return hostname == canonicalHostname

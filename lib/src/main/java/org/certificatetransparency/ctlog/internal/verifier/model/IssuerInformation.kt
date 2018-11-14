@@ -23,7 +23,8 @@ internal data class IssuerInformation(
     val name: X500Name? = null,
     val keyHash: ByteArray,
     val x509authorityKeyIdentifier: Extension? = null,
-    val issuedByPreCertificateSigningCert: Boolean) {
+    val issuedByPreCertificateSigningCert: Boolean
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

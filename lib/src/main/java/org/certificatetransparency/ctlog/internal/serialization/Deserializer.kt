@@ -1,6 +1,6 @@
 package org.certificatetransparency.ctlog.internal.serialization
 
-import org.certificatetransparency.ctlog.exceptions.SerializationException
+import org.certificatetransparency.ctlog.internal.exceptions.SerializationException
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.logclient.model.DigitallySigned
 import org.certificatetransparency.ctlog.internal.logclient.model.LogEntry

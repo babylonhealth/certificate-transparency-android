@@ -27,7 +27,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.logclient.model.DigitallySigned
 import org.certificatetransparency.ctlog.internal.logclient.model.LogEntry

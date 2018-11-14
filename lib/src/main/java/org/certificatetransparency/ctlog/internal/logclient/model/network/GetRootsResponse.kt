@@ -17,7 +17,7 @@
 package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
-import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
