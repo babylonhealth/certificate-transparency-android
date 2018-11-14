@@ -1,7 +1,7 @@
-package org.certificatetransparency.ctlog.exceptions
+package org.certificatetransparency.ctlog.internal.exceptions
 
 /** Base class for CT errors.  */
-open class CertificateTransparencyException : RuntimeException {
+internal open class CertificateTransparencyException : RuntimeException {
 
     constructor(message: String) : super(message)
 

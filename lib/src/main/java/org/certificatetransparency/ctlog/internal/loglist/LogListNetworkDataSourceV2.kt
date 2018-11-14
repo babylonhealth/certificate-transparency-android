@@ -24,7 +24,6 @@ import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.LogListV2
 import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.State
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
-import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.loglist.LogServer
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
@@ -97,8 +96,7 @@ internal class LogListNetworkDataSourceV2(
                 // QUALIFIED, USABLE -> Validate SCT against this (any timestamp okay)
                 val validUntil = if (it.state is State.Retired || it.state is State.Frozen) it.state.timestamp else null
 
-                LogInfo(PublicKeyFactory.fromByteArray(key), validUntil)
+                LogServer(PublicKeyFactory.fromByteArray(key), validUntil)
             }
     }
 }
-

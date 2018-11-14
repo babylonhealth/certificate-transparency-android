@@ -18,20 +18,20 @@ package org.certificatetransparency.ctlog.internal.loglist
 
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.verifier.SignatureVerifier
+import org.certificatetransparency.ctlog.loglist.LogServer
 import retrofit2.Retrofit
 
 internal object LogListDataSourceFactory {
-    fun create(): DataSource<Map<String, SignatureVerifier>> {
+    fun create(): DataSource<Map<String, LogServer>> {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.gstatic.com/ct/log_list/")
             .build()
 
         val logService = retrofit.create(LogListService::class.java)
 
-        return InMemoryDataSource<Map<String, SignatureVerifier>>()
+        return InMemoryDataSource<Map<String, LogServer>>()
             .compose(LogListNetworkDataSource(logService).oneWayTransform { logServers ->
-                logServers.associateBy({ Base64.toBase64String(it.id) }) { it.signatureVerifier }
+                logServers.associateBy { Base64.toBase64String(it.id) }
             })
             .reuseInflight()
     }

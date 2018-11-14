@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.verifier
+package org.certificatetransparency.ctlog.internal.verifier
 
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.SctResult
 import java.security.cert.Certificate
 
 /**
  * A [SignatureVerifier] verifies a Signed Certificate Timestamp is trusted by a particular log server
  */
-interface SignatureVerifier {
+internal interface SignatureVerifier {
 
     /**
      * Verifies the signature of a Signed Certificate Timestamp and certificate. Works for the following cases:

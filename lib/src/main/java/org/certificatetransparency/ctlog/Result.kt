@@ -16,8 +16,7 @@
 
 package org.certificatetransparency.ctlog
 
-import org.certificatetransparency.ctlog.verifier.SctResult
-import org.certificatetransparency.ctlog.verifier.SignatureVerifier
+import org.certificatetransparency.ctlog.loglist.LogServer
 import java.io.IOException
 
 /**
@@ -68,14 +67,14 @@ sealed class Result {
         }
 
         /**
-         * Certificate transparency checks failed as no [SignatureVerifier] are present. This can occur if there are network problems loading
+         * Certificate transparency checks failed as no [LogServer] are present. This can occur if there are network problems loading
          * the log-list.json file
          */
-        object NoVerifiers : Failure() {
+        object NoLogServers : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: No verifiers to check against"
+            override fun toString() = "Failure: No log servers to check against"
         }
 
         /**

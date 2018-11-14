@@ -17,7 +17,7 @@
 package org.certificatetransparency.ctlog.internal.verifier
 
 import org.certificatetransparency.ctlog.internal.utils.stringStackTrace
-import org.certificatetransparency.ctlog.verifier.SctResult
+import org.certificatetransparency.ctlog.SctResult
 import java.io.IOException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException

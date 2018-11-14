@@ -25,6 +25,8 @@ import org.bouncycastle.asn1.x509.Extensions
 import org.bouncycastle.asn1.x509.TBSCertificate
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator
 import org.bouncycastle.util.encoders.Base64
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.LOG_ENTRY_TYPE_LENGTH
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants.MAX_CERTIFICATE_LENGTH
@@ -39,11 +41,8 @@ import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningC
 import org.certificatetransparency.ctlog.internal.utils.issuerInformation
 import org.certificatetransparency.ctlog.internal.utils.issuerInformationFromPreCertificate
 import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformation
-import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
-import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.internal.logclient.model.Version
-import org.certificatetransparency.ctlog.verifier.SctResult
-import org.certificatetransparency.ctlog.verifier.SignatureVerifier
+import org.certificatetransparency.ctlog.loglist.LogServer
+import org.certificatetransparency.ctlog.SctResult
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
@@ -61,9 +60,9 @@ import java.security.cert.X509Certificate
  * Verifies signatures from a given CT Log.
  *
  * @constructor Creates a new LogSignatureVerifier which is associated with a single log.
- * @property logInfo information of the log this verifier is to be associated with.
+ * @property logServer information of the log this verifier is to be associated with.
  */
-internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVerifier {
+internal class LogSignatureVerifier(private val logServer: LogServer) : SignatureVerifier {
 
     override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult {
 
@@ -73,12 +72,12 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
             return SctResult.Invalid.FutureTimestamp(sct.timestamp, now)
         }
 
-        if (logInfo.validUntil != null && sct.timestamp > logInfo.validUntil) {
-            return SctResult.Invalid.LogServerUntrusted(sct.timestamp, logInfo.validUntil)
+        if (logServer.validUntil != null && sct.timestamp > logServer.validUntil) {
+            return SctResult.Invalid.LogServerUntrusted(sct.timestamp, logServer.validUntil)
         }
 
-        if (!logInfo.isSameLogId(sct.id.keyId)) {
-            return LogIdMismatch(Base64.toBase64String(sct.id.keyId), Base64.toBase64String(logInfo.id))
+        if (!logServer.id.contentEquals(sct.id.keyId)) {
+            return LogIdMismatch(Base64.toBase64String(sct.id.keyId), Base64.toBase64String(logServer.id))
         }
 
         val leafCert = chain[0]
@@ -225,14 +224,14 @@ internal class LogSignatureVerifier(private val logInfo: LogInfo) : SignatureVer
 
     private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): SctResult {
         val sigAlg = when {
-            logInfo.key.algorithm == "EC" -> "SHA256withECDSA"
-            logInfo.key.algorithm == "RSA" -> "SHA256withRSA"
-            else -> return UnsupportedSignatureAlgorithm(logInfo.key.algorithm)
+            logServer.key.algorithm == "EC" -> "SHA256withECDSA"
+            logServer.key.algorithm == "RSA" -> "SHA256withRSA"
+            else -> return UnsupportedSignatureAlgorithm(logServer.key.algorithm)
         }
 
         return try {
             val result = Signature.getInstance(sigAlg).apply {
-                initVerify(logInfo.key)
+                initVerify(logServer.key)
                 update(toVerify)
             }.verify(sct.signature.signature)
 

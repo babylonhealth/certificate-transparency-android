@@ -23,7 +23,7 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.Result
-import org.certificatetransparency.ctlog.verifier.SctResult
+import org.certificatetransparency.ctlog.SctResult
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ATTACK_CHAIN
@@ -134,7 +134,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
-        assertIsA<Result.Failure.NoVerifiers>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<Result.Failure.NoLogServers>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test

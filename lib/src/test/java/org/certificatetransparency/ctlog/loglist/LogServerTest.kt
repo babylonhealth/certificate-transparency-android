@@ -1,4 +1,4 @@
-package org.certificatetransparency.ctlog.internal.verifier.model
+package org.certificatetransparency.ctlog.loglist
 
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
@@ -6,18 +6,18 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Mostly for verifying the log info calculates the log ID correctly.  */
-class LogInfoTest {
+class LogServerTest {
 
     @Test
     fun testCalculatesLogIdCorrectly() {
-        val logInfo = LogInfo(PublicKeyFactory.fromByteArray(PUBLIC_KEY))
-        assertTrue(logInfo.isSameLogId(LOG_ID))
+        val logServer = LogServer(PublicKeyFactory.fromByteArray(PUBLIC_KEY))
+        assertTrue(logServer.id.contentEquals(LOG_ID))
     }
 
     @Test
     fun testCalculatesLogIdCorrectlyRSA() {
-        val logInfo = LogInfo(PublicKeyFactory.fromByteArray(PUBLIC_KEY_RSA))
-        assertTrue(logInfo.isSameLogId(LOG_ID_RSA))
+        val logServer = LogServer(PublicKeyFactory.fromByteArray(PUBLIC_KEY_RSA))
+        assertTrue(logServer.id.contentEquals(LOG_ID_RSA))
     }
 
     companion object {

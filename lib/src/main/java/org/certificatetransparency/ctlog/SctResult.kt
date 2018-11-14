@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.verifier
+package org.certificatetransparency.ctlog
 
 /**
  * Abstract class providing the results of verifying a Signed Certificate Timestamp
@@ -35,9 +35,9 @@ sealed class SctResult {
         object FailedVerification : Invalid()
 
         /**
-         * Signed Certificate Timestamp checks failed as there was no [SignatureVerifier] we trust in the log-list.json
+         * Signed Certificate Timestamp checks failed as there was no log server we trust in the log-list.json
          */
-        object NoVerifierFound : Invalid()
+        object NoLogServerFound : Invalid()
 
         /**
          * Signed Certificate Timestamp checks failed as the [timestamp] of the SCT is in the future
@@ -75,7 +75,7 @@ sealed class SctResult {
             /**
              * The [Exception] that occurred
              */
-            abstract val exception: kotlin.Exception
+            abstract val exception: kotlin.Exception?
         }
     }
 }

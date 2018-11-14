@@ -23,7 +23,6 @@ import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.model.LogList
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
-import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
 import org.certificatetransparency.ctlog.loglist.LogServer
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
@@ -89,7 +88,7 @@ internal class LogListNetworkDataSource(
             val key = Base64.decode(it.key)
             val validUntil = it.disqualifiedAt ?: it.finalSignedTreeHead?.timestamp
 
-            LogInfo(PublicKeyFactory.fromByteArray(key), validUntil)
+            LogServer(PublicKeyFactory.fromByteArray(key), validUntil)
         }
     }
 }

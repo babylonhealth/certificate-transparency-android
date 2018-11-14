@@ -20,7 +20,7 @@ import okhttp3.internal.tls.OkHostnameVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyHostnameVerifier
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.verifier.SignatureVerifier
+import org.certificatetransparency.ctlog.loglist.LogServer
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
@@ -34,7 +34,7 @@ class HostnameVerifierBuilder(
     @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE
 ) {
     private var trustManager: X509TrustManager? = null
-    private var logListDataSource: DataSource<Map<String, SignatureVerifier>>? = null
+    private var logListDataSource: DataSource<Map<String, LogServer>>? = null
     private val hosts = mutableSetOf<Host>()
 
     /**
@@ -56,22 +56,22 @@ class HostnameVerifierBuilder(
     }
 
     /**
-     * A [DataSource] providing a map of log list key id's to a [SignatureVerifier]
+     * A [DataSource] providing a map of log list key id's to a [LogServer]
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setLogListDataSource(logListDataSource: DataSource<Map<String, SignatureVerifier>>) =
+    fun setLogListDataSource(logListDataSource: DataSource<Map<String, LogServer>>) =
         apply {
             this.logListDataSource = logListDataSource
         }
 
     /**
-     * A [DataSource] providing a map of log list key id's to a [SignatureVerifier]
+     * A [DataSource] providing a map of log list key id's to a [LogServer]
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun logListDataSource(init: () -> DataSource<Map<String, SignatureVerifier>>) {
+    fun logListDataSource(init: () -> DataSource<Map<String, LogServer>>) {
         setLogListDataSource(init())
     }
 

@@ -1,9 +1,7 @@
-package org.certificatetransparency.ctlog.exceptions
-
-import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyException
+package org.certificatetransparency.ctlog.internal.exceptions
 
 /** Error serializing / deserializing data.  */
-class SerializationException : CertificateTransparencyException {
+internal class SerializationException : CertificateTransparencyException {
 
     constructor(message: String) : super(message)
 

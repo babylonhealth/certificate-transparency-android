@@ -23,7 +23,7 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.issuerInformation
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
-import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
+import org.certificatetransparency.ctlog.loglist.LogServer
 import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.utils.TestData.INTERMEDIATE_CA_CERT
 import org.certificatetransparency.ctlog.utils.TestData.PRE_CERT_SIGNING_BY_INTERMEDIATE
@@ -52,7 +52,7 @@ import org.certificatetransparency.ctlog.utils.TestData.TEST_PRE_SCT_RSA
 import org.certificatetransparency.ctlog.utils.TestData.loadCertificates
 import org.certificatetransparency.ctlog.utils.assertIsA
 import org.certificatetransparency.ctlog.utils.readPemFile
-import org.certificatetransparency.ctlog.verifier.SctResult
+import org.certificatetransparency.ctlog.SctResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -72,22 +72,22 @@ class LogSignatureVerifierTest {
 
     /** Returns a LogSignatureVerifier for the test log with an EC key  */
     private val verifier by lazy {
-        val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
+        val logInfo = LogServer.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
         LogSignatureVerifier(logInfo)
     }
 
     /** Returns a LogSignatureVerifier for the test log with an RSA key  */
     private val verifierRSA by lazy {
-        val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_RSA))
+        val logInfo = LogServer.fromKeyFile(TestData.fileName(TEST_LOG_KEY_RSA))
         LogSignatureVerifier(logInfo)
     }
 
     /** Returns a Map of LogInfos with all log keys to verify the Github certificate  */
     private val logInfosGitHub by lazy {
         listOf(
-            LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_PILOT)),
-            LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_SKYDIVER)),
-            LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY_DIGICERT))
+            LogServer.fromKeyFile(TestData.fileName(TEST_LOG_KEY_PILOT)),
+            LogServer.fromKeyFile(TestData.fileName(TEST_LOG_KEY_SKYDIVER)),
+            LogServer.fromKeyFile(TestData.fileName(TEST_LOG_KEY_DIGICERT))
         ).associateBy { Base64.toBase64String(it.id) }
     }
 
@@ -266,7 +266,7 @@ class LogSignatureVerifierTest {
         val sct = Deserializer.parseSctFromBinary(TestData.file(TEST_CERT_SCT).inputStream())
 
         // when we have a log server which is no longer valid
-        val logInfo = LogInfo.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
+        val logInfo = LogServer.fromKeyFile(TestData.fileName(TEST_LOG_KEY))
         val verifier = LogSignatureVerifier(logInfo.copy(validUntil = sct.timestamp - 10000))
 
         // then the signature is rejected
@@ -279,8 +279,8 @@ class LogSignatureVerifierTest {
      * @param pemKeyFilePath Path of the log's public key file.
      * @return new LogInfo instance.
      */
-    private fun LogInfo.Companion.fromKeyFile(pemKeyFilePath: String): LogInfo {
+    private fun LogServer.Companion.fromKeyFile(pemKeyFilePath: String): LogServer {
         val logPublicKey = File(pemKeyFilePath).readPemFile()
-        return LogInfo(logPublicKey)
+        return LogServer(logPublicKey)
     }
 }
