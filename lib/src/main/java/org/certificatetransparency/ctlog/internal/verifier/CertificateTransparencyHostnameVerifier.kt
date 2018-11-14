@@ -29,7 +29,7 @@ internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<Map<String, LogServer>>?,
+    logListDataSource: DataSource<List<LogServer>>?,
     private val failOnError: Boolean = true,
     private val logger: Logger? = null
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), HostnameVerifier {

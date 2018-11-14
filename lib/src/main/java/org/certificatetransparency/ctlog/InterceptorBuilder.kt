@@ -30,7 +30,7 @@ import javax.net.ssl.X509TrustManager
  */
 class InterceptorBuilder {
     private var trustManager: X509TrustManager? = null
-    private var logListDataSource: DataSource<Map<String, LogServer>>? = null
+    private var logListDataSource: DataSource<List<LogServer>>? = null
     private val hosts = mutableSetOf<Host>()
 
     /**
@@ -63,22 +63,22 @@ class InterceptorBuilder {
     }
 
     /**
-     * A [DataSource] providing a map of log list key id's to a [LogServer]
+     * A [DataSource] providing a list of [LogServer]
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setLogListDataSource(logListDataSource: DataSource<Map<String, LogServer>>) =
+    fun setLogListDataSource(logListDataSource: DataSource<List<LogServer>>) =
         apply {
             this.logListDataSource = logListDataSource
         }
 
     /**
-     * A [DataSource] providing a map of log list key id's to a [LogServer]
+     * A [DataSource] providing a list of [LogServer]
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun logListDataSource(init: () -> DataSource<Map<String, LogServer>>) {
+    fun logListDataSource(init: () -> DataSource<List<LogServer>>) {
         setLogListDataSource(init())
     }
 

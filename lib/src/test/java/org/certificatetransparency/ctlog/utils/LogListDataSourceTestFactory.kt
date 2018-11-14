@@ -23,47 +23,42 @@ import org.certificatetransparency.ctlog.internal.loglist.model.LogList
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
 import org.certificatetransparency.ctlog.loglist.LogServer
-import java.security.MessageDigest
 
 object LogListDataSourceTestFactory {
 
-    val logListDataSource: DataSource<Map<String, LogServer>> by lazy {
-        val hasher = MessageDigest.getInstance("SHA-256")
-
+    val logListDataSource: DataSource<List<LogServer>> by lazy {
         // Collection of CT logs that are trusted from https://www.gstatic.com/ct/log_list/log_list.json
         val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
         val trustedLogKeys = GsonBuilder().create().fromJson(json, LogList::class.java).logs.map { it.key }
 
-        val map = trustedLogKeys.map { Base64.decode(it) }.associateBy({
-            Base64.toBase64String(hasher.digest(it))
-        }) {
+        val list = trustedLogKeys.map { Base64.decode(it) }.map {
             LogServer(PublicKeyFactory.fromByteArray(it))
         }
 
-        object : DataSource<Map<String, LogServer>> {
-            override suspend fun get() = map
+        object : DataSource<List<LogServer>> {
+            override suspend fun get() = list
 
-            override suspend fun set(value: Map<String, LogServer>) = Unit
-
-            override val coroutineContext = GlobalScope.coroutineContext
-        }
-    }
-
-    val emptySource: DataSource<Map<String, LogServer>> by lazy {
-        object : DataSource<Map<String, LogServer>> {
-            override suspend fun get() = emptyMap<String, LogServer>()
-
-            override suspend fun set(value: Map<String, LogServer>) = Unit
+            override suspend fun set(value: List<LogServer>) = Unit
 
             override val coroutineContext = GlobalScope.coroutineContext
         }
     }
 
-    val nullSource: DataSource<Map<String, LogServer>> by lazy {
-        object : DataSource<Map<String, LogServer>> {
-            override suspend fun get(): Map<String, LogServer>? = null
+    val emptySource: DataSource<List<LogServer>> by lazy {
+        object : DataSource<List<LogServer>> {
+            override suspend fun get() = emptyList<LogServer>()
 
-            override suspend fun set(value: Map<String, LogServer>) = Unit
+            override suspend fun set(value: List<LogServer>) = Unit
+
+            override val coroutineContext = GlobalScope.coroutineContext
+        }
+    }
+
+    val nullSource: DataSource<List<LogServer>> by lazy {
+        object : DataSource<List<LogServer>> {
+            override suspend fun get(): List<LogServer>? = null
+
+            override suspend fun set(value: List<LogServer>) = Unit
 
             override val coroutineContext = GlobalScope.coroutineContext
         }

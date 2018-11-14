@@ -21,6 +21,7 @@ package org.certificatetransparency.ctlog.internal.verifier
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
 import org.certificatetransparency.ctlog.Result
+import org.certificatetransparency.ctlog.SctResult
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.LogListDataSourceFactory
 import org.certificatetransparency.ctlog.internal.utils.Base64
@@ -28,7 +29,6 @@ import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.loglist.LogServer
-import org.certificatetransparency.ctlog.SctResult
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
@@ -38,7 +38,7 @@ import javax.net.ssl.X509TrustManager
 internal open class CertificateTransparencyBase(
     private val hosts: Set<Host>,
     trustManager: X509TrustManager? = null,
-    logListDataSource: DataSource<Map<String, LogServer>>? = null,
+    logListDataSource: DataSource<List<LogServer>>? = null,
     private val minimumValidSignedCertificateTimestamps: Int = 2
 ) {
     init {
@@ -53,7 +53,9 @@ internal open class CertificateTransparencyBase(
         CertificateChainCleaner.get(localTrustManager)
     }
 
-    private val logListDataSource = logListDataSource ?: LogListDataSourceFactory.create()
+    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create()).oneWayTransform { logServers ->
+        logServers.associateBy({ Base64.toBase64String(it.id) }) { LogSignatureVerifier(it) }
+    }.reuseInflight()
 
     fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): Result {
         return if (!enabledForCertificateTransparency(host)) {
@@ -76,9 +78,7 @@ internal open class CertificateTransparencyBase(
     private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): Result {
 
         val verifiers = runBlocking {
-            logListDataSource.get()?.mapValues {
-                LogSignatureVerifier(it.value)
-            }
+            logListDataSource.get()
         } ?: return Result.Failure.NoLogServers
 
         val leafCertificate = certificates[0]

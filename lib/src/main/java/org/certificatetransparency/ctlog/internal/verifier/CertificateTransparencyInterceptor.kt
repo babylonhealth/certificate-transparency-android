@@ -30,7 +30,7 @@ import javax.net.ssl.X509TrustManager
 internal class CertificateTransparencyInterceptor(
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<Map<String, LogServer>>?,
+    logListDataSource: DataSource<List<LogServer>>?,
     private val failOnError: Boolean = true,
     private val logger: Logger? = null
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
