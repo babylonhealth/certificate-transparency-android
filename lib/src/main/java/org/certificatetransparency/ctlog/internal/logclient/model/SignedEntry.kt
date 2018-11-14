@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-sealed class SignedEntry {
+internal sealed class SignedEntry {
 
     data class X509(val x509: ByteArray) : SignedEntry() {
 
@@ -36,5 +36,5 @@ sealed class SignedEntry {
         }
     }
 
-    data class PreCertificate(val preCertificate: org.certificatetransparency.ctlog.logclient.model.PreCertificate) : SignedEntry()
+    data class PreCertificate(val preCertificate: org.certificatetransparency.ctlog.internal.logclient.model.PreCertificate) : SignedEntry()
 }

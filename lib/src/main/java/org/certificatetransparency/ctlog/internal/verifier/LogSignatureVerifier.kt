@@ -40,8 +40,8 @@ import org.certificatetransparency.ctlog.internal.utils.issuerInformation
 import org.certificatetransparency.ctlog.internal.utils.issuerInformationFromPreCertificate
 import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformation
 import org.certificatetransparency.ctlog.internal.verifier.model.LogInfo
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 import org.certificatetransparency.ctlog.verifier.SctResult
 import org.certificatetransparency.ctlog.verifier.SignatureVerifier
 import java.io.ByteArrayOutputStream

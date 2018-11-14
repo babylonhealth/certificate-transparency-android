@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
 /**
  * A signed certificate timestamp. If the [sctVersion] is not [Version.V1], then a v1 client may be unable to verify the signature.
@@ -28,7 +28,7 @@ package org.certificatetransparency.ctlog.logclient.model
  * @property extensions An opaque type for future expansion.  It is likely that not all participants will need to understand data in this
  * field.  Logs should set this to the empty string.  Clients should decode the base64-encoded data and include it in the SCT.
  */
-data class SignedCertificateTimestamp(
+internal data class SignedCertificateTimestamp(
     val sctVersion: Version = Version.UNKNOWN_VERSION,
     val id: LogId,
     val timestamp: Long,

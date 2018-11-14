@@ -19,9 +19,9 @@ package org.certificatetransparency.ctlog.internal.logclient.model.network
 import com.google.gson.annotations.SerializedName
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.logclient.model.LogId
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.internal.logclient.model.LogId
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 
 /**
  * If the "sctVersion" is not v1, then a v1 client may be unable to verify the signature. It MUST NOT construe this as an error. (Note: Log

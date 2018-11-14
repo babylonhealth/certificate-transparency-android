@@ -1,10 +1,10 @@
 package org.certificatetransparency.ctlog.internal.serialization
 
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.logclient.model.DigitallySigned
-import org.certificatetransparency.ctlog.logclient.model.LogId
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.internal.logclient.model.DigitallySigned
+import org.certificatetransparency.ctlog.internal.logclient.model.LogId
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 import org.certificatetransparency.ctlog.utils.TestData
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test

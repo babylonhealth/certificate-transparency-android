@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient
+package org.certificatetransparency.ctlog.internal.logclient
 
-import org.certificatetransparency.ctlog.logclient.model.MerkleAuditProof
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntry
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntryWithProof
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.MerkleAuditProof
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntryWithProof
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
 import java.security.cert.Certificate
 
 /**
  * [LogClient] represents a log server which can be used, for example, to ensure a Signed Certificate Timestamp really has been logged
  */
-interface LogClient {
+internal interface LogClient {
     /**
      * Adds a certificate to the log.
      *

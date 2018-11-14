@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog
+package org.certificatetransparency.ctlog.internal.logclient
 
 import okhttp3.OkHttpClient
-import org.certificatetransparency.ctlog.internal.logclient.HttpLogClient
-import org.certificatetransparency.ctlog.internal.logclient.LogClientService
-import org.certificatetransparency.ctlog.logclient.LogClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Factory to create a [LogClient] for querying a log server
  */
-object LogClientFactory {
+internal object LogClientFactory {
 
     /**
      * Create a [LogClient] for the log server [baseUrl]

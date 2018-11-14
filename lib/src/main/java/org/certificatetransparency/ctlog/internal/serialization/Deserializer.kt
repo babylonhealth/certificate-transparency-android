@@ -2,19 +2,19 @@ package org.certificatetransparency.ctlog.internal.serialization
 
 import org.certificatetransparency.ctlog.exceptions.SerializationException
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.logclient.model.DigitallySigned
-import org.certificatetransparency.ctlog.logclient.model.LogEntry
-import org.certificatetransparency.ctlog.logclient.model.LogEntryType
-import org.certificatetransparency.ctlog.logclient.model.LogId
-import org.certificatetransparency.ctlog.logclient.model.MerkleAuditProof
-import org.certificatetransparency.ctlog.logclient.model.MerkleTreeLeaf
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntry
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntryWithProof
-import org.certificatetransparency.ctlog.logclient.model.PreCertificate
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.logclient.model.SignedEntry
-import org.certificatetransparency.ctlog.logclient.model.TimestampedEntry
-import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.internal.logclient.model.DigitallySigned
+import org.certificatetransparency.ctlog.internal.logclient.model.LogEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.LogEntryType
+import org.certificatetransparency.ctlog.internal.logclient.model.LogId
+import org.certificatetransparency.ctlog.internal.logclient.model.MerkleAuditProof
+import org.certificatetransparency.ctlog.internal.logclient.model.MerkleTreeLeaf
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntryWithProof
+import org.certificatetransparency.ctlog.internal.logclient.model.PreCertificate
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.TimestampedEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 import java.io.IOException
 import java.io.InputStream
 import kotlin.math.ceil
@@ -94,7 +94,10 @@ internal object Deserializer {
      * @return [ParsedLogEntryWithProof]
      */
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
-        return ParsedLogEntryWithProof(entry, parseAuditProof(proof, leafIndex, treeSize))
+        return ParsedLogEntryWithProof(
+            entry,
+            parseAuditProof(proof, leafIndex, treeSize)
+        )
     }
 
     /**
@@ -107,7 +110,12 @@ internal object Deserializer {
      * @return [MerkleAuditProof]
      */
     fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long) =
-        MerkleAuditProof(Version.V1, treeSize, leafIndex, proof.map(Base64::decode))
+        MerkleAuditProof(
+            Version.V1,
+            treeSize,
+            leafIndex,
+            proof.map(Base64::decode)
+        )
 
     /**
      * Parses an entry retrieved from Log.
@@ -149,7 +157,11 @@ internal object Deserializer {
             throw SerializationException("Unknown entry type: $leafType")
         }
 
-        return MerkleTreeLeaf(Version.forNumber(version), parseTimestampedEntry(inputStream))
+        return MerkleTreeLeaf(
+            Version.forNumber(
+                version
+            ), parseTimestampedEntry(inputStream)
+        )
     }
 
     /**

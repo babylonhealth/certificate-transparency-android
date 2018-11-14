@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 
@@ -31,7 +31,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
  * TBSCertificate, the corresponding extension must also be present in the Precertificate Signing Certificate -- in this case, the
  * TBSCertificate also has its Authority Key Identifier changed to match the final issuer.
  */
-data class PreCertificate(
+internal data class PreCertificate(
     val issuerKeyHash: ByteArray? = null,
     val tbsCertificate: ByteArray? = null
 ) {

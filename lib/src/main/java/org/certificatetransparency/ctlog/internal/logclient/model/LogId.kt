@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 
@@ -22,7 +22,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
  * @property keyId [keyId] is the SHA-256 hash of the log's public key, calculated over the DER encoding of the key represented as
  * [SubjectPublicKeyInfo].
  */
-data class LogId(
+internal data class LogId(
     val keyId: ByteArray
 ) {
 

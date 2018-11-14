@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-/** ParsedLogEntry data type contains an entry retrieved from Log with it's audit proof.  */
-data class ParsedLogEntryWithProof(
-    val parsedLogEntry: ParsedLogEntry,
-    val auditProof: MerkleAuditProof
-)
+/**
+ * @property UNKNOWN_VERSION Not part of the I-D, and outside the valid range.
+ */
+// Numbers part of specification
+@Suppress("MagicNumber")
+internal enum class Version(val number: Int) {
+    V1(0),
+    UNKNOWN_VERSION(256);
+
+    companion object {
+        fun forNumber(number: Int) = Version.values().firstOrNull { it.number == number } ?: UNKNOWN_VERSION
+    }
+}

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
 /**
  * The leaves of the Merkle Tree are the leaf hashes of the corresponding "MerkleTreeLeaf" structures.
  * @property version [version] is the version of the protocol to which the MerkleTreeLeaf corresponds.  This version is v1.
  * @property timestampedEntry [timestampedEntry]
  */
-data class MerkleTreeLeaf(
+internal data class MerkleTreeLeaf(
     val version: Version,
     val timestampedEntry: TimestampedEntry
 )

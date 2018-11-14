@@ -16,7 +16,7 @@
 
 package org.certificatetransparency.ctlog.verifier
 
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
 import java.security.cert.Certificate
 
 /**

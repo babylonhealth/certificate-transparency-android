@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-data class DigitallySigned(
+internal data class DigitallySigned(
     val hashAlgorithm: HashAlgorithm = HashAlgorithm.NONE,
     val signatureAlgorithm: SignatureAlgorithm = SignatureAlgorithm.ANONYMOUS,
     val signature: ByteArray

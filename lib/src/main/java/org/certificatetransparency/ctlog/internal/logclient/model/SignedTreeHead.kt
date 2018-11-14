@@ -16,8 +16,6 @@
 
 package org.certificatetransparency.ctlog.internal.logclient.model
 
-import org.certificatetransparency.ctlog.logclient.model.DigitallySigned
-import org.certificatetransparency.ctlog.logclient.model.Version
 import java.util.Arrays
 
 internal data class SignedTreeHead(

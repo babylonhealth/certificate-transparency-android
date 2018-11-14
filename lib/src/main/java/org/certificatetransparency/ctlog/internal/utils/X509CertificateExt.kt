@@ -24,7 +24,7 @@ import org.bouncycastle.asn1.DEROctetString
 import org.bouncycastle.crypto.tls.TlsUtils
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
 import java.io.IOException
 import java.security.cert.X509Certificate
 

@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
 /**
- * @property UNKNOWN_VERSION Not part of the I-D, and outside the valid range.
+ * [LogEntryType] is the type of this entry. Future revisions of this protocol version may add new LogEntryType values.
+ * @property UNKNOWN_ENTRY_TYPE Not part of the I-D, and outside the valid range.
  */
 // Numbers part of specification
 @Suppress("MagicNumber")
-enum class Version(val number: Int) {
-    V1(0),
-    UNKNOWN_VERSION(256);
+internal enum class LogEntryType(val number: Int) {
+    /**
+     * Type specifying [LogEntry] is [LogEntry.X509ChainEntry]
+     */
+    X509_ENTRY(0),
+
+    /**
+     * Type specifying [LogEntry] is [LogEntry.PreCertificateChainEntry]
+     */
+    PRE_CERTIFICATE_ENTRY(1),
+    UNKNOWN_ENTRY_TYPE(65536);
 
     companion object {
-        fun forNumber(number: Int) = Version.values().firstOrNull { it.number == number } ?: UNKNOWN_VERSION
+        fun forNumber(number: Int) = LogEntryType.values().firstOrNull { it.number == number } ?: UNKNOWN_ENTRY_TYPE
     }
 }

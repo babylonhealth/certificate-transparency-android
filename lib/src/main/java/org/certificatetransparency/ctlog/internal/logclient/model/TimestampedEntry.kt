@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-import org.certificatetransparency.ctlog.internal.logclient.model.SignedEntry
-import org.certificatetransparency.ctlog.utils.equalsVerifier
-import org.junit.Test
-
-class SignedEntryTest {
-    @Test
-    fun verifyX509Equals() {
-        equalsVerifier<SignedEntry.X509>()
-    }
-
-    @Test
-    fun verifyPreCertificateEquals() {
-        equalsVerifier<SignedEntry.PreCertificate>()
-    }
-}
+/**
+ * @property timestamp [timestamp] is the timestamp of the corresponding SCT issued for this certificate.
+ * @property signedEntry [signedEntry] is the [SignedEntry] of the corresponding SCT.
+ */
+internal data class TimestampedEntry(
+    val timestamp: Long = 0,
+    val signedEntry: SignedEntry
+)

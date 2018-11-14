@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-/**
- * @property timestamp [timestamp] is the timestamp of the corresponding SCT issued for this certificate.
- * @property signedEntry [signedEntry] is the [SignedEntry] of the corresponding SCT.
- */
-data class TimestampedEntry(
-    val timestamp: Long = 0,
-    val signedEntry: SignedEntry
+internal data class MerkleAuditProof(
+    val version: Version,
+    val treeSize: Long,
+    val leafIndex: Long,
+    val pathNodes: List<ByteArray>
 )

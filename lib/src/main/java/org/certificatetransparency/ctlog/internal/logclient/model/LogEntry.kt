@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-sealed class LogEntry {
+internal sealed class LogEntry {
     /**
      * @property leafCertificate [leafCertificate] is the end-entity certificate submitted for auditing. For V1 this entry just includes the
      * certificate in the [leafCertificate] field

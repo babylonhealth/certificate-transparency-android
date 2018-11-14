@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.certificatetransparency.ctlog.logclient.model
+package org.certificatetransparency.ctlog.internal.logclient.model
 
-data class MerkleAuditProof(
-    val version: Version,
-    val treeSize: Long,
-    val leafIndex: Long,
-    val pathNodes: List<ByteArray>
+/** ParsedLogEntry data type contains an entry retrieved from Log.  */
+internal data class ParsedLogEntry(
+    val merkleTreeLeaf: MerkleTreeLeaf,
+    val logEntry: LogEntry
 )

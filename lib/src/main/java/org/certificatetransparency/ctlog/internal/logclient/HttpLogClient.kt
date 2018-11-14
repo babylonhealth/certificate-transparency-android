@@ -25,11 +25,10 @@ import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.isPreCertificate
 import org.certificatetransparency.ctlog.internal.utils.isPreCertificateSigningCert
-import org.certificatetransparency.ctlog.logclient.LogClient
-import org.certificatetransparency.ctlog.logclient.model.MerkleAuditProof
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntry
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntryWithProof
-import org.certificatetransparency.ctlog.logclient.model.SignedCertificateTimestamp
+import org.certificatetransparency.ctlog.internal.logclient.model.MerkleAuditProof
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntryWithProof
+import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 

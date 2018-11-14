@@ -21,7 +21,7 @@ import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyExcep
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedTreeHead
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.logclient.model.Version
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 
 private const val MERKLE_HASH_TREE_BYTE_LENGTH = 32
 

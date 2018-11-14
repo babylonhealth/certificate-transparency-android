@@ -21,7 +21,7 @@ import org.certificatetransparency.ctlog.exceptions.CertificateTransparencyExcep
 import org.certificatetransparency.ctlog.internal.logclient.model.network.GetEntriesResponse.Entry
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.logclient.model.ParsedLogEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntry
 
 /**
  * Note that this message is not signed -- the retrieved data can be verified by constructing the Merkle Tree Hash corresponding to a
