@@ -72,7 +72,7 @@ internal open class CertificateTransparencyBase(
      * Check if the certificates provided by a server contain Signed Certificate Timestamps
      * from a trusted CT log.
      *
-     * @param certificates the certificate chain provided by the server
+     * @property certificates the certificate chain provided by the server
      * @return true if the certificates can be trusted, false otherwise.
      */
     private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): Result {

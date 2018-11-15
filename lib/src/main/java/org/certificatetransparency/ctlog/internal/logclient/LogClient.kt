@@ -29,7 +29,7 @@ internal interface LogClient {
     /**
      * Adds a certificate to the log.
      *
-     * @param certificatesChain The certificate chain to add.
+     * @property certificatesChain The certificate chain to add.
      * @return SignedCertificateTimestamp if the log added the chain successfully.
      */
     fun addCertificate(certificatesChain: List<Certificate>): SignedCertificateTimestamp
@@ -37,8 +37,8 @@ internal interface LogClient {
     /**
      * Retrieve Entries from Log.
      *
-     * @param start 0-based index of first entry to retrieve, in decimal.
-     * @param end 0-based index of last entry to retrieve, in decimal.
+     * @property start 0-based index of first entry to retrieve, in decimal.
+     * @property end 0-based index of last entry to retrieve, in decimal.
      * @return list of Log's entries.
      */
     fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry>
@@ -46,8 +46,8 @@ internal interface LogClient {
     /**
      * Retrieve Merkle Consistency Proof between Two Signed Tree Heads.
      *
-     * @param first The tree_size of the first tree, in decimal.
-     * @param second The tree_size of the second tree, in decimal.
+     * @property first The tree_size of the first tree, in decimal.
+     * @property second The tree_size of the second tree, in decimal.
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
     fun getSthConsistency(first: Long, second: Long): List<ByteArray>
@@ -55,8 +55,8 @@ internal interface LogClient {
     /**
      * Retrieve Entry+Merkle Audit Proof from Log.
      *
-     * @param leafIndex The index of the desired entry.
-     * @param treeSize The tree_size of the tree for which the proof is desired.
+     * @property leafIndex The index of the desired entry.
+     * @property treeSize The tree_size of the tree for which the proof is desired.
      * @return ParsedLog entry object with proof.
      */
     fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof
@@ -64,7 +64,7 @@ internal interface LogClient {
     /**
      * Retrieve Merkle Audit Proof from Log by Merkle Leaf Hash.
      *
-     * @param leafHash sha256 hash of MerkleTreeLeaf.
+     * @property leafHash sha256 hash of MerkleTreeLeaf.
      * @return MerkleAuditProof object.
      */
     fun getProofByHash(leafHash: ByteArray): MerkleAuditProof
@@ -72,8 +72,8 @@ internal interface LogClient {
     /**
      * Retrieve Merkle Audit Proof from Log by Merkle Leaf Hash.
      *
-     * @param encodedMerkleLeafHash Base64 encoded of sha256 hash of MerkleTreeLeaf.
-     * @param treeSize The tree_size of the tree for which the proof is desired. It can be obtained
+     * @property encodedMerkleLeafHash Base64 encoded of sha256 hash of MerkleTreeLeaf.
+     * @property treeSize The tree_size of the tree for which the proof is desired. It can be obtained
      * from latest STH.
      * @return MerkleAuditProof object.
      */

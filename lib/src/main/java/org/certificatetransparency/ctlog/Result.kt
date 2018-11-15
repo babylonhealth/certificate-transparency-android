@@ -30,7 +30,7 @@ sealed class Result {
 
         /**
          * Certificate transparency checks passed as [host] is not being verified
-         * @param host The host certificate transparency is not enabled for
+         * @property host The host certificate transparency is not enabled for
          */
         data class DisabledForHost(val host: String) : Success() {
             /**
@@ -41,7 +41,7 @@ sealed class Result {
 
         /**
          * Certificate transparency checks passed with the provided [scts]
-         * @param scts List of [SctResult] showing the results of checking each Signed Certificate Timestamp
+         * @property scts List of [SctResult] showing the results of checking each Signed Certificate Timestamp
          */
         data class Trusted(val scts: List<SctResult>) : Success() {
             /**
@@ -90,8 +90,8 @@ sealed class Result {
 
         /**
          * Certificate transparency checks failed as there are not enough valid Signed Certificate Timestamps
-         * @param scts List of [SctResult] stating which SCTs passed or failed checks
-         * @param minSctCount The number of valid SCTs required for trust to be established
+         * @property scts List of [SctResult] stating which SCTs passed or failed checks
+         * @property minSctCount The number of valid SCTs required for trust to be established
          */
         data class TooFewSctsTrusted(val scts: List<SctResult>, val minSctCount: Int) : Failure() {
             /**
@@ -103,7 +103,7 @@ sealed class Result {
 
         /**
          * Certificate transparency checks failed due to an unknown [IOException]
-         * @param ioException The [IOException] that occurred
+         * @property ioException The [IOException] that occurred
          */
         data class UnknownIoException(val ioException: IOException) : Failure() {
             /**

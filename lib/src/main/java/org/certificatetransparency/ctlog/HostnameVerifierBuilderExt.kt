@@ -21,8 +21,8 @@ import javax.net.ssl.HostnameVerifier
 
 /**
  * DSL to create a [HostnameVerifier] that will verify a host is trusted using certificate transparency
- * @param delegate [HostnameVerifier] to delegate to before performing certificate transparency checks. Default: `OkHostnameVerifier.INSTANCE`
- * @param init Block to execute as a [HostnameVerifierBuilder]
+ * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks. Default: `OkHostnameVerifier.INSTANCE`
+ * @property init Block to execute as a [HostnameVerifierBuilder]
  */
 @JvmSynthetic
 fun certificateTransparencyHostnameVerifier(

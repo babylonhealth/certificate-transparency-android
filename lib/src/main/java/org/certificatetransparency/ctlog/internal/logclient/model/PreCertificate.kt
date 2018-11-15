@@ -21,7 +21,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 /**
  * @property issuerKeyHash [issuerKeyHash] is the SHA-256 hash of the certificate issuer's public key, calculated over the DER encoding of the
  * key represented as [SubjectPublicKeyInfo].  This is needed to bind the issuer to the final certificate.
- * @property tbsCertificate [tbsCertificate] is the DER-encoded TBSCertificate (see (https://tools.ietf.org/html/rfc5280)[RFC5280]) component of
+ * @property tbsCertificate [tbsCertificate] is the DER-encoded TBSCertificate (see [RFC5280](https://tools.ietf.org/html/rfc5280)) component of
  * the Precertificate -- that is, without the signature and the poison extension.  If the Precertificate is not signed with the CA certificate
  * that will issue the final certificate, then the TBSCertificate also has its issuer changed to that of the CA that will issue the final
  * certificate.  Note that it is also possible to reconstruct this TBSCertificate from the final certificate by extracting the TBSCertificate

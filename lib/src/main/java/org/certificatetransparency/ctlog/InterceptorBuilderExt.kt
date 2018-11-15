@@ -21,7 +21,7 @@ import okhttp3.Interceptor
 /**
  * DSL to create an OkHttp network [Interceptor] that will verify a host is
  * trusted using certificate transparency
- * @param init Block to execute as a [InterceptorBuilder]
+ * @property init Block to execute as a [InterceptorBuilder]
  */
 @JvmSynthetic
 fun certificateTransparencyInterceptor(

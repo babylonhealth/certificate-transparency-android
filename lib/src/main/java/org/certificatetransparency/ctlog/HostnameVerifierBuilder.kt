@@ -28,7 +28,7 @@ import javax.net.ssl.X509TrustManager
 /**
  * Builder to create a [HostnameVerifier] that will verify a host is trusted using certificate
  * transparency
- * @param delegate [HostnameVerifier] to delegate to before performing certificate transparency checks. Default: `OkHostnameVerifier.INSTANCE`
+ * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks. Default: `OkHostnameVerifier.INSTANCE`
  */
 class HostnameVerifierBuilder(
     @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE
@@ -78,7 +78,7 @@ class HostnameVerifierBuilder(
     /**
      * Verify certificate transparency for hosts that match [pattern].
      *
-     * @param pattern lower-case host name or wildcard pattern such as `*.example.com`.
+     * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun addHost(vararg pattern: String) = apply {

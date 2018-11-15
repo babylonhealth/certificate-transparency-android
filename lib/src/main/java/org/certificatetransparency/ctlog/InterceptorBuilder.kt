@@ -83,8 +83,8 @@ class InterceptorBuilder {
     }
 
     /**
-     * Determine if a failure to pass certificate transparency results in the connection being closed. A value of true ensures the connection is
-     * closed on errors
+     * Determine if a failure to pass certificate transparency results in the connection being closed. [failOnError] set to true closes the
+     * connection on errors
      * Default: true
      */
     @Suppress("unused")
@@ -93,7 +93,7 @@ class InterceptorBuilder {
     /**
      * Verify certificate transparency for hosts that match [pattern].
      *
-     * @param pattern lower-case host name or wildcard pattern such as `*.example.com`.
+     * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun addHost(pattern: String) = apply {

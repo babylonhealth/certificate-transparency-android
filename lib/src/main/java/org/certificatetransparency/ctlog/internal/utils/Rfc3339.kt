@@ -51,7 +51,7 @@ private val Rfc3339Pattern = Regex(
 // Magic numbers accepted as very much linked to the pattern
 @Suppress("MagicNumber")
 @Throws(NumberFormatException::class)
-fun String.toRfc3339Long(): Long {
+internal fun String.toRfc3339Long(): Long {
     val results = Rfc3339Pattern.matchEntire(this) ?: throw NumberFormatException("Invalid RFC3339 date/time format: $this")
 
     val year = results.groupValues[1].toInt() // yyyy

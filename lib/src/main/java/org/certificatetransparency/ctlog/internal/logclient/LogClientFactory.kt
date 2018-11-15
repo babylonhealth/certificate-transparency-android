@@ -27,7 +27,7 @@ internal object LogClientFactory {
 
     /**
      * Create a [LogClient] for the log server [baseUrl]
-     * @param baseUrl Url of the log server
+     * @property baseUrl Url of the log server
      */
     fun create(baseUrl: String): LogClient {
         val client = OkHttpClient.Builder().build()

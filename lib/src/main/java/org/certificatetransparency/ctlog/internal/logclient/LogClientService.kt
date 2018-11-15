@@ -37,8 +37,8 @@ internal interface LogClientService {
 
     /**
      * Retrieve Merkle Audit Proof from Log by Leaf Hash
-     * @param hash A base64-encoded v1 leaf hash. The [hash] must be calculated as defined in https://tools.ietf.org/html/rfc6962#section-3.4.
-     * @param treeSize The [treeSize] of the tree on which to base the proof, in decimal. The [treeSize] must designate an existing v1 STH.
+     * @property hash A base64-encoded v1 leaf hash. The [hash] must be calculated as defined in https://tools.ietf.org/html/rfc6962#section-3.4.
+     * @property treeSize The [treeSize] of the tree on which to base the proof, in decimal. The [treeSize] must designate an existing v1 STH.
      */
     @GET("get-proof-by-hash")
     fun getProofByHash(@Query("tree_size") treeSize: Long, @Query("hash") hash: String): Call<ProofByHashResponse>
@@ -48,8 +48,8 @@ internal interface LogClientService {
      *
      * This API is probably only useful for debugging.
      *
-     * @param leafIndex The index of the desired entry.
-     * @param treeSize The tree_size of the tree for which the proof is desired. The tree size must designate an existing STH.
+     * @property leafIndex The index of the desired entry.
+     * @property treeSize The tree_size of the tree for which the proof is desired. The tree size must designate an existing STH.
      */
     @GET("get-entry-and-proof")
     fun getEntryAndProof(@Query("leaf_index") leafIndex: Long, @Query("tree_size") treeSize: Long): Call<GetEntryAndProofResponse>
@@ -78,8 +78,8 @@ internal interface LogClientService {
      * number of entries, the log SHALL return the maximum number of entries permissible.  These entries SHALL be sequential beginning with
      * the entry specified by "start".
      *
-     * @param start 0-based index of first entry to retrieve, in decimal.
-     * @param end 0-based index of last entry to retrieve, in decimal.
+     * @property start 0-based index of first entry to retrieve, in decimal.
+     * @property end 0-based index of last entry to retrieve, in decimal.
      */
     @GET("get-entries")
     fun getEntries(@Query("start") start: Long, @Query("end") end: Long): Call<GetEntriesResponse>
@@ -87,8 +87,8 @@ internal interface LogClientService {
     /**
      * Retrieve Merkle Consistency Proof between Two Signed Tree Heads
      *
-     * @param first The treeSize of the first tree, in decimal. Both tree sizes must be from existing v1 STHs (Signed Tree Heads).
-     * @param second The treeSize of the second tree, in decimal. Both tree sizes must be from existing v1 STHs (Signed Tree Heads).
+     * @property first The treeSize of the first tree, in decimal. Both tree sizes must be from existing v1 STHs (Signed Tree Heads).
+     * @property second The treeSize of the second tree, in decimal. Both tree sizes must be from existing v1 STHs (Signed Tree Heads).
      */
     @GET("get-sth-consistency")
     fun getSthConsistency(@Query("first") first: Long, @Query("second") second: Long): Call<GetSthConsistencyResponse>

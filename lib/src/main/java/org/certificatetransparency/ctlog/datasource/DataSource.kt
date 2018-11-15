@@ -26,6 +26,8 @@ import kotlinx.coroutines.launch
 
 /**
  * A standard cache which stores and retrieves data
+ *
+ * @param Value The data type this data source accesses
  */
 interface DataSource<Value : Any> : CoroutineScope {
     /**
@@ -34,13 +36,13 @@ interface DataSource<Value : Any> : CoroutineScope {
     suspend fun get(): Value?
 
     /**
-     * Save the value to this data source
+     * Save the [value] to this data source
      */
     suspend fun set(value: Value)
 
     /**
-     * Compose two data sources. Try to fetch from the first data source and, failing that, request the data from the second data source.
-     * After being retrieved from the second data source, the data is saved to the first data source for future retrieval.
+     * Compose the current data source with [b]. Try to fetch from the first data source and, failing that, request the data from data source
+     * [b]. After being retrieved from data source [b], the data is saved to the first data source for future retrieval.
      */
     fun compose(b: DataSource<Value>): DataSource<Value> {
         return object : DataSource<Value> {
@@ -59,8 +61,8 @@ interface DataSource<Value : Any> : CoroutineScope {
     }
 
     /**
-     * Compose two data sources. Try to fetch from the first data source and, failing that, request the data from the second data source.
-     * After being retrieved from the second data source, the data is saved to the first data source for future retrieval.
+     * Compose the current data source with [b]. Try to fetch from the first data source and, failing that, request the data from data source
+     * [b]. After being retrieved from data source [b], the data is saved to the first data source for future retrieval.
      */
     operator fun plus(b: DataSource<Value>) = compose(b)
 
@@ -89,7 +91,10 @@ interface DataSource<Value : Any> : CoroutineScope {
     }
 
     /**
-     * Map values from one type to another. As this is a one way transform calling set on the resulting cache is no-op
+     * Map values to the [MappedValue] data type using the [transform] function. As this is a one way transform calling set on the resulting
+     * cache is no-op
+     *
+     * @param MappedValue The data type this data source is being mapped to
      */
     fun <MappedValue : Any> oneWayTransform(transform: (Value) -> MappedValue): DataSource<MappedValue> {
         return object : DataSource<MappedValue> {

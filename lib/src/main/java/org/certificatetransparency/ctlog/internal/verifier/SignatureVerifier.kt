@@ -32,8 +32,8 @@ internal interface SignatureVerifier {
      *   PreCertificate signed by a PreCertificate Signing Cert. In this case the PreCertificate signing certificate must be 2nd on the chain,
      *   the CA cert itself 3rd.
      *
-     * @param sct SignedCertificateTimestamp received from the log.
-     * @param chain The certificates chain as sent to the log.
+     * @property sct SignedCertificateTimestamp received from the log.
+     * @property chain The certificates chain as sent to the log.
      * @return [SctResult.Valid] if the log's signature over this SCT can be verified, [SctResult.Invalid] otherwise.
      */
     fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult

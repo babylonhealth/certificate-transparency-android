@@ -9,7 +9,7 @@ import java.security.PublicKey
 /**
  * Load EC or RSA public key from a PEM file.
  *
- * @param pemFile File containing the key.
+ * @property pemFile File containing the key.
  * @return Public key represented by this file.
  */
 fun File.readPemFile(): PublicKey {

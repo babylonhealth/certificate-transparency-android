@@ -137,10 +137,10 @@ internal class LogSignatureVerifier(private val logServer: LogServer) : Signatur
     /**
      * Verifies the CT Log's signature over the SCT and the PreCertificate, or a final certificate.
      *
-     * @param sct SignedCertificateTimestamp received from the log.
-     * @param certificate the PreCertificate sent to the log for addition, or the final certificate
+     * @property sct SignedCertificateTimestamp received from the log.
+     * @property certificate the PreCertificate sent to the log for addition, or the final certificate
      * with the embedded SCTs.
-     * @param issuerInfo Information on the issuer which will (or did) ultimately sign this
+     * @property issuerInfo Information on the issuer which will (or did) ultimately sign this
      * PreCertificate. If the PreCertificate was signed using by a PreCertificate Signing Cert,
      * the issuerInfo contains data on the final CA certificate used for signing.
      * @return true if the SCT verifies, false otherwise.

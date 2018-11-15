@@ -29,7 +29,7 @@ internal object Deserializer {
     /**
      * Parses a SignedCertificateTimestamp from binary encoding.
      *
-     * @param inputStream byte stream of binary encoding.
+     * @property inputStream byte stream of binary encoding.
      * @return Built SignedCertificateTimestamp
      * @throws SerializationException if the data stream is too short.
      * TODO IOException
@@ -60,7 +60,7 @@ internal object Deserializer {
     /**
      * Parses a DigitallySigned from binary encoding.
      *
-     * @param inputStream byte stream of binary encoding.
+     * @property inputStream byte stream of binary encoding.
      * @return Built DigitallySigned
      * @throws SerializationException if the data stream is too short.
      * TODO IOException
@@ -86,11 +86,11 @@ internal object Deserializer {
     /**
      * Parses an entry retrieved from Log and it's audit proof.
      *
-     * @param entry ParsedLogEntry instance.
-     * @param proof An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen
+     * @property entry ParsedLogEntry instance.
+     * @property proof An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen
      * certificate.
-     * @param leafIndex The index of the desired entry.
-     * @param treeSize The tree size of the tree for which the proof is desired.
+     * @property leafIndex The index of the desired entry.
+     * @property treeSize The tree size of the tree for which the proof is desired.
      * @return [ParsedLogEntryWithProof]
      */
     fun parseLogEntryWithProof(entry: ParsedLogEntry, proof: List<String>, leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
@@ -103,10 +103,10 @@ internal object Deserializer {
     /**
      * Parses the audit proof retrieved from Log.
      *
-     * @param proof An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen
+     * @property proof An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen
      * certificate.
-     * @param leafIndex The index of the desired entry.
-     * @param treeSize The tree size of the tree for which the proof is desired.
+     * @property leafIndex The index of the desired entry.
+     * @property treeSize The tree size of the tree for which the proof is desired.
      * @return [MerkleAuditProof]
      */
     fun parseAuditProof(proof: List<String>, leafIndex: Long, treeSize: Long) =
@@ -120,8 +120,8 @@ internal object Deserializer {
     /**
      * Parses an entry retrieved from Log.
      *
-     * @param merkleTreeLeaf MerkleTreeLeaf structure, byte stream of binary encoding.
-     * @param extraData extra data, byte stream of binary encoding.
+     * @property merkleTreeLeaf MerkleTreeLeaf structure, byte stream of binary encoding.
+     * @property extraData extra data, byte stream of binary encoding.
      * @return [ParsedLogEntry]
      */
     fun parseLogEntry(merkleTreeLeaf: InputStream, extraData: InputStream): ParsedLogEntry {
@@ -142,7 +142,7 @@ internal object Deserializer {
     /**
      * Parses a [MerkleTreeLeaf] from binary encoding.
      *
-     * @param inputStream byte stream of binary encoding.
+     * @property inputStream byte stream of binary encoding.
      * @return Built [MerkleTreeLeaf].
      * @throws SerializationException if the data stream is too short.
      */
@@ -167,7 +167,7 @@ internal object Deserializer {
     /**
      * Parses a [TimestampedEntry] from binary encoding.
      *
-     * @param inputStream byte stream of binary encoding.
+     * @property inputStream byte stream of binary encoding.
      * @return Built [TimestampedEntry].
      * @throws SerializationException if the data stream is too short.
      */
@@ -207,8 +207,8 @@ internal object Deserializer {
     /**
      * Parses X509ChainEntry structure.
      *
-     * @param inputStream X509ChainEntry structure, byte stream of binary encoding.
-     * @param x509Cert leaf certificate.
+     * @property inputStream X509ChainEntry structure, byte stream of binary encoding.
+     * @property x509Cert leaf certificate.
      * @throws SerializationException if an I/O error occurs.
      * @return [LogEntry.X509ChainEntry] object.
      */
@@ -236,8 +236,8 @@ internal object Deserializer {
     /**
      * Parses PreCertificateChainEntry structure.
      *
-     * @param inputStream PreCertificateChainEntry structure, byte stream of binary encoding.
-     * @param preCertificate Pre-certificate.
+     * @property inputStream PreCertificateChainEntry structure, byte stream of binary encoding.
+     * @property preCertificate Pre-certificate.
      * @return [LogEntry.PreCertificateChainEntry] object.
      */
     private fun parsePreCertificateChainEntry(inputStream: InputStream, preCertificate: PreCertificate): LogEntry.PreCertificateChainEntry {
@@ -264,7 +264,7 @@ internal object Deserializer {
     /**
      * Calculates the number of bytes needed to hold the given number: ceil(log2(maxDataLength)) / 8
      *
-     * @param maxDataLength the number that needs to be represented as bytes
+     * @property maxDataLength the number that needs to be represented as bytes
      * @return Number of bytes needed to represent the given number
      */
     fun bytesForDataLength(maxDataLength: Int): Int {

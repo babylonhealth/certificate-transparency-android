@@ -61,7 +61,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * JSON-encodes the list of certificates into a JSON object.
      *
-     * @param certs Certificates to encode.
+     * @property certs Certificates to encode.
      * @return A JSON object with one field, "chain", holding a JSON array of base64-encoded certs.
      */
     internal fun encodeCertificates(certs: List<Certificate>): AddChainRequest {
@@ -77,7 +77,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * Adds a certificate to the log.
      *
-     * @param certificatesChain The certificate chain to add.
+     * @property certificatesChain The certificate chain to add.
      * @return SignedCertificateTimestamp if the log added the chain successfully.
      */
     override fun addCertificate(certificatesChain: List<Certificate>): SignedCertificateTimestamp {
@@ -106,8 +106,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * Retrieve Entries from Log.
      *
-     * @param start 0-based index of first entry to retrieve, in decimal.
-     * @param end 0-based index of last entry to retrieve, in decimal.
+     * @property start 0-based index of first entry to retrieve, in decimal.
+     * @property end 0-based index of last entry to retrieve, in decimal.
      * @return list of Log's entries.
      */
     override fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry> {
@@ -119,8 +119,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * Retrieve Merkle Consistency Proof between Two Signed Tree Heads.
      *
-     * @param first The tree_size of the first tree, in decimal.
-     * @param second The tree_size of the second tree, in decimal.
+     * @property first The tree_size of the first tree, in decimal.
+     * @property second The tree_size of the second tree, in decimal.
      * @return A list of base64 decoded Merkle Tree nodes serialized to ByteString objects.
      */
     override fun getSthConsistency(first: Long, second: Long): List<ByteArray> {
@@ -132,8 +132,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * Retrieve Entry+Merkle Audit Proof from Log.
      *
-     * @param leafIndex The index of the desired entry.
-     * @param treeSize The tree_size of the tree for which the proof is desired.
+     * @property leafIndex The index of the desired entry.
+     * @property treeSize The tree_size of the tree for which the proof is desired.
      * @return ParsedLog entry object with proof.
      */
     override fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
@@ -152,7 +152,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * Retrieve Merkle Audit Proof from Log by Merkle Leaf Hash.
      *
-     * @param leafHash sha256 hash of MerkleTreeLeaf.
+     * @property leafHash sha256 hash of MerkleTreeLeaf.
      * @return MerkleAuditProof object.
      */
     override fun getProofByHash(leafHash: ByteArray): MerkleAuditProof {
@@ -165,8 +165,8 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     /**
      * Retrieve Merkle Audit Proof from Log by Merkle Leaf Hash.
      *
-     * @param encodedMerkleLeafHash Base64 encoded of sha256 hash of MerkleTreeLeaf.
-     * @param treeSize The tree_size of the tree for which the proof is desired. It can be obtained
+     * @property encodedMerkleLeafHash Base64 encoded of sha256 hash of MerkleTreeLeaf.
+     * @property treeSize The tree_size of the tree for which the proof is desired. It can be obtained
      * from latest STH.
      * @return MerkleAuditProof object.
      */

@@ -29,7 +29,7 @@ object CryptoDataLoader {
     /**
      * Returns a list of certificates from an input stream of PEM-encoded certs.
      *
-     * @param pemStream input stream with PEM bytes
+     * @property pemStream input stream with PEM bytes
      * @return A list of certificates in the PEM file.
      */
     private fun parseCertificates(pemStream: InputStream): List<Certificate> {
@@ -40,7 +40,7 @@ object CryptoDataLoader {
     /**
      * Parses a PEM-encoded file containing a list of certificates.
      *
-     * @param pemCertsFile File to parse.
+     * @property pemCertsFile File to parse.
      * @return A list of certificates from the certificates in the file.
      * @throws FileNotFoundException If the file is not present.
      */

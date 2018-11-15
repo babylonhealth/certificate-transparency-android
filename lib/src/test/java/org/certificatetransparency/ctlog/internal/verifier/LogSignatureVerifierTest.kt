@@ -276,7 +276,7 @@ class LogSignatureVerifierTest {
     /**
      * Creates a LogInfo instance from the Log's public key file. Supports both EC and RSA keys.
      *
-     * @param pemKeyFilePath Path of the log's public key file.
+     * @property pemKeyFilePath Path of the log's public key file.
      * @return new LogInfo instance.
      */
     private fun LogServer.Companion.fromKeyFile(pemKeyFilePath: String): LogServer {

@@ -10,7 +10,7 @@ private const val BITS_IN_BYTE = 8
  * Read a number of numBytes bytes (Assuming MSB first).
  *
  * @receiver byte stream of binary encoding
- * @param numBytes exact number of bytes representing this number.
+ * @property numBytes exact number of bytes representing this number.
  * @return a number of at most 2^numBytes
  * @throws IOException
  */
@@ -32,7 +32,7 @@ internal fun InputStream.readNumber(numBytes: Int): Long {
  * Reads a fixed-length byte array.
  *
  * @receiver byte stream of binary encoding
- * @param dataLength exact data length.
+ * @property dataLength exact data length.
  * @return read byte array.
  * @throws IOException if the data stream is too short.
  */
@@ -50,7 +50,7 @@ internal fun InputStream.readFixedLength(dataLength: Int): ByteArray {
  * number of bytes needed to represent the max data length) then the byte array itself.
  *
  * @receiver byte stream of binary encoding
- * @param maxDataLength Maximal data length.
+ * @property maxDataLength Maximal data length.
  * @return read byte array.
  * @throws IOException if the data stream is too short.
  */

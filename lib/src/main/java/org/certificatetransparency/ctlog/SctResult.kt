@@ -41,8 +41,8 @@ sealed class SctResult {
 
         /**
          * Signed Certificate Timestamp checks failed as the [timestamp] of the SCT is in the future
-         * @param timestamp The timestamp of the SCT
-         * @param now The time now
+         * @property timestamp The timestamp of the SCT
+         * @property now The time now
          */
         data class FutureTimestamp(val timestamp: Long, val now: Long) : Invalid() {
             /**
@@ -53,8 +53,8 @@ sealed class SctResult {
 
         /**
          * Signed Certificate Timestamp checks failed as the log server is no longer trusted
-         * @param timestamp The timestamp of the SCT
-         * @param logServerValidUntil The time the log server was valid till
+         * @property timestamp The timestamp of the SCT
+         * @property logServerValidUntil The time the log server was valid till
          */
         data class LogServerUntrusted(val timestamp: Long, val logServerValidUntil: Long) : Invalid() {
             /**
