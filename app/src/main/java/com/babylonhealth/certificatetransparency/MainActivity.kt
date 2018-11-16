@@ -26,6 +26,8 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.certificatetransparency.ctlog.Logger
+import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.certificateTransparencyInterceptor
 import java.io.IOException
 
@@ -39,6 +41,12 @@ class MainActivity : AppCompatActivity() {
 
             val interceptor = certificateTransparencyInterceptor {
                 +"*.babylonhealth.com"
+
+                logger = object : Logger {
+                    override fun log(host: String, result: VerificationResult) {
+                        println("$host -> $result")
+                    }
+                }
             }
 
             val client = OkHttpClient.Builder().apply {

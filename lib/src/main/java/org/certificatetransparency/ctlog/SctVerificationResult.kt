@@ -19,25 +19,46 @@ package org.certificatetransparency.ctlog
 /**
  * Abstract class providing the results of verifying a Signed Certificate Timestamp
  */
-sealed class SctResult {
+sealed class SctVerificationResult {
     /**
      * Signed Certificate Timestamp checks passed
      */
-    object Valid : SctResult()
+    object Valid : SctVerificationResult() {
+        /**
+         * Returns a string representation of the object.
+         */
+        override fun toString(): String {
+            return "Valid SCT"
+        }
+    }
 
     /**
      * Abstract class representing Signed Certificate Timestamp checks failed
      */
-    sealed class Invalid : SctResult() {
+    sealed class Invalid : SctVerificationResult() {
         /**
          * Signed Certificate Timestamp checks failed as the signature could not be verified
          */
-        object FailedVerification : Invalid()
+        object FailedVerification : Invalid() {
+            /**
+             * Returns a string representation of the object.
+             */
+            override fun toString(): String {
+                return "SCT signature failed verification"
+            }
+        }
 
         /**
          * Signed Certificate Timestamp checks failed as there was no log server we trust in the log-list.json
          */
-        object NoLogServerFound : Invalid()
+        object NoLogServerFound : Invalid() {
+            /**
+             * Returns a string representation of the object.
+             */
+            override fun toString(): String {
+                return "No trusted log server found for SCT"
+            }
+        }
 
         /**
          * Signed Certificate Timestamp checks failed as the [timestamp] of the SCT is in the future

@@ -18,12 +18,12 @@ package org.certificatetransparency.ctlog.internal
 
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
+import org.certificatetransparency.ctlog.SctVerificationResult
+import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyBase
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.Result
-import org.certificatetransparency.ctlog.SctResult
 import org.certificatetransparency.ctlog.utils.LogListDataSourceTestFactory
 import org.certificatetransparency.ctlog.utils.TestData
 import org.certificatetransparency.ctlog.utils.TestData.TEST_MITMPROXY_ATTACK_CHAIN
@@ -51,7 +51,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ATTACK_CHAIN)
 
-        assertIsA<Result.Failure.NoScts>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<VerificationResult.Failure.NoScts>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test
@@ -66,7 +66,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ATTACK_CHAIN)
 
-        assertIsA<Result.Success.DisabledForHost>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<VerificationResult.Success.DisabledForHost>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test
@@ -78,7 +78,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
-        assertIsA<Result.Success.DisabledForHost>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<VerificationResult.Success.DisabledForHost>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test
@@ -92,8 +92,8 @@ class CertificateTransparencyBaseTest {
 
         val result = ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck)
 
-        require(result is Result.Success.Trusted)
-        assertEquals(2, result.scts.count { it is SctResult.Valid })
+        require(result is VerificationResult.Success.Trusted)
+        assertEquals(2, result.scts.count { it.value is SctVerificationResult.Valid })
     }
 
     @Test(expected = SSLPeerUnverifiedException::class)
@@ -122,7 +122,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
-        assertIsA<Result.Failure.TooFewSctsTrusted>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<VerificationResult.Failure.TooFewSctsTrusted>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test
@@ -134,7 +134,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
-        assertIsA<Result.Failure.NoLogServers>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<VerificationResult.Failure.NoLogServers>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test
@@ -150,7 +150,7 @@ class CertificateTransparencyBaseTest {
 
         val filtered = listOf(certWithSingleSct, *certsToCheck.drop(1).toTypedArray())
 
-        assertIsA<Result.Failure.TooFewSctsTrusted>(ctb.verifyCertificateTransparency("www.babylonhealth.com", filtered))
+        assertIsA<VerificationResult.Failure.TooFewSctsTrusted>(ctb.verifyCertificateTransparency("www.babylonhealth.com", filtered))
     }
 
     @Test
@@ -160,7 +160,7 @@ class CertificateTransparencyBaseTest {
             logListDataSource = LogListDataSourceTestFactory.nullSource
         )
 
-        assertIsA<Result.Failure.NoCertificates>(ctb.verifyCertificateTransparency("www.babylonhealth.com", emptyList()))
+        assertIsA<VerificationResult.Failure.NoCertificates>(ctb.verifyCertificateTransparency("www.babylonhealth.com", emptyList()))
     }
 
     private fun mitmProxyTrustManager(): X509TrustManager {

@@ -20,8 +20,8 @@ package org.certificatetransparency.ctlog.internal.verifier
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.tls.CertificateChainCleaner
-import org.certificatetransparency.ctlog.Result
-import org.certificatetransparency.ctlog.SctResult
+import org.certificatetransparency.ctlog.SctVerificationResult
+import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.LogListDataSourceFactory
 import org.certificatetransparency.ctlog.internal.utils.Base64
@@ -57,11 +57,11 @@ internal open class CertificateTransparencyBase(
         logServers.associateBy({ Base64.toBase64String(it.id) }) { LogSignatureVerifier(it) }
     }.reuseInflight()
 
-    fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): Result {
+    fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): VerificationResult {
         return if (!enabledForCertificateTransparency(host)) {
-            Result.Success.DisabledForHost(host)
+            VerificationResult.Success.DisabledForHost(host)
         } else if (certificates.isEmpty()) {
-            Result.Failure.NoCertificates
+            VerificationResult.Failure.NoCertificates
         } else {
             val cleanedCerts = cleaner.clean(certificates, host)
             hasValidSignedCertificateTimestamp(cleanedCerts)
@@ -75,31 +75,32 @@ internal open class CertificateTransparencyBase(
      * @property certificates the certificate chain provided by the server
      * @return true if the certificates can be trusted, false otherwise.
      */
-    private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): Result {
+    private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): VerificationResult {
 
         val verifiers = runBlocking {
             logListDataSource.get()
-        } ?: return Result.Failure.NoLogServers
+        } ?: return VerificationResult.Failure.NoLogServers
 
         val leafCertificate = certificates[0]
 
         if (!leafCertificate.hasEmbeddedSct()) {
-            return Result.Failure.NoScts
+            return VerificationResult.Failure.NoScts
         }
 
         return try {
-            val sctResults = leafCertificate.signedCertificateTimestamps().map { sct ->
-                val logId = Base64.toBase64String(sct.id.keyId)
-                verifiers[logId]?.verifySignature(sct, certificates) ?: SctResult.Invalid.NoLogServerFound
-            }
+            val sctResults = leafCertificate.signedCertificateTimestamps()
+                .associateBy { Base64.toBase64String(it.id.keyId) }
+                .mapValues { (logId, sct) ->
+                    verifiers[logId]?.verifySignature(sct, certificates) ?: SctVerificationResult.Invalid.NoLogServerFound
+                }
 
-            if (sctResults.count { it is SctResult.Valid } < minimumValidSignedCertificateTimestamps) {
-                Result.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
+            if (sctResults.count { it.value is SctVerificationResult.Valid } < minimumValidSignedCertificateTimestamps) {
+                VerificationResult.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
             } else {
-                Result.Success.Trusted(sctResults)
+                VerificationResult.Success.Trusted(sctResults)
             }
         } catch (e: IOException) {
-            Result.Failure.UnknownIoException(e)
+            VerificationResult.Failure.UnknownIoException(e)
         }
     }
 

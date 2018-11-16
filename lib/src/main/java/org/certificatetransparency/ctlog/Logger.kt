@@ -23,5 +23,5 @@ interface Logger {
     /**
      * Log a [host] and its [result] from performing certificate transparency
      */
-    fun log(host: String, result: Result)
+    fun log(host: String, result: VerificationResult)
 }

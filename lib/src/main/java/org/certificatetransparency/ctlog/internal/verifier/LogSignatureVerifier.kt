@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.x509.Extensions
 import org.bouncycastle.asn1.x509.TBSCertificate
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator
 import org.bouncycastle.util.encoders.Base64
+import org.certificatetransparency.ctlog.SctVerificationResult
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.internal.logclient.model.Version
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
@@ -42,7 +43,6 @@ import org.certificatetransparency.ctlog.internal.utils.issuerInformation
 import org.certificatetransparency.ctlog.internal.utils.issuerInformationFromPreCertificate
 import org.certificatetransparency.ctlog.internal.verifier.model.IssuerInformation
 import org.certificatetransparency.ctlog.loglist.LogServer
-import org.certificatetransparency.ctlog.SctResult
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
@@ -64,16 +64,16 @@ import java.security.cert.X509Certificate
  */
 internal class LogSignatureVerifier(private val logServer: LogServer) : SignatureVerifier {
 
-    override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult {
+    override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctVerificationResult {
 
         // If the timestamp is in the future then we have to reject it
         val now = System.currentTimeMillis()
         if (sct.timestamp > now) {
-            return SctResult.Invalid.FutureTimestamp(sct.timestamp, now)
+            return SctVerificationResult.Invalid.FutureTimestamp(sct.timestamp, now)
         }
 
         if (logServer.validUntil != null && sct.timestamp > logServer.validUntil) {
-            return SctResult.Invalid.LogServerUntrusted(sct.timestamp, logServer.validUntil)
+            return SctVerificationResult.Invalid.LogServerUntrusted(sct.timestamp, logServer.validUntil)
         }
 
         if (!logServer.id.contentEquals(sct.id.keyId)) {
@@ -149,7 +149,7 @@ internal class LogSignatureVerifier(private val logServer: LogServer) : Signatur
         sct: SignedCertificateTimestamp,
         certificate: X509Certificate,
         issuerInfo: IssuerInformation
-    ): SctResult {
+    ): SctVerificationResult {
         return try {
             val preCertificateTBS = createTbsForVerification(certificate, issuerInfo)
             val toVerify = serializeSignedSctDataForPreCertificate(preCertificateTBS.encoded, issuerInfo.keyHash, sct)
@@ -222,7 +222,7 @@ internal class LogSignatureVerifier(private val logServer: LogServer) : Signatur
             }
     }
 
-    private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): SctResult {
+    private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): SctVerificationResult {
         val sigAlg = when {
             logServer.key.algorithm == "EC" -> "SHA256withECDSA"
             logServer.key.algorithm == "RSA" -> "SHA256withRSA"
@@ -235,7 +235,7 @@ internal class LogSignatureVerifier(private val logServer: LogServer) : Signatur
                 update(toVerify)
             }.verify(sct.signature.signature)
 
-            if (result) SctResult.Valid else SctResult.Invalid.FailedVerification
+            if (result) SctVerificationResult.Valid else SctVerificationResult.Invalid.FailedVerification
         } catch (e: SignatureException) {
             SignatureNotValid(e)
         } catch (e: InvalidKeyException) {

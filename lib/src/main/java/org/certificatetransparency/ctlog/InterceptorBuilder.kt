@@ -45,6 +45,16 @@ class InterceptorBuilder {
         @JvmSynthetic set
 
     /**
+     * [Logger] which will be called with all results
+     * Default: none
+     */
+    // public for access in DSL
+    @Suppress("MemberVisibilityCanBePrivate")
+    var logger: Logger? = null
+        @JvmSynthetic get
+        @JvmSynthetic set
+
+    /**
      * [X509TrustManager] used to clean the certificate chain
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
@@ -91,6 +101,13 @@ class InterceptorBuilder {
     fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
 
     /**
+     * [Logger] which will be called with all results
+     * Default: none
+     */
+    @Suppress("unused")
+    fun setLogger(logger: Logger) = apply { this.logger = logger }
+
+    /**
      * Verify certificate transparency for hosts that match [pattern].
      *
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
@@ -123,5 +140,5 @@ class InterceptorBuilder {
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts, trustManager, logListDataSource, failOnError)
+    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts, trustManager, logListDataSource, failOnError, logger)
 }

@@ -17,7 +17,7 @@
 package org.certificatetransparency.ctlog.internal.verifier
 
 import org.certificatetransparency.ctlog.Logger
-import org.certificatetransparency.ctlog.Result
+import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.loglist.LogServer
@@ -43,6 +43,6 @@ internal class CertificateTransparencyHostnameVerifier(
 
         logger?.log(host, result)
 
-        return !(result is Result.Failure && failOnError)
+        return !(result is VerificationResult.Failure && failOnError)
     }
 }

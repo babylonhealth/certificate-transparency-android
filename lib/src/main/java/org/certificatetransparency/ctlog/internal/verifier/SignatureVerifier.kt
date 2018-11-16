@@ -17,7 +17,7 @@
 package org.certificatetransparency.ctlog.internal.verifier
 
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
-import org.certificatetransparency.ctlog.SctResult
+import org.certificatetransparency.ctlog.SctVerificationResult
 import java.security.cert.Certificate
 
 /**
@@ -34,7 +34,7 @@ internal interface SignatureVerifier {
      *
      * @property sct SignedCertificateTimestamp received from the log.
      * @property chain The certificates chain as sent to the log.
-     * @return [SctResult.Valid] if the log's signature over this SCT can be verified, [SctResult.Invalid] otherwise.
+     * @return [SctVerificationResult.Valid] if the log's signature over this SCT can be verified, [SctVerificationResult.Invalid] otherwise.
      */
-    fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctResult
+    fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctVerificationResult
 }

@@ -22,11 +22,11 @@ import java.io.IOException
 /**
  * Abstract class providing the results of performing certificate transparency checks
  */
-sealed class Result {
+sealed class VerificationResult {
     /**
      * Abstract class representing certificate transparency checks passed
      */
-    sealed class Success : Result() {
+    sealed class Success : VerificationResult() {
 
         /**
          * Certificate transparency checks passed as [host] is not being verified
@@ -41,9 +41,9 @@ sealed class Result {
 
         /**
          * Certificate transparency checks passed with the provided [scts]
-         * @property scts List of [SctResult] showing the results of checking each Signed Certificate Timestamp
+         * @property scts Map of logIds to [SctVerificationResult] showing the results of checking each Signed Certificate Timestamp
          */
-        data class Trusted(val scts: List<SctResult>) : Success() {
+        data class Trusted(val scts: Map<String, SctVerificationResult>) : Success() {
             /**
              * Returns a string representation of the object.
              */
@@ -54,7 +54,7 @@ sealed class Result {
     /**
      * Abstract class representing certificate transparency checks failed
      */
-    sealed class Failure : Result() {
+    sealed class Failure : VerificationResult() {
 
         /**
          * Certificate transparency checks failed as no certificates are present
@@ -90,15 +90,15 @@ sealed class Result {
 
         /**
          * Certificate transparency checks failed as there are not enough valid Signed Certificate Timestamps
-         * @property scts List of [SctResult] stating which SCTs passed or failed checks
+         * @property scts Map of logIds to [SctVerificationResult] stating which SCTs passed or failed checks
          * @property minSctCount The number of valid SCTs required for trust to be established
          */
-        data class TooFewSctsTrusted(val scts: List<SctResult>, val minSctCount: Int) : Failure() {
+        data class TooFewSctsTrusted(val scts: Map<String, SctVerificationResult>, val minSctCount: Int) : Failure() {
             /**
              * Returns a string representation of the object.
              */
             override fun toString() =
-                "Failure: Too few trusted SCTs present, required $minSctCount, found ${scts.count { it is SctResult.Valid }} in $scts"
+                "Failure: Too few trusted SCTs present, required $minSctCount, found ${scts.count { it.value is SctVerificationResult.Valid }} in $scts"
         }
 
         /**
