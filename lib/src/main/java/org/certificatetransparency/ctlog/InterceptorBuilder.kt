@@ -18,6 +18,7 @@ package org.certificatetransparency.ctlog
 
 import okhttp3.Interceptor
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyInterceptor
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.loglist.LogServer
@@ -30,7 +31,7 @@ import javax.net.ssl.X509TrustManager
  */
 class InterceptorBuilder {
     private var trustManager: X509TrustManager? = null
-    private var logListDataSource: DataSource<List<LogServer>>? = null
+    private var logListDataSource: DataSource<LogListResult>? = null
     private val hosts = mutableSetOf<Host>()
 
     /**
@@ -77,7 +78,7 @@ class InterceptorBuilder {
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setLogListDataSource(logListDataSource: DataSource<List<LogServer>>) =
+    fun setLogListDataSource(logListDataSource: DataSource<LogListResult>) =
         apply {
             this.logListDataSource = logListDataSource
         }
@@ -88,7 +89,7 @@ class InterceptorBuilder {
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun logListDataSource(init: () -> DataSource<List<LogServer>>) {
+    fun logListDataSource(init: () -> DataSource<LogListResult>) {
         setLogListDataSource(init())
     }
 

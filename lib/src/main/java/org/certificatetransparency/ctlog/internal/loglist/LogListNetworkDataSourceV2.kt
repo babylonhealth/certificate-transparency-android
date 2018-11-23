@@ -17,6 +17,7 @@
 package org.certificatetransparency.ctlog.internal.loglist
 
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParseException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.certificatetransparency.ctlog.datasource.DataSource
@@ -24,79 +25,98 @@ import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.LogListV2
 import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.State
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.loglist.LogServer
-import java.security.InvalidKeyException
-import java.security.NoSuchAlgorithmException
-import java.security.PublicKey
-import java.security.Signature
-import java.security.SignatureException
+import java.io.IOException
+import java.security.*
 import java.security.spec.InvalidKeySpecException
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
 internal class LogListNetworkDataSourceV2(
     private val logService: LogListService,
     private val publicKey: PublicKey = GoogleLogListPublicKey
-) : DataSource<List<LogServer>> {
+) : DataSource<LogListResult> {
 
     override val coroutineContext = GlobalScope.coroutineContext
 
-    override suspend fun get(): List<LogServer>? {
-        try {
-            val logListJob = async { logService.getLogList().execute().body()?.string() }
-            val signatureJob = async { logService.getLogListSignature().execute().body()?.bytes() }
+    override suspend fun get(): LogListResult {
+        val logListJob = async { logService.getLogList().execute().body()?.string() }
+        val signatureJob = async { logService.getLogListSignature().execute().body()?.bytes() }
 
-            val logListJson = requireNotNull(logListJob.await())
-            val signature = requireNotNull(signatureJob.await())
-
-            if (verify(logListJson, signature, publicKey)) {
-                val logList = GsonBuilder().setLenient().create().fromJson(logListJson, LogListV2Beta::class.java)
-                return buildLogServerList(logList)
-            }
-        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-            println("Exception loading log-list.json from network. ${e.message}")
+        val logListJson = try {
+            logListJob.await() ?: return LogListJsonFailedLoading
+        } catch (e: IOException) {
+            return LogListJsonFailedLoadingWithException(e)
         }
 
-        return null
+        val signature = try {
+            signatureJob.await() ?: return LogListSigFailedLoading
+        } catch (e: IOException) {
+            return LogListSigFailedLoadingWithException(e)
+        }
+
+        return when (val signatureResult = verify(logListJson, signature, publicKey)) {
+            is LogServerSignatureResult.Valid -> parseJson(logListJson)
+            is LogServerSignatureResult.Invalid -> SignatureVerificationFailed(signatureResult)
+        }
     }
 
-    override suspend fun set(value: List<LogServer>) = Unit
+    override suspend fun isValid(value: LogListResult?) = value is LogListResult.Valid
 
-    private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): Boolean {
+    override suspend fun set(value: LogListResult) = Unit
+
+    private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): LogServerSignatureResult {
         return try {
-            Signature.getInstance("SHA256WithRSA").apply {
-                initVerify(publicKey)
-                update(message.toByteArray())
-            }.verify(signature)
+            if (Signature.getInstance("SHA256WithRSA").apply {
+                    initVerify(publicKey)
+                    update(message.toByteArray())
+                }.verify(signature)) {
+                LogServerSignatureResult.Valid
+            } else {
+                LogServerSignatureResult.Invalid.SignatureFailed
+            }
         } catch (e: SignatureException) {
-            false
+            LogServerSignatureResult.Invalid.SignatureNotValid(e)
         } catch (e: InvalidKeyException) {
-            false
+            LogServerSignatureResult.Invalid.PublicKeyNotValid(e)
         } catch (e: NoSuchAlgorithmException) {
-            false
+            LogServerSignatureResult.Invalid.NoSuchAlgorithm(e)
         }
     }
 
-    /**
-     * Construct LogSignatureVerifiers for each of the trusted CT logs.
-     *
-     * @throws InvalidKeySpecException the CT log key isn't RSA or EC, the key is probably corrupt.
-     * @throws NoSuchAlgorithmException the crypto provider couldn't supply the hashing algorithm
-     * or the key algorithm. This probably means you are using an ancient or bad crypto provider.
-     */
-    @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
-    private fun buildLogServerList(logList: LogListV2Beta): List<LogServer> {
+    private fun parseJson(logListJson: String): LogListResult {
+        val logList = try {
+            GsonBuilder().setLenient().create().fromJson(logListJson, LogListV2Beta::class.java)
+        } catch (e: JsonParseException) {
+            return JsonFormat(e)
+        }
+
+        return buildLogServerList(logList)
+    }
+
+    private fun buildLogServerList(logList: LogListV2Beta): LogListResult {
         return logList.operators
             .flatMap { it.value.logs.values }
             // null, PENDING, REJECTED -> An SCT associated with this log server would be treated as untrusted
             .filterNot { it.state == null || it.state is State.Pending || it.state is State.Rejected }
             .map {
-                val key = Base64.decode(it.key)
+                val keyBytes = Base64.decode(it.key)
 
                 // FROZEN, RETIRED -> Validate SCT against this if it was issued before the state timestamp, otherwise SCT is untrusted
                 // QUALIFIED, USABLE -> Validate SCT against this (any timestamp okay)
                 val validUntil = if (it.state is State.Retired || it.state is State.Frozen) it.state.timestamp else null
 
-                LogServer(PublicKeyFactory.fromByteArray(key), validUntil)
-            }
+                val key = try {
+                    PublicKeyFactory.fromByteArray(keyBytes)
+                } catch (e: InvalidKeySpecException) {
+                    return LogServerInvalidKey(e, it.key)
+                } catch (e: NoSuchAlgorithmException) {
+                    return LogServerInvalidKey(e, it.key)
+                } catch (e: IllegalArgumentException) {
+                    return LogServerInvalidKey(e, it.key)
+                }
+
+                LogServer(key, validUntil)
+            }.let(LogListResult::Valid)
     }
 }

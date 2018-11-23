@@ -27,9 +27,7 @@ sealed class SctVerificationResult {
         /**
          * Returns a string representation of the object.
          */
-        override fun toString(): String {
-            return "Valid SCT"
-        }
+        override fun toString() = "Valid SCT"
     }
 
     /**
@@ -43,9 +41,7 @@ sealed class SctVerificationResult {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString(): String {
-                return "SCT signature failed verification"
-            }
+            override fun toString() = "SCT signature failed verification"
         }
 
         /**
@@ -55,9 +51,7 @@ sealed class SctVerificationResult {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString(): String {
-                return "No trusted log server found for SCT"
-            }
+            override fun toString() = "No trusted log server found for SCT"
         }
 
         /**
@@ -87,14 +81,14 @@ sealed class SctVerificationResult {
         /**
          * Signed Certificate Timestamp checks failed for an unspecified reason
          */
-        abstract class Generic : Invalid()
+        abstract class Failed : Invalid()
 
         /**
          * Signed Certificate Timestamp checks failed as an [exception] was detected
          */
-        abstract class Exception : Invalid() {
+        abstract class FailedWithException : Invalid() {
             /**
-             * The [Exception] that occurred
+             * The [exception] that occurred
              */
             abstract val exception: kotlin.Exception?
         }

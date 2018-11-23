@@ -17,19 +17,23 @@
 package org.certificatetransparency.ctlog.internal.loglist
 
 import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.loglist.LogServer
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import retrofit2.Retrofit
 
 internal object LogListDataSourceFactory {
-    fun create(): DataSource<List<LogServer>> {
+    fun create(): DataSource<LogListResult> {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.gstatic.com/ct/log_list/")
             .build()
 
         val logService = retrofit.create(LogListService::class.java)
 
-        return InMemoryDataSource<List<LogServer>>()
+        return InMemoryCache()
             .compose(LogListNetworkDataSource(logService))
             .reuseInflight()
+    }
+
+    private class InMemoryCache : InMemoryDataSource<LogListResult>() {
+        override suspend fun isValid(value: LogListResult?) = value is LogListResult.Valid
     }
 }

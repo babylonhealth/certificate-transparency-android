@@ -26,10 +26,12 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class CertificateTransparencyInterceptorIntegrationTest {
 
     companion object {
+        private const val invalidSctDomain = "example.com"
+
         val networkInterceptor = certificateTransparencyInterceptor {
             +"*.babylonhealth.com"
             +"letsencrypt.org"
-            +"invalid-expected-sct.badssl.com"
+            +invalidSctDomain
 
             logListDataSource {
                 LogListDataSourceTestFactory.logListDataSource
@@ -39,7 +41,7 @@ class CertificateTransparencyInterceptorIntegrationTest {
         val networkInterceptorAllowFails = certificateTransparencyInterceptor {
             +"*.babylonhealth.com"
             +"letsencrypt.org"
-            +"invalid-expected-sct.badssl.com"
+            +invalidSctDomain
 
             logListDataSource {
                 LogListDataSourceTestFactory.logListDataSource
@@ -76,7 +78,7 @@ class CertificateTransparencyInterceptorIntegrationTest {
         val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 
         val request = Request.Builder()
-            .url("https://invalid-expected-sct.badssl.com/")
+            .url("https://$invalidSctDomain/")
             .build()
 
         client.newCall(request).execute()
@@ -87,7 +89,7 @@ class CertificateTransparencyInterceptorIntegrationTest {
         val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptorAllowFails).build()
 
         val request = Request.Builder()
-            .url("https://invalid-expected-sct.badssl.com/")
+            .url("https://$invalidSctDomain/")
             .build()
 
         client.newCall(request).execute()
@@ -107,7 +109,7 @@ class CertificateTransparencyInterceptorIntegrationTest {
             }).build()
 
         val request = Request.Builder()
-            .url("https://invalid-expected-sct.badssl.com/")
+            .url("https://$invalidSctDomain/")
             .build()
 
         client.newCall(request).execute()

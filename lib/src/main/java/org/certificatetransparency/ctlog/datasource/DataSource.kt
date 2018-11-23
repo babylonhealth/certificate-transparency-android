@@ -18,11 +18,7 @@
 
 package org.certificatetransparency.ctlog.datasource
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 /**
  * A standard cache which stores and retrieves data
@@ -30,6 +26,7 @@ import kotlinx.coroutines.launch
  * @param Value The data type this data source accesses
  */
 interface DataSource<Value : Any> : CoroutineScope {
+
     /**
      * Return the value associated with this data source or null if not present
      */
@@ -40,6 +37,8 @@ interface DataSource<Value : Any> : CoroutineScope {
      */
     suspend fun set(value: Value)
 
+    suspend fun isValid(value: Value?): Boolean = value != null
+
     /**
      * Compose the current data source with [b]. Try to fetch from the first data source and, failing that, request the data from data source
      * [b]. After being retrieved from data source [b], the data is saved to the first data source for future retrieval.
@@ -47,10 +46,16 @@ interface DataSource<Value : Any> : CoroutineScope {
     fun compose(b: DataSource<Value>): DataSource<Value> {
         return object : DataSource<Value> {
             override suspend fun get(): Value? {
-                return this@DataSource.get() ?: let {
+                val result = this@DataSource.get()
+
+                return if (isValid(result)) {
+                    result
+                } else {
                     b.get()?.apply { this@DataSource.set(this) }
                 }
             }
+
+            override suspend fun isValid(value: Value?) = this@DataSource.isValid(value)
 
             override suspend fun set(value: Value) {
                 awaitAll(async { this@DataSource.set(value) }, async { b.set(value) })
@@ -83,6 +88,8 @@ interface DataSource<Value : Any> : CoroutineScope {
                     }
                 }).await()
             }
+
+            override suspend fun isValid(value: Value?) = this@DataSource.isValid(value)
 
             override suspend fun set(value: Value) = this@DataSource.set(value)
 

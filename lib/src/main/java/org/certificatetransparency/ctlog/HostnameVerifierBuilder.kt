@@ -18,6 +18,7 @@ package org.certificatetransparency.ctlog
 
 import okhttp3.internal.tls.OkHostnameVerifier
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyHostnameVerifier
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
 import org.certificatetransparency.ctlog.loglist.LogServer
@@ -34,7 +35,7 @@ class HostnameVerifierBuilder(
     @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE
 ) {
     private var trustManager: X509TrustManager? = null
-    private var logListDataSource: DataSource<List<LogServer>>? = null
+    private var logListDataSource: DataSource<LogListResult>? = null
     private val hosts = mutableSetOf<Host>()
 
     /**
@@ -81,7 +82,7 @@ class HostnameVerifierBuilder(
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setLogListDataSource(logListDataSource: DataSource<List<LogServer>>) =
+    fun setLogListDataSource(logListDataSource: DataSource<LogListResult>) =
         apply {
             this.logListDataSource = logListDataSource
         }
@@ -92,7 +93,7 @@ class HostnameVerifierBuilder(
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun logListDataSource(init: () -> DataSource<List<LogServer>>) {
+    fun logListDataSource(init: () -> DataSource<LogListResult>) {
         setLogListDataSource(init())
     }
 

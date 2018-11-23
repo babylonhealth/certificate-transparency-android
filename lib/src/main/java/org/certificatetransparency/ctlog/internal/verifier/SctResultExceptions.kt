@@ -16,8 +16,8 @@
 
 package org.certificatetransparency.ctlog.internal.verifier
 
-import org.certificatetransparency.ctlog.internal.utils.stringStackTrace
 import org.certificatetransparency.ctlog.SctVerificationResult
+import org.certificatetransparency.ctlog.internal.utils.stringStackTrace
 import java.io.IOException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
@@ -27,7 +27,7 @@ import java.security.cert.CertificateParsingException
 internal data class UnsupportedSignatureAlgorithm(
     val algorithm: String,
     override val exception: NoSuchAlgorithmException? = null
-) : SctVerificationResult.Invalid.Exception() {
+) : SctVerificationResult.Invalid.FailedWithException() {
 
     override fun toString() = if (exception != null) {
         "Unsupported signature algorithm $algorithm with: ${exception.stringStackTrace()}"
@@ -36,36 +36,35 @@ internal data class UnsupportedSignatureAlgorithm(
     }
 }
 
-internal data class LogPublicKeyNotValid(override val exception: InvalidKeyException) : SctVerificationResult.Invalid.Exception() {
+internal data class LogPublicKeyNotValid(override val exception: InvalidKeyException) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() = "Log's public key cannot be used with ${exception.stringStackTrace()}"
 }
 
-internal data class SignatureNotValid(override val exception: SignatureException) : SctVerificationResult.Invalid.Exception() {
+internal data class SignatureNotValid(override val exception: SignatureException) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() =
         "Signature object not properly initialized or signature from SCT is improperly encoded with: ${exception.stringStackTrace()}"
 }
 
-internal data class LogIdMismatch(val sctLogId: String, val logServerId: String) : SctVerificationResult.Invalid.Generic() {
+internal data class LogIdMismatch(val sctLogId: String, val logServerId: String) : SctVerificationResult.Invalid.Failed() {
     override fun toString() = "Log ID of SCT, $sctLogId, does not match this log's ID, $logServerId"
 }
 
-internal object NoIssuer : SctVerificationResult.Invalid.Generic() {
+internal object NoIssuer : SctVerificationResult.Invalid.Failed() {
     override fun toString() = "Chain with PreCertificate or Certificate must contain issuer"
 }
 
-internal object NoIssuerWithPreCert : SctVerificationResult.Invalid.Generic() {
+internal object NoIssuerWithPreCert : SctVerificationResult.Invalid.Failed() {
     override fun toString() = "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer"
 }
 
-internal data class CertificateEncodingFailed(override val exception: kotlin.Exception) : SctVerificationResult.Invalid.Exception() {
+internal data class CertificateEncodingFailed(override val exception: kotlin.Exception) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() = "Certificate could not be encoded with: ${exception.stringStackTrace()}"
 }
 
-
-internal data class CertificateParsingFailed(override val exception: CertificateParsingException) : SctVerificationResult.Invalid.Exception() {
+internal data class CertificateParsingFailed(override val exception: CertificateParsingException) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() = "Error parsing cert with: ${exception.stringStackTrace()}"
 }
 
-internal data class ASN1ParsingFailed(override val exception: IOException) : SctVerificationResult.Invalid.Exception() {
+internal data class ASN1ParsingFailed(override val exception: IOException) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() = "Error during ASN.1 parsing of certificate with: ${exception.stringStackTrace()}"
 }

@@ -21,8 +21,8 @@ import okhttp3.Response
 import org.certificatetransparency.ctlog.Logger
 import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.loglist.LogServer
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.X509TrustManager
@@ -30,7 +30,7 @@ import javax.net.ssl.X509TrustManager
 internal class CertificateTransparencyInterceptor(
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<List<LogServer>>?,
+    logListDataSource: DataSource<LogListResult>?,
     private val failOnError: Boolean = true,
     private val logger: Logger? = null
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {

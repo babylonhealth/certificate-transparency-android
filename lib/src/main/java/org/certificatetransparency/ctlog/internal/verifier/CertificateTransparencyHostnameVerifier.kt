@@ -19,8 +19,8 @@ package org.certificatetransparency.ctlog.internal.verifier
 import org.certificatetransparency.ctlog.Logger
 import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.loglist.LogServer
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
@@ -29,7 +29,7 @@ internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<List<LogServer>>?,
+    logListDataSource: DataSource<LogListResult>?,
     private val failOnError: Boolean = true,
     private val logger: Logger? = null
 ) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), HostnameVerifier {

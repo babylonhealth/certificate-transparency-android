@@ -26,11 +26,18 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers
 import org.bouncycastle.util.io.pem.PemReader
 import java.io.StringReader
 import java.security.KeyFactory
+import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
+import java.security.spec.InvalidKeySpecException
 import java.security.spec.X509EncodedKeySpec
 
 internal object PublicKeyFactory {
 
+    /**
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     * @throws IllegalArgumentException Unsupported key type
+     */
     fun fromByteArray(bytes: ByteArray): PublicKey {
         val keyFactory = KeyFactory.getInstance(determineKeyAlgorithm(bytes))
         return keyFactory.generatePublic(X509EncodedKeySpec(bytes))

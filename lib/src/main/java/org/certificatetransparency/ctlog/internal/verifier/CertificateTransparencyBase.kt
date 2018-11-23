@@ -24,11 +24,11 @@ import org.certificatetransparency.ctlog.SctVerificationResult
 import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.LogListDataSourceFactory
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
-import org.certificatetransparency.ctlog.loglist.LogServer
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
@@ -38,7 +38,7 @@ import javax.net.ssl.X509TrustManager
 internal open class CertificateTransparencyBase(
     private val hosts: Set<Host>,
     trustManager: X509TrustManager? = null,
-    logListDataSource: DataSource<List<LogServer>>? = null,
+    logListDataSource: DataSource<LogListResult>? = null,
     private val minimumValidSignedCertificateTimestamps: Int = 2
 ) {
     init {
@@ -53,9 +53,7 @@ internal open class CertificateTransparencyBase(
         CertificateChainCleaner.get(localTrustManager)
     }
 
-    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create()).oneWayTransform { logServers ->
-        logServers.associateBy({ Base64.toBase64String(it.id) }) { LogSignatureVerifier(it) }
-    }.reuseInflight()
+    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create())
 
     fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): VerificationResult {
         return if (!enabledForCertificateTransparency(host)) {
@@ -77,9 +75,19 @@ internal open class CertificateTransparencyBase(
      */
     private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): VerificationResult {
 
-        val verifiers = runBlocking {
+        val result = runBlocking {
             logListDataSource.get()
-        } ?: return VerificationResult.Failure.NoLogServers
+        }
+
+        val verifiers = when (result) {
+            is LogListResult.Valid -> result.servers.associateBy({ Base64.toBase64String(it.id) }) { LogSignatureVerifier(it) }
+            is LogListResult.Invalid -> return VerificationResult.Failure.LogServersFailed(result)
+            null -> return VerificationResult.Failure.NoLogServers
+        }
+
+        if (verifiers is LogListResult.Invalid) {
+            return VerificationResult.Failure.LogServersFailed(verifiers)
+        }
 
         val leafCertificate = certificates[0]
 

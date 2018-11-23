@@ -30,6 +30,7 @@ import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.internal.verification.Times
 
 class DataSourceComposeTest {
@@ -97,6 +98,30 @@ class DataSourceComposeTest {
         verify(cache1, Times(1)).set(any())
         verify(cache2, Times(0)).set(any())
     }
+
+    @Test
+    fun testComposeQueriesSecondCacheAndSetsValueInFirstWhenIsValidReturnsFalse() = runBlocking {
+        // given we have two composed empty caches
+        val cache1 = spy(InMemoryDataSource<Int>().apply { set(2) })
+        whenever(cache1.isValid(anyInt())).thenReturn(false)
+
+        val cache2 = spy(InMemoryDataSource<Int>().apply { set(3) })
+        val composed = cache1 + cache2
+
+        // when we ask for a value
+        val value = composed.get()
+
+        // then value from second cache is returned and value set in first cache
+        assertEquals(3, value)
+        assertEquals(3, cache1.get())
+
+        verify(cache1, Times(2)).get()
+        verify(cache2, Times(1)).get()
+
+        verify(cache1, Times(1)).set(any())
+        verify(cache2, Times(0)).set(any())
+    }
+
 
     @Test
     fun testComposeThrowsExceptionWhenFirstErrors() = runBlocking {

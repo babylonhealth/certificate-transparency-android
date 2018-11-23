@@ -16,6 +16,7 @@
 
 package org.certificatetransparency.ctlog
 
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.loglist.LogServer
 import java.io.IOException
 
@@ -68,13 +69,24 @@ sealed class VerificationResult {
 
         /**
          * Certificate transparency checks failed as no [LogServer] are present. This can occur if there are network problems loading
-         * the log-list.json file
+         * the log-list.json or log-list.sig file
          */
         object NoLogServers : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: No log servers to check against"
+            override fun toString() = "Failure: Unable to load log servers"
+        }
+
+        /**
+         * Certificate transparency checks failed as couldn't load list of [LogServer]. This can occur if there are network problems loading
+         * the log-list.json or log-list.sig file along with issues with the signature
+         */
+        data class LogServersFailed(val logListResult: LogListResult.Invalid) : Failure() {
+            /**
+             * Returns a string representation of the object.
+             */
+            override fun toString() = "Failure: Unable to load log servers with $logListResult"
         }
 
         /**
