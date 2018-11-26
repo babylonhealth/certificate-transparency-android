@@ -46,7 +46,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
      * @return latest STH
      */
     internal val logSth: SignedTreeHead by lazy {
-        ctService.getSth().execute()?.body()!!.toSignedTreeHead()
+        ctService.getSth().execute().body()!!.toSignedTreeHead()
     }
 
     /**
@@ -55,7 +55,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
      * @return a list of root certificates.
      */
     internal val logRoots: List<Certificate> by lazy {
-        ctService.getRoots().execute()?.body()!!.toRootCertificates()
+        ctService.getRoots().execute().body()!!.toRootCertificates()
     }
 
     /**
@@ -100,7 +100,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
 
         val call = if (isPreCertificate) ctService.addPreChain(jsonPayload) else ctService.addChain(jsonPayload)
 
-        return call.execute()?.body()!!.toSignedCertificateTimestamp()
+        return call.execute().body()!!.toSignedCertificateTimestamp()
     }
 
     /**
@@ -113,7 +113,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     override fun getLogEntries(start: Long, end: Long): List<ParsedLogEntry> {
         require(start in 0..end)
 
-        return ctService.getEntries(start, end).execute()?.body()!!.toParsedLogEntries()
+        return ctService.getEntries(start, end).execute().body()!!.toParsedLogEntries()
     }
 
     /**
@@ -126,7 +126,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     override fun getSthConsistency(first: Long, second: Long): List<ByteArray> {
         require(first in 0..second)
 
-        return ctService.getSthConsistency(first, second).execute()?.body()!!.toMerkleTreeNodes()
+        return ctService.getSthConsistency(first, second).execute().body()!!.toMerkleTreeNodes()
     }
 
     /**
@@ -139,7 +139,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
     override fun getLogEntryAndProof(leafIndex: Long, treeSize: Long): ParsedLogEntryWithProof {
         require(leafIndex in 0..treeSize)
 
-        val response = ctService.getEntryAndProof(leafIndex, treeSize).execute()?.body()!!
+        val response = ctService.getEntryAndProof(leafIndex, treeSize).execute().body()!!
 
         val logEntry = Deserializer.parseLogEntry(
             Base64.decode(response.leafInput).inputStream(),
@@ -172,7 +172,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
      */
     override fun getProofByEncodedHash(encodedMerkleLeafHash: String, treeSize: Long): MerkleAuditProof {
         require(encodedMerkleLeafHash.isNotEmpty())
-        val response = ctService.getProofByHash(treeSize, encodedMerkleLeafHash).execute()?.body()!!
+        val response = ctService.getProofByHash(treeSize, encodedMerkleLeafHash).execute().body()!!
         return Deserializer.parseAuditProof(response.auditPath, response.leafIndex, treeSize)
     }
 }

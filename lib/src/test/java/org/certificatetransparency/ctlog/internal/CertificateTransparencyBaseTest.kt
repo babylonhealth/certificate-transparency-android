@@ -16,8 +16,8 @@
 
 package org.certificatetransparency.ctlog.internal
 
-import com.nhaarman.mockito_kotlin.spy
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.whenever
 import org.certificatetransparency.ctlog.SctVerificationResult
 import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.internal.serialization.CTConstants
