@@ -18,7 +18,11 @@
 
 package org.certificatetransparency.ctlog.datasource
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 
 /**
  * A standard cache which stores and retrieves data

@@ -19,9 +19,9 @@ package org.certificatetransparency.ctlog.internal.logclient.model.network
 import com.google.gson.annotations.SerializedName
 import org.certificatetransparency.ctlog.internal.exceptions.CertificateTransparencyException
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedTreeHead
+import org.certificatetransparency.ctlog.internal.logclient.model.Version
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.internal.logclient.model.Version
 
 private const val MERKLE_HASH_TREE_BYTE_LENGTH = 32
 
@@ -43,6 +43,7 @@ internal data class GetSthResponse(
      *
      * @return A SignedTreeHead object.
      */
+    @Suppress("ThrowsCount")
     fun toSignedTreeHead(): SignedTreeHead {
         val treeSize = treeSize
         val timestamp = timestamp

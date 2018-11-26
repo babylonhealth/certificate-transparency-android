@@ -28,7 +28,11 @@ import org.certificatetransparency.ctlog.internal.utils.PublicKeyFactory
 import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.loglist.LogServer
 import java.io.IOException
-import java.security.*
+import java.security.InvalidKeyException
+import java.security.NoSuchAlgorithmException
+import java.security.PublicKey
+import java.security.Signature
+import java.security.SignatureException
 import java.security.spec.InvalidKeySpecException
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
@@ -39,6 +43,7 @@ internal class LogListNetworkDataSourceV2(
 
     override val coroutineContext = GlobalScope.coroutineContext
 
+    @Suppress("ReturnCount")
     override suspend fun get(): LogListResult {
         val logListJob = async { logService.getLogList().execute().body()?.string() }
         val signatureJob = async { logService.getLogListSignature().execute().body()?.bytes() }
@@ -94,6 +99,7 @@ internal class LogListNetworkDataSourceV2(
         return buildLogServerList(logList)
     }
 
+    @Suppress("ReturnCount")
     private fun buildLogServerList(logList: LogListV2Beta): LogListResult {
         return logList.operators
             .flatMap { it.value.logs.values }

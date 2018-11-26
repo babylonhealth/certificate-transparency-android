@@ -110,7 +110,7 @@ sealed class VerificationResult {
              * Returns a string representation of the object.
              */
             override fun toString() =
-                "Failure: Too few trusted SCTs present, required $minSctCount, found ${scts.count { it.value is SctVerificationResult.Valid }} in $scts"
+                "Failure: Too few trusted SCTs, required $minSctCount, found ${scts.count { it.value is SctVerificationResult.Valid }} in $scts"
         }
 
         /**

@@ -61,7 +61,9 @@ internal data class CertificateEncodingFailed(override val exception: kotlin.Exc
     override fun toString() = "Certificate could not be encoded with: ${exception.stringStackTrace()}"
 }
 
-internal data class CertificateParsingFailed(override val exception: CertificateParsingException) : SctVerificationResult.Invalid.FailedWithException() {
+internal data class CertificateParsingFailed(
+    override val exception: CertificateParsingException
+) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() = "Error parsing cert with: ${exception.stringStackTrace()}"
 }
 

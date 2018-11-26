@@ -64,6 +64,7 @@ import java.security.cert.X509Certificate
  */
 internal class LogSignatureVerifier(private val logServer: LogServer) : SignatureVerifier {
 
+    @Suppress("ReturnCount", "ComplexMethod")
     override fun verifySignature(sct: SignedCertificateTimestamp, chain: List<Certificate>): SctVerificationResult {
 
         // If the timestamp is in the future then we have to reject it
@@ -222,6 +223,7 @@ internal class LogSignatureVerifier(private val logServer: LogServer) : Signatur
             }
     }
 
+    @Suppress("ComplexMethod")
     private fun verifySctSignatureOverBytes(sct: SignedCertificateTimestamp, toVerify: ByteArray): SctVerificationResult {
         val sigAlg = when {
             logServer.key.algorithm == "EC" -> "SHA256withECDSA"

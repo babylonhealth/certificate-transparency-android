@@ -50,3 +50,4 @@ dependencyCheck {
 }
 
 tasks.check.dependsOn(tasks.dependencyCheckAnalyze)
+tasks.check.dependsOn(rootProject.tasks.detekt)

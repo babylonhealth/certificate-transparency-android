@@ -24,11 +24,11 @@ import org.certificatetransparency.ctlog.SctVerificationResult
 import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.LogListDataSourceFactory
-import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
@@ -73,6 +73,7 @@ internal open class CertificateTransparencyBase(
      * @property certificates the certificate chain provided by the server
      * @return true if the certificates can be trusted, false otherwise.
      */
+    @Suppress("ReturnCount")
     private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): VerificationResult {
 
         val result = runBlocking {
@@ -102,13 +103,17 @@ internal open class CertificateTransparencyBase(
                     verifiers[logId]?.verifySignature(sct, certificates) ?: SctVerificationResult.Invalid.NoLogServerFound
                 }
 
-            if (sctResults.count { it.value is SctVerificationResult.Valid } < minimumValidSignedCertificateTimestamps) {
-                VerificationResult.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
-            } else {
-                VerificationResult.Success.Trusted(sctResults)
-            }
+            policyVerificationResult(sctResults)
         } catch (e: IOException) {
             VerificationResult.Failure.UnknownIoException(e)
+        }
+    }
+
+    private fun policyVerificationResult(sctResults: Map<String, SctVerificationResult>): VerificationResult {
+        return if (sctResults.count { it.value is SctVerificationResult.Valid } < minimumValidSignedCertificateTimestamps) {
+            VerificationResult.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
+        } else {
+            VerificationResult.Success.Trusted(sctResults)
         }
     }
 
