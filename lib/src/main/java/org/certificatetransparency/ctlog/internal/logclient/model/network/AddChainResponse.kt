@@ -22,6 +22,7 @@ import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.logclient.model.LogId
 import org.certificatetransparency.ctlog.internal.logclient.model.SignedCertificateTimestamp
 import org.certificatetransparency.ctlog.internal.logclient.model.Version
+import java.io.IOException
 
 /**
  * If the "sctVersion" is not v1, then a v1 client may be unable to verify the signature. It MUST NOT construe this as an error. (Note: Log
@@ -49,6 +50,7 @@ internal data class AddChainResponse(
      * Parses the CT Log's json response into a SignedCertificateTimestamp.
      *
      * @return SCT filled from the JSON input.
+     * @throws IOException
      */
     fun toSignedCertificateTimestamp(): SignedCertificateTimestamp {
         return SignedCertificateTimestamp(

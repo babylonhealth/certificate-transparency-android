@@ -18,10 +18,11 @@ package org.certificatetransparency.ctlog.internal.logclient.model.network
 
 import com.google.gson.annotations.SerializedName
 import org.certificatetransparency.ctlog.internal.exceptions.CertificateTransparencyException
+import org.certificatetransparency.ctlog.internal.logclient.model.LogEntry
+import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntry
 import org.certificatetransparency.ctlog.internal.logclient.model.network.GetEntriesResponse.Entry
 import org.certificatetransparency.ctlog.internal.serialization.Deserializer
 import org.certificatetransparency.ctlog.internal.utils.Base64
-import org.certificatetransparency.ctlog.internal.logclient.model.ParsedLogEntry
 
 /**
  * Note that this message is not signed -- the retrieved data can be verified by constructing the Merkle Tree Hash corresponding to a
@@ -37,8 +38,8 @@ internal data class GetEntriesResponse(
     /**
      * @property leafInput The base64-encoded MerkleTreeLeaf structure.
      * @property extraData The base64-encoded unsigned data pertaining to the log entry.  In the case of an
-     * [org.certificatetransparency.ctlog.LogEntry.X509], this is the "certificate_chain".  In the case of a
-     * [org.certificatetransparency.ctlog.LogEntry.PreCertificate], this is the whole "PreCertificateChainEntry".
+     * [LogEntry.X509ChainEntry], this is the "certificate_chain".  In the case of a
+     * [LogEntry.PreCertificateChainEntry], this is the whole "PreCertificateChainEntry".
      */
     data class Entry(
         @SerializedName("leaf_input") val leafInput: String,
