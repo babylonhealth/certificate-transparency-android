@@ -1,6 +1,7 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'org.owasp.dependencycheck'
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -39,3 +40,13 @@ dokka {
         url = new URL("https://square.github.io/okhttp/3.x/okhttp/")
     }
 }
+
+dependencyCheck {
+    failBuildOnCVSS 0
+
+    analyzers {
+        assemblyEnabled = false
+    }
+}
+
+tasks.check.dependsOn(tasks.dependencyCheckAnalyze)
