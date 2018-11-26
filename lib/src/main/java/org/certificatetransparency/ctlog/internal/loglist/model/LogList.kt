@@ -16,7 +16,9 @@
 
 package org.certificatetransparency.ctlog.internal.loglist.model
 
+import com.google.gson.annotations.SerializedName
+
 internal data class LogList(
-    val logs: List<Log>,
-    val operators: List<Operator>
+    @SerializedName("logs") val logs: List<Log>,
+    @SerializedName("operators") val operators: List<Operator>
 )

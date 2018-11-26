@@ -38,15 +38,15 @@ import org.certificatetransparency.ctlog.internal.loglist.deserializer.HttpUrlDe
  * @property state The state of the log from the log list distributor's perspective.
  */
 internal data class Log(
-    val description: List<String>?,
-    val key: String,
+    @SerializedName("description") val description: List<String>?,
+    @SerializedName("key") val key: String,
     @SerializedName("log_id") val logId: String,
     @SerializedName("mmd") val maximumMergeDelay: Int,
-    @JsonAdapter(HttpUrlDeserializer::class) val url: HttpUrl,
-    val dns: Hostname?,
+    @SerializedName("url") @JsonAdapter(HttpUrlDeserializer::class) val url: HttpUrl,
+    @SerializedName("dns") val dns: Hostname?,
     @SerializedName("temporal_interval") val temporalInterval: TemporalInterval?,
     @SerializedName("log_type") val logType: LogType?,
-    val state: State?
+    @SerializedName("state") val state: State?
 ) {
     init {
         require(description == null || description.isNotEmpty())

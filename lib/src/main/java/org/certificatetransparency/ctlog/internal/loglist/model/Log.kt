@@ -26,9 +26,9 @@ import org.certificatetransparency.ctlog.internal.loglist.model.v2beta.Hostname
  * @property dnsApiEndpoint DNS API endpoint for the log
  */
 internal data class Log(
-    val description: String,
-    val key: String,
-    val url: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("key") val key: String,
+    @SerializedName("url") val url: String,
     @SerializedName("maximum_merge_delay") val maximumMergeDelay: Long,
     @SerializedName("operated_by") val operatedBy: List<Int>,
     @SerializedName("dns_api_endpoint") val dnsApiEndpoint: Hostname?,

@@ -16,9 +16,11 @@
 
 package org.certificatetransparency.ctlog.internal.loglist.model.v2beta
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * @property operators CT log operators. People/organizations that run Certificate Transparency logs.
  */
 internal data class LogListV2Beta(
-    val operators: Map<String, Operator>
+    @SerializedName("operators") val operators: Map<String, Operator>
 )

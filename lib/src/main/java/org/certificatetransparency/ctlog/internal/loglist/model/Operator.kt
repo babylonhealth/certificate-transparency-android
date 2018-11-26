@@ -16,7 +16,9 @@
 
 package org.certificatetransparency.ctlog.internal.loglist.model
 
+import com.google.gson.annotations.SerializedName
+
 internal data class Operator(
-    val name: String,
-    val id: Int
+    @SerializedName("name") val name: String,
+    @SerializedName("id") val id: Int
 )

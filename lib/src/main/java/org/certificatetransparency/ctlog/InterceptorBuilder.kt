@@ -18,9 +18,9 @@ package org.certificatetransparency.ctlog
 
 import okhttp3.Interceptor
 import org.certificatetransparency.ctlog.datasource.DataSource
-import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.internal.verifier.CertificateTransparencyInterceptor
 import org.certificatetransparency.ctlog.internal.verifier.model.Host
+import org.certificatetransparency.ctlog.loglist.LogListResult
 import org.certificatetransparency.ctlog.loglist.LogServer
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
@@ -141,5 +141,5 @@ class InterceptorBuilder {
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts, trustManager, logListDataSource, failOnError, logger)
+    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts.toSet(), trustManager, logListDataSource, failOnError, logger)
 }
