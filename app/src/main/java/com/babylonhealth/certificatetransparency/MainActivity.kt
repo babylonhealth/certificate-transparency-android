@@ -19,6 +19,7 @@ package com.babylonhealth.certificatetransparency
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.babylonhealth.certificatetransparency.sampleapp.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Call
