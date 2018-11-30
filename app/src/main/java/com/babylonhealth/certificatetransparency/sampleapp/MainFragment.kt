@@ -61,8 +61,8 @@ class MainFragment : Fragment() {
                     navController,
                     "OkHttp",
                     Uri.parse("http://square.github.io/okhttp/"),
-                    R.id.ok_http_kotlin_example_fragment,
-                    R.id.ok_http_java_example_fragment
+                    R.id.okhttp_kotlin_example_fragment,
+                    R.id.okhttp_java_example_fragment
                 )
             )
             add(
@@ -70,8 +70,8 @@ class MainFragment : Fragment() {
                     navController,
                     "HttpURLConnection",
                     Uri.parse("https://developer.android.com/reference/java/net/HttpURLConnection"),
-                    R.id.ok_http_kotlin_example_fragment,
-                    R.id.ok_http_java_example_fragment
+                    R.id.httpurlconnection_kotlin_example_fragment,
+                    R.id.httpurlconnection_java_example_fragment
                 )
             )
             add(
@@ -79,8 +79,8 @@ class MainFragment : Fragment() {
                     navController,
                     "Volley",
                     Uri.parse("https://developer.android.com/training/volley/index.html"),
-                    R.id.ok_http_kotlin_example_fragment,
-                    R.id.ok_http_java_example_fragment
+                    R.id.volley_kotlin_example_fragment,
+                    R.id.volley_java_example_fragment
                 )
             )
 

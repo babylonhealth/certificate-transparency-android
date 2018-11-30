@@ -1,0 +1,12 @@
+Interceptor networkInterceptor = new InterceptorBuilder()
+{{#hosts}}
+        .addHost("{{.}}")
+{{/hosts}}
+{{^failOnError}}
+        .setFailOnError(false)
+{{/failOnError}}
+        .build();
+
+OkHttpClient client = new OkHttpClient.Builder()
+        .addNetworkInterceptor(networkInterceptor)
+        .build();

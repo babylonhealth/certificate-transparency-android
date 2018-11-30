@@ -28,6 +28,9 @@ import java.io.IOException
 
 class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
 
+    override val sampleCodeTemplate
+        get() = "okhttp-kotlin.txt"
+
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private fun createOkHttpClient(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger): OkHttpClient {
@@ -62,20 +65,5 @@ class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
                 // Success. Reason will have been sent to the logger
             }
         })
-    }
-
-    override fun generateSourceCode(hosts: Set<String>, failOnError: Boolean): String {
-        val hostsString = hosts.joinToString("\n") { "        +\"$it\"" }
-
-        return """
-val interceptor =
-    certificateTransparencyInterceptor {
-$hostsString${if (failOnError) "" else "\n\n        failOnError = false"}
-    }
-
-val client = OkHttpClient.Builder().apply {
-    addNetworkInterceptor(interceptor)
-}.build()
-""".trimIndent()
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Babylon Healthcare Services Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.babylonhealth.certificatetransparency.sampleapp.examples.okhttp.java;
 
 import com.babylonhealth.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
@@ -10,6 +26,13 @@ import java.io.IOException;
 import java.util.Set;
 
 public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
+
+    @NotNull
+    @Override
+    public String getSampleCodeTemplate() {
+        return "okhttp-java.txt";
+    }
+
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private OkHttpClient createOkHttpClient(Set<String> hosts, boolean isFailOnError, Logger defaultLogger) {
@@ -34,7 +57,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
     public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull Logger defaultLogger) {
         OkHttpClient client = createOkHttpClient(hosts, isFailOnError, defaultLogger);
 
-        Request request = new Request.Builder().url("https://$connectionHost").build();
+        Request request = new Request.Builder().url("https://" + connectionHost).build();
 
         client.newCall(request).enqueue(new Callback() {
 
@@ -51,7 +74,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
         });
     }
 
-    @NotNull
+    /*@NotNull
     @Override
     public String generateSourceCode(@NotNull Set<String> hosts, boolean failOnError) {
         StringBuilder bob = new StringBuilder();
@@ -75,5 +98,5 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
         bob.append("        .build();");
 
         return bob.toString();
-    }
+    }*/
 }

@@ -19,13 +19,17 @@ package com.babylonhealth.certificatetransparency.sampleapp.examples
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.volley.VolleyError
+import com.github.mustachejava.DefaultMustacheFactory
 import okhttp3.HttpUrl
 import org.certificatetransparency.ctlog.Logger
 import org.certificatetransparency.ctlog.VerificationResult
-import java.io.IOException
+import java.io.StringWriter
 import javax.net.ssl.SSLPeerUnverifiedException
 
 abstract class BaseExampleViewModel : ViewModel() {
+
+    abstract val sampleCodeTemplate: String
 
     private var state = State(
         hosts = setOf("*.babylonhealth.com"),
@@ -34,9 +38,11 @@ abstract class BaseExampleViewModel : ViewModel() {
         message = null
     )
 
-    private val _liveData = MutableLiveData<State>().apply {
+    private val _liveData = MutableLiveData<State>()
+
+    init {
         updateSourceCode()
-        postValue(state)
+        _liveData.postValue(state)
     }
 
     val liveData: LiveData<State>
@@ -64,7 +70,13 @@ abstract class BaseExampleViewModel : ViewModel() {
         _liveData.postValue(state)
     }
 
-    abstract fun generateSourceCode(hosts: Set<String>, failOnError: Boolean): String
+    private fun generateSourceCode(hosts: Set<String>, failOnError: Boolean): String {
+        val scopes = mapOf("hosts" to hosts.toSet(), "failOnError" to failOnError)
+
+        return StringWriter().use {
+            DefaultMustacheFactory().compile(sampleCodeTemplate).execute(it, scopes)
+        }.toString()
+    }
 
     private fun updateSourceCode() {
         val source = generateSourceCode(state.hosts, state.failOnError)
@@ -89,9 +101,11 @@ abstract class BaseExampleViewModel : ViewModel() {
         }
     }
 
-    fun sendException(e: IOException) {
-        if (e !is SSLPeerUnverifiedException || e.message != "Certificate transparency failed") {
-            state = state.copy(message = State.Message.Failure(e.message ?: e.toString()))
+    fun sendException(e: Throwable?) {
+        if ((e is VolleyError && e.cause !is SSLPeerUnverifiedException) ||
+            (e !is VolleyError && (e !is SSLPeerUnverifiedException || e.message != "Certificate transparency failed"))
+        ) {
+            state = state.copy(message = State.Message.Failure(e?.message ?: e.toString()))
             _liveData.postValue(state)
         }
     }

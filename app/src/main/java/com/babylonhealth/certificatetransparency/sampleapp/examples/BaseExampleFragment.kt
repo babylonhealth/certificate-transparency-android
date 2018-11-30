@@ -92,7 +92,7 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(getViewModelClass())
+        viewModel = ViewModelProviders.of(this, ContextViewModelFactory(requireContext())).get(getViewModelClass())
 
         viewModel.liveData.observe(this, Observer { state ->
             updateHosts(state)

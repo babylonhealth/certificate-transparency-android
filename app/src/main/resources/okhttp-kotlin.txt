@@ -1,0 +1,13 @@
+val interceptor =
+    certificateTransparencyInterceptor {
+{{#hosts}}
+        +"{{.}}"
+{{/hosts}}
+{{^failOnError}}
+        failOnError = false
+{{/failOnError}}
+    }
+
+val client = OkHttpClient.Builder().apply {
+    addNetworkInterceptor(interceptor)
+}.build()

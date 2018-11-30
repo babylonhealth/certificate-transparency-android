@@ -1,0 +1,22 @@
+private fun HttpURLConnection.enableCertificateTransparencyChecks() {
+    if (this is HttpsURLConnection) {
+        // Create a hostname verifier wrapping the original
+        hostnameVerifier = certificateTransparencyHostnameVerifier(hostnameVerifier) {
+{{#hosts}}
+            +"{{.}}"
+{{/hosts}}
+{{^failOnError}}
+            failOnError = false
+{{/failOnError}}
+        }
+    }
+}
+
+val queue = Volley.newRequestQueue(applicationContext,
+    object : HurlStack() {
+        override fun createConnection(url: URL): HttpURLConnection {
+            return super.createConnection(url).apply {
+                enableCertificateTransparencyChecks()
+            }
+        }
+    })

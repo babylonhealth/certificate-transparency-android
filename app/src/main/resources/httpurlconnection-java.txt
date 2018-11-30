@@ -1,0 +1,19 @@
+private void enableCertificateTransparencyChecks(HttpURLConnection connection) {
+    if (connection instanceof HttpsURLConnection) {
+        HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
+
+        // Create a hostname verifier wrapping the original
+        HostnameVerifier verifier = new HostnameVerifierBuilder(httpsConnection.getHostnameVerifier())
+{{#hosts}}
+                .addHost("{{.}}")
+{{/hosts}}
+{{^failOnError}}
+                .setFailOnError(false)
+{{/failOnError}}
+                .build();
+
+        httpsConnection.setHostnameVerifier(verifier);
+    }
+}
+
+enableCertificateTransparencyChecks(connection);

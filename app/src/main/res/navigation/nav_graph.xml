@@ -10,13 +10,33 @@
         tools:layout="@layout/fragment_main" />
 
     <fragment
-        android:id="@+id/ok_http_kotlin_example_fragment"
+        android:id="@+id/okhttp_kotlin_example_fragment"
         android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.okhttp.kotlin.OkHttpKotlinExampleFragment"
         tools:layout="@layout/example_fragment" />
 
     <fragment
-        android:id="@+id/ok_http_java_example_fragment"
+        android:id="@+id/okhttp_java_example_fragment"
         android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.okhttp.java.OkHttpJavaExampleFragment"
+        tools:layout="@layout/example_fragment" />
+
+    <fragment
+        android:id="@+id/volley_kotlin_example_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.volley.kotlin.VolleyKotlinExampleFragment"
+        tools:layout="@layout/example_fragment" />
+
+    <fragment
+        android:id="@+id/volley_java_example_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.volley.java.VolleyJavaExampleFragment"
+        tools:layout="@layout/example_fragment" />
+
+    <fragment
+        android:id="@+id/httpurlconnection_kotlin_example_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.httpurlconnection.kotlin.HttpURLConnectionKotlinExampleFragment"
+        tools:layout="@layout/example_fragment" />
+
+    <fragment
+        android:id="@+id/httpurlconnection_java_example_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.httpurlconnection.java.HttpURLConnectionJavaExampleFragment"
         tools:layout="@layout/example_fragment" />
 
 </navigation>
