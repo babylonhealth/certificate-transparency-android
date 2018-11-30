@@ -26,7 +26,7 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class CertificateTransparencyHostnameVerifierIntegrationTest {
 
     companion object {
-        private const val invalidSctDomain = "example.com"
+        private const val invalidSctDomain = "www.tauntonstore.com"
 
         val hostnameVerifier = certificateTransparencyHostnameVerifier {
             +"*.babylonhealth.com"

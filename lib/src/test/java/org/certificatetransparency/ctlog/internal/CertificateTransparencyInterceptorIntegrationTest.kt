@@ -26,7 +26,7 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class CertificateTransparencyInterceptorIntegrationTest {
 
     companion object {
-        private const val invalidSctDomain = "example.com"
+        private const val invalidSctDomain = "www.tauntonstore.com"
 
         val networkInterceptor = certificateTransparencyInterceptor {
             +"*.babylonhealth.com"
