@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@+id/main_fragment">
+
+    <fragment
+        android:id="@+id/main_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.MainFragment"
+        tools:layout="@layout/fragment_main" />
+
+    <fragment
+        android:id="@+id/ok_http_kotlin_example_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.okhttp.kotlin.OkHttpKotlinExampleFragment"
+        tools:layout="@layout/example_fragment" />
+
+    <fragment
+        android:id="@+id/ok_http_java_example_fragment"
+        android:name="com.babylonhealth.certificatetransparency.sampleapp.examples.okhttp.java.OkHttpJavaExampleFragment"
+        tools:layout="@layout/example_fragment" />
+
+</navigation>
