@@ -21,7 +21,7 @@ import com.babylonhealth.certificatetransparency.sampleapp.examples.BaseExampleF
 
 class HttpURLConnectionJavaExampleFragment : BaseExampleFragment<HttpURLConnectionJavaExampleViewModel>() {
 
-    override fun getViewModelClass() = HttpURLConnectionJavaExampleViewModel::class.java
+    override fun getViewModelClass(): Class<HttpURLConnectionJavaExampleViewModel> = HttpURLConnectionJavaExampleViewModel::class.java
 
     override fun getTitle() = R.string.httpurlconnection_java_example
 }

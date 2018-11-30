@@ -21,7 +21,7 @@ import com.babylonhealth.certificatetransparency.sampleapp.examples.BaseExampleF
 
 class OkHttpKotlinExampleFragment : BaseExampleFragment<OkHttpKotlinExampleViewModel>() {
 
-    override fun getViewModelClass() = OkHttpKotlinExampleViewModel::class.java
+    override fun getViewModelClass(): Class<OkHttpKotlinExampleViewModel> = OkHttpKotlinExampleViewModel::class.java
 
     override fun getTitle() = R.string.okhttp_kotlin_example
 }

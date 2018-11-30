@@ -21,7 +21,7 @@ import com.babylonhealth.certificatetransparency.sampleapp.examples.BaseExampleF
 
 class VolleyKotlinExampleFragment : BaseExampleFragment<VolleyKotlinExampleViewModel>() {
 
-    override fun getViewModelClass() = VolleyKotlinExampleViewModel::class.java
+    override fun getViewModelClass(): Class<VolleyKotlinExampleViewModel> = VolleyKotlinExampleViewModel::class.java
 
     override fun getTitle() = R.string.volley_kotlin_example
 }

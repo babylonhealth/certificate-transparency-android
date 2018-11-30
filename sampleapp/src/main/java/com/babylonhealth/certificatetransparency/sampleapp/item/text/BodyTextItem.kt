@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package com.babylonhealth.certificatetransparency.sampleapp.item.button
+package com.babylonhealth.certificatetransparency.sampleapp.item.text
 
 import androidx.annotation.StringRes
-import com.babylonhealth.certificatetransparency.sampleapp.item.ItemCallback
 import com.babylonhealth.certificatetransparency.sampleapp.R
 import com.babylonhealth.certificatetransparency.sampleapp.item.getString
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.button_item.view.*
+import kotlinx.android.synthetic.main.body_text_item.view.*
 
-class ButtonItem(
+class BodyTextItem(
     @StringRes private val titleResId: Int? = null,
-    private val title: String? = null,
-    private val callback: ItemCallback<ButtonItem>? = null
+    private val title: String? = null
 ) : Item() {
 
     init {
-        if ((titleResId != null && title != null) || (titleResId == null && title == null))
+        if (!((titleResId != null) xor (title != null))) {
             throw IllegalStateException("Provide either titleResId or title")
+        }
     }
 
-    override fun getLayout() = R.layout.button_item
+    override fun getLayout() = R.layout.body_text_item
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.containerView.button.apply {
-            text = if (titleResId != null) viewHolder.getString(titleResId) else title
-
-            setOnClickListener {
-                callback?.invoke(this@ButtonItem)
-            }
-        }
+        viewHolder.containerView.title.text = if (titleResId != null) viewHolder.getString(titleResId) else title
     }
 }

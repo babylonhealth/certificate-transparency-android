@@ -19,7 +19,6 @@ package com.babylonhealth.certificatetransparency.sampleapp.examples
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.android.volley.VolleyError
 import com.github.mustachejava.DefaultMustacheFactory
 import okhttp3.HttpUrl
 import org.certificatetransparency.ctlog.Logger
@@ -102,9 +101,7 @@ abstract class BaseExampleViewModel : ViewModel() {
     }
 
     fun sendException(e: Throwable?) {
-        if ((e is VolleyError && e.cause !is SSLPeerUnverifiedException) ||
-            (e !is VolleyError && (e !is SSLPeerUnverifiedException || e.message != "Certificate transparency failed"))
-        ) {
+        if (e?.message != "Certificate transparency failed" && e?.cause !is SSLPeerUnverifiedException) {
             state = state.copy(message = State.Message.Failure(e?.message ?: e.toString()))
             _liveData.postValue(state)
         }

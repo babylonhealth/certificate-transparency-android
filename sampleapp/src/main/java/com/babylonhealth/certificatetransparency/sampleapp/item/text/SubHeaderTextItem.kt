@@ -14,45 +14,29 @@
  * limitations under the License.
  */
 
-package com.babylonhealth.certificatetransparency.sampleapp.item.button
+package com.babylonhealth.certificatetransparency.sampleapp.item.text
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.babylonhealth.certificatetransparency.sampleapp.item.ItemCallback
 import com.babylonhealth.certificatetransparency.sampleapp.R
 import com.babylonhealth.certificatetransparency.sampleapp.item.getString
-import com.google.android.material.button.MaterialButton
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.outlined_button_item.view.*
+import kotlinx.android.synthetic.main.header_text_item.view.*
 
-class OutlinedButtonItem(
+class SubHeaderTextItem(
     @StringRes private val titleResId: Int? = null,
-    private val title: String? = null,
-    @DrawableRes private val iconResId: Int? = null,
-    private val callback: ItemCallback<OutlinedButtonItem>? = null
+    private val title: String? = null
 ) : Item() {
 
     init {
-        if ((titleResId != null && title != null) || (titleResId == null && title == null))
+        if (!((titleResId != null) xor (title != null))) {
             throw IllegalStateException("Provide either titleResId or title")
-    }
-
-    override fun getLayout() = R.layout.outlined_button_item
-
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.containerView.button.apply {
-            text = if (titleResId != null) viewHolder.getString(titleResId) else title
-
-            iconResId?.let(::setIconResource) ?: clearIcon()
-
-            setOnClickListener {
-                callback?.invoke(this@OutlinedButtonItem)
-            }
         }
     }
 
-    private fun MaterialButton.clearIcon() {
-        icon = null
+    override fun getLayout() = R.layout.sub_header_text_item
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        viewHolder.containerView.title.text = if (titleResId != null) viewHolder.getString(titleResId) else title
     }
 }
