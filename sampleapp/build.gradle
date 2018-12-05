@@ -12,7 +12,6 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
@@ -52,8 +51,4 @@ dependencies {
     implementation 'com.pddstudio:highlightjs-android:1.5.0'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.github.spullara.mustache.java:compiler:0.9.5'
-    testImplementation 'com.squareup.retrofit2:retrofit-mock:2.5.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 }
