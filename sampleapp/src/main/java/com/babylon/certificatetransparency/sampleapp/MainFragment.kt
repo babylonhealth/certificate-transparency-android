@@ -60,7 +60,7 @@ class MainFragment : Fragment() {
                 ExampleCardItem(
                     navController,
                     "OkHttp",
-                    Uri.parse("http://square.github.io/okhttp/"),
+                    Uri.parse("https://square.github.io/okhttp/"),
                     R.id.okhttp_kotlin_example_fragment,
                     R.id.okhttp_java_example_fragment
                 )
