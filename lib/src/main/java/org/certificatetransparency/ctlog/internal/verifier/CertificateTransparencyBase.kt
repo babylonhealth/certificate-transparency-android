@@ -101,7 +101,7 @@ internal open class CertificateTransparencyBase(
             val sctResults = leafCertificate.signedCertificateTimestamps()
                 .associateBy { Base64.toBase64String(it.id.keyId) }
                 .mapValues { (logId, sct) ->
-                    verifiers[logId]?.verifySignature(sct, certificates) ?: SctVerificationResult.Invalid.NoLogServerFound
+                    verifiers[logId]?.verifySignature(sct, certificates) ?: SctVerificationResult.Invalid.NoTrustedLogServerFound
                 }
 
             policyVerificationResult(sctResults)

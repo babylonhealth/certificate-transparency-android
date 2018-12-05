@@ -47,7 +47,7 @@ sealed class SctVerificationResult {
         /**
          * Signed Certificate Timestamp checks failed as there was no log server we trust in the log-list.json
          */
-        object NoLogServerFound : Invalid() {
+        object NoTrustedLogServerFound : Invalid() {
             /**
              * Returns a string representation of the object.
              */
