@@ -81,30 +81,4 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
             }
         });
     }
-
-    /*@NotNull
-    @Override
-    public String generateSourceCode(@NotNull Set<String> hosts, boolean failOnError) {
-        StringBuilder bob = new StringBuilder();
-
-        bob.append("InterceptorBuilder builder = new InterceptorBuilder()");
-
-        for (String host : hosts) {
-            bob.append("\n        .addHost(\"");
-            bob.append(host);
-            bob.append("\")");
-        }
-
-        if (!failOnError) {
-            bob.append("\n        .setFailOnError(false)");
-        }
-        bob.append(";\n\n");
-
-
-        bob.append("OkHttpClient client = new OkHttpClient.Builder()\n");
-        bob.append("        .addNetworkInterceptor(networkInterceptor)\n");
-        bob.append("        .build();");
-
-        return bob.toString();
-    }*/
 }
