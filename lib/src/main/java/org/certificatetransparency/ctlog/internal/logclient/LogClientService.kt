@@ -38,7 +38,8 @@ internal interface LogClientService {
     /**
      * Retrieve Merkle Audit Proof from Log by Leaf Hash
      * @property hash A base64-encoded v1 leaf hash. The [hash] must be calculated as defined in https://tools.ietf.org/html/rfc6962#section-3.4.
-     * @property treeSize The [treeSize] of the tree on which to base the proof, in decimal. The [treeSize] must designate an existing v1 STH.
+     * @property treeSize The [treeSize] of the tree on which to base the proof, in decimal. The [treeSize] must designate an existing v1 STH
+     * (signed tree head).
      */
     @GET("get-proof-by-hash")
     fun getProofByHash(@Query("tree_size") treeSize: Long, @Query("hash") hash: String): Call<ProofByHashResponse>
@@ -49,7 +50,8 @@ internal interface LogClientService {
      * This API is probably only useful for debugging.
      *
      * @property leafIndex The index of the desired entry.
-     * @property treeSize The tree_size of the tree for which the proof is desired. The tree size must designate an existing STH.
+     * @property treeSize The tree_size of the tree for which the proof is desired. The tree size must designate an existing STH (signed tree
+     * head).
      */
     @GET("get-entry-and-proof")
     fun getEntryAndProof(@Query("leaf_index") leafIndex: Long, @Query("tree_size") treeSize: Long): Call<GetEntryAndProofResponse>
