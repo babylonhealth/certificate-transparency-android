@@ -16,14 +16,14 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.kotlin
 
+import com.babylon.certificatetransparency.Logger
+import com.babylon.certificatetransparency.certificateTransparencyInterceptor
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.certificatetransparency.ctlog.Logger
-import org.certificatetransparency.ctlog.certificateTransparencyInterceptor
 import java.io.IOException
 
 class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {

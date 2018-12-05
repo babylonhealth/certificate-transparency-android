@@ -16,6 +16,8 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.java;
 
+import com.babylon.certificatetransparency.InterceptorBuilder;
+import com.babylon.certificatetransparency.Logger;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -23,8 +25,6 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.certificatetransparency.ctlog.InterceptorBuilder;
-import org.certificatetransparency.ctlog.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

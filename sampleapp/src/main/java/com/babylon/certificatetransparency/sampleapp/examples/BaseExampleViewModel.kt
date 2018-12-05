@@ -19,10 +19,10 @@ package com.babylon.certificatetransparency.sampleapp.examples
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.babylon.certificatetransparency.Logger
+import com.babylon.certificatetransparency.VerificationResult
 import com.github.mustachejava.DefaultMustacheFactory
 import okhttp3.HttpUrl
-import org.certificatetransparency.ctlog.Logger
-import org.certificatetransparency.ctlog.VerificationResult
 import java.io.StringWriter
 import javax.net.ssl.SSLPeerUnverifiedException
 

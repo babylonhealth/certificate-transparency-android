@@ -22,9 +22,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.babylon.certificatetransparency.HostnameVerifierBuilder;
+import com.babylon.certificatetransparency.Logger;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
-import org.certificatetransparency.ctlog.HostnameVerifierBuilder;
-import org.certificatetransparency.ctlog.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;

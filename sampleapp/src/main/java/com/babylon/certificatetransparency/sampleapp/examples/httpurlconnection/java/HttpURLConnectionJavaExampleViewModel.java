@@ -18,8 +18,8 @@ package com.babylon.certificatetransparency.sampleapp.examples.httpurlconnection
 
 import android.content.Context;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
-import org.certificatetransparency.ctlog.HostnameVerifierBuilder;
-import org.certificatetransparency.ctlog.Logger;
+import com.babylon.certificatetransparency.HostnameVerifierBuilder;
+import com.babylon.certificatetransparency.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
