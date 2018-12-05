@@ -68,17 +68,6 @@ sealed class VerificationResult {
         }
 
         /**
-         * Certificate transparency checks failed as no [LogServer] are present. This can occur if there are network problems loading
-         * the log-list.json or log-list.sig file
-         */
-        object NoLogServers : Failure() {
-            /**
-             * Returns a string representation of the object.
-             */
-            override fun toString() = "Failure: Unable to load log servers"
-        }
-
-        /**
          * Certificate transparency checks failed as couldn't load list of [LogServer]. This can occur if there are network problems loading
          * the log-list.json or log-list.sig file along with issues with the signature
          */

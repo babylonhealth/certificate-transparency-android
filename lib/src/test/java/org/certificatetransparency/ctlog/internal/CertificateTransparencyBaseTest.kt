@@ -134,7 +134,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
-        assertIsA<VerificationResult.Failure.NoLogServers>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
+        assertIsA<VerificationResult.Failure.LogServersFailed>(ctb.verifyCertificateTransparency("www.babylonhealth.com", certsToCheck))
     }
 
     @Test

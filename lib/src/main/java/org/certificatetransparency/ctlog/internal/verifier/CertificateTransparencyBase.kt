@@ -24,6 +24,7 @@ import org.certificatetransparency.ctlog.SctVerificationResult
 import org.certificatetransparency.ctlog.VerificationResult
 import org.certificatetransparency.ctlog.datasource.DataSource
 import org.certificatetransparency.ctlog.internal.loglist.LogListDataSourceFactory
+import org.certificatetransparency.ctlog.internal.loglist.NoLogServers
 import org.certificatetransparency.ctlog.internal.utils.Base64
 import org.certificatetransparency.ctlog.internal.utils.hasEmbeddedSct
 import org.certificatetransparency.ctlog.internal.utils.signedCertificateTimestamps
@@ -83,7 +84,7 @@ internal open class CertificateTransparencyBase(
         val verifiers = when (result) {
             is LogListResult.Valid -> result.servers.associateBy({ Base64.toBase64String(it.id) }) { LogSignatureVerifier(it) }
             is LogListResult.Invalid -> return VerificationResult.Failure.LogServersFailed(result)
-            null -> return VerificationResult.Failure.NoLogServers
+            null -> return VerificationResult.Failure.LogServersFailed(NoLogServers)
         }
 
         if (verifiers is LogListResult.Invalid) {
