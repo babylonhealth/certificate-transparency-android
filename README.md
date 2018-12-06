@@ -210,7 +210,7 @@ requests to us.
 We use [SemVer](http://semver.org/) for versioning. For the versions
 available, see the [tags on this repository](https://github.com/Babylonpartners/certificate-transparency-android/tags).
 
-## License
+## License [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 This project is licensed under the Apache License, Version 2.0 - see the
 [LICENSE.md](LICENSE.md) file for details
