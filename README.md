@@ -198,3 +198,19 @@ pattern which is a lower-case host name or wildcard pattern such as
 In addition to all of the properties above the hostname verifier ensures
 you provide a **delegate** hostname verifier which is used to first
 verify the hostname before the certificate transparency checks occur.
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md)
+for details on our code of conduct, and the process for submitting pull
+requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions
+available, see the [tags on this repository](https://github.com/Babylonpartners/certificate-transparency-android/tags).
+
+## License
+
+This project is licensed under the Apache License, Version 2.0 - see the
+[LICENSE.md](LICENSE.md) file for details
