@@ -30,6 +30,12 @@ android {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        allWarningsAsErrors = true
+    }
+}
+
 dependencies {
     implementation project(':android')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

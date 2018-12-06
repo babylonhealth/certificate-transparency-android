@@ -31,7 +31,7 @@ class CheckboxItem(private val title: String, private val isChecked: Boolean, pr
         viewHolder.containerView.checkbox.text = title
         viewHolder.containerView.checkbox.isChecked = isChecked
 
-        viewHolder.containerView.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+        viewHolder.containerView.checkbox.setOnCheckedChangeListener { _, isChecked ->
             callback?.invoke(isChecked)
         }
     }
