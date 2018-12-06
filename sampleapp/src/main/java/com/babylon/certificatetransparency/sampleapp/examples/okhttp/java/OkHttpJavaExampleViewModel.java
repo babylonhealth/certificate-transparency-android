@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.java;
 
-import com.babylon.certificatetransparency.InterceptorBuilder;
+import com.babylon.certificatetransparency.CTInterceptorBuilder;
 import com.babylon.certificatetransparency.Logger;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import okhttp3.Call;
@@ -45,7 +45,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private OkHttpClient createOkHttpClient(Set<String> hosts, boolean isFailOnError, Logger defaultLogger) {
         // Create a network interceptor
-        InterceptorBuilder builder = new InterceptorBuilder()
+        CTInterceptorBuilder builder = new CTInterceptorBuilder()
                 .setFailOnError(isFailOnError)
                 .setLogger(defaultLogger);
 

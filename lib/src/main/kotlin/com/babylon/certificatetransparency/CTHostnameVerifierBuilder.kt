@@ -17,19 +17,23 @@
 package com.babylon.certificatetransparency
 
 import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyInterceptor
+import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyHostnameVerifier
 import com.babylon.certificatetransparency.internal.verifier.model.Host
 import com.babylon.certificatetransparency.loglist.LogListResult
 import com.babylon.certificatetransparency.loglist.LogServer
-import okhttp3.Interceptor
+import okhttp3.internal.tls.OkHostnameVerifier
+import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 /**
- * Builder to create an OkHttp network interceptor that will verify a host is trusted using
- * certificate transparency
+ * Builder to create a [HostnameVerifier] that will verify a host is trusted using certificate
+ * transparency
+ * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks. Default: `OkHostnameVerifier.INSTANCE`
  */
-class InterceptorBuilder {
+class CTHostnameVerifierBuilder(
+    @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE
+) {
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
     private val hosts = mutableSetOf<Host>()
@@ -114,8 +118,8 @@ class InterceptorBuilder {
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun addHost(pattern: String) = apply {
-        hosts.add(Host(pattern))
+    fun addHost(vararg pattern: String) = apply {
+        pattern.forEach { hosts.add(Host(it)) }
     }
 
     /**
@@ -139,7 +143,14 @@ class InterceptorBuilder {
     }
 
     /**
-     * Build the network [Interceptor]
+     * Build the [HostnameVerifier]
      */
-    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts.toSet(), trustManager, logListDataSource, failOnError, logger)
+    fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(
+        delegate,
+        hosts.toSet(),
+        trustManager,
+        logListDataSource,
+        failOnError,
+        logger
+    )
 }

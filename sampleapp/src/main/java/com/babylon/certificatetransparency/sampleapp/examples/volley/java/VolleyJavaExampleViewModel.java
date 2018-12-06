@@ -22,7 +22,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.babylon.certificatetransparency.HostnameVerifierBuilder;
+import com.babylon.certificatetransparency.CTHostnameVerifierBuilder;
 import com.babylon.certificatetransparency.Logger;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +57,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
             HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
 
             // Create a hostname verifier wrapping the original
-            HostnameVerifierBuilder builder = new HostnameVerifierBuilder(httpsConnection.getHostnameVerifier())
+            CTHostnameVerifierBuilder builder = new CTHostnameVerifierBuilder(httpsConnection.getHostnameVerifier())
                     .setFailOnError(isFailOnError)
                     .setLogger(defaultLogger);
 

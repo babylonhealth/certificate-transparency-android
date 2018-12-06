@@ -1,4 +1,4 @@
-Interceptor networkInterceptor = new InterceptorBuilder()
+Interceptor networkInterceptor = new CTInterceptorBuilder()
 {{#hosts}}
         .addHost("{{.}}")
 {{/hosts}}
