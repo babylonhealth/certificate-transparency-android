@@ -87,10 +87,6 @@ internal open class CertificateTransparencyBase(
             null -> return VerificationResult.Failure.LogServersFailed(NoLogServers)
         }
 
-        if (verifiers is LogListResult.Invalid) {
-            return VerificationResult.Failure.LogServersFailed(verifiers)
-        }
-
         val leafCertificate = certificates[0]
 
         if (!leafCertificate.hasEmbeddedSct()) {
