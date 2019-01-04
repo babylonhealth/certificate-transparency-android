@@ -11,6 +11,7 @@
     <string name="add_host">Add Host</string>
     <string name="configuration">Configuration</string>
     <string name="sample_code">Sample code</string>
+    <string name="remove">Remove</string>
     <string name="okhttp_kotlin_example">OkHttp Kotlin Example</string>
     <string name="okhttp_java_example">OkHttp Java Example</string>
     <string name="volley_kotlin_example">Volley Kotlin Example</string>
