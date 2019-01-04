@@ -12,7 +12,7 @@ dependencies {
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.60'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
@@ -22,7 +22,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0'
 
-    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.0.3'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.4'
 }
 
 compileKotlin {

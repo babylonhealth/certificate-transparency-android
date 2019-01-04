@@ -10,12 +10,12 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.jetbrains.dokka:dokka-gradle-plugin:0.9.17'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
-        classpath 'org.owasp:dependency-check-gradle:4.0.0.1'
+        classpath 'org.owasp:dependency-check-gradle:4.0.2'
     }
 }
 
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "1.0.0-RC11"
+    id "io.gitlab.arturbosch.detekt" version "1.0.0-RC12"
 }
 
 apply plugin: "com.github.ben-manes.versions"
