@@ -1,7 +1,9 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
-apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'org.owasp.dependencycheck'
+plugins {
+    id("java-library")
+    id("kotlin")
+    id("org.jetbrains.dokka")
+    id("org.owasp.dependencycheck")
+}
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
