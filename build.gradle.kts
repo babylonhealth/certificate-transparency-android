@@ -1,5 +1,5 @@
 buildscript {
-    extra["kotlin_version"] = "1.3.11"
+    extra["kotlin_version"] = "1.3.20"
 
     repositories {
         google()
