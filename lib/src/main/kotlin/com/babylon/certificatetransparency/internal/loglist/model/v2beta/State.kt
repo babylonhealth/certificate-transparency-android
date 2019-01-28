@@ -53,7 +53,7 @@ internal sealed class State {
      * Validate SCT against this if it was issued before the timestamp, otherwise SCT is untrusted
      * @property finalTreeHead The tree head (tree size and root hash) at which the log was frozen.
      */
-    data class Frozen(
+    data class ReadOnly(
         @JsonAdapter(Rfc3339Deserializer::class) override val timestamp: Long,
         @SerializedName("final_tree_head") val finalTreeHead: FinalTreeHead
     ) : State()

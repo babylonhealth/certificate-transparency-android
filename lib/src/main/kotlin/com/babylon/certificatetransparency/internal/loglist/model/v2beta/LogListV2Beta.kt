@@ -19,8 +19,10 @@ package com.babylon.certificatetransparency.internal.loglist.model.v2beta
 import com.google.gson.annotations.SerializedName
 
 /**
+ * @property version Version of this log list. The version will change whenever a change is made to any part of this log list.
  * @property operators CT log operators. People/organizations that run Certificate Transparency logs.
  */
 internal data class LogListV2Beta(
-    @SerializedName("operators") val operators: Map<String, Operator>
+    @SerializedName("version") val version: String?,
+    @SerializedName("operators") val operators: List<Operator>
 )

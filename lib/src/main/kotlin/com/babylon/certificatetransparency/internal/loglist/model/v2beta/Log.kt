@@ -22,8 +22,7 @@ import com.google.gson.annotations.SerializedName
 import okhttp3.HttpUrl
 
 /**
- * @property description Further details about the CT log. Any additional information that the log list distributor wishes to provide about the
- * log.
+ * @property description Description of the CT log. A human-readable description that can be used to identify this log.
  * @property key The public key of the CT log. The log's public key as a DER-encoded ASN.1 SubjectPublicKeyInfo structure, then encoded as
  * base64 (https://tools.ietf.org/html/rfc5280#section-4.1.2.7).
  * @property logId The SHA-256 hash of the CT log's public key, base64-encoded. This is the LogID found in SCTs issued by this log
@@ -38,7 +37,7 @@ import okhttp3.HttpUrl
  * @property state The state of the log from the log list distributor's perspective.
  */
 internal data class Log(
-    @SerializedName("description") val description: List<String>?,
+    @SerializedName("description") val description: String?,
     @SerializedName("key") val key: String,
     @SerializedName("log_id") val logId: String,
     @SerializedName("mmd") val maximumMergeDelay: Int,

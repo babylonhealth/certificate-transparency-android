@@ -102,7 +102,7 @@ internal class LogListNetworkDataSourceV2(
     @Suppress("ReturnCount")
     private fun buildLogServerList(logList: LogListV2Beta): LogListResult {
         return logList.operators
-            .flatMap { it.value.logs.values }
+            .flatMap { it.logs }
             // null, PENDING, REJECTED -> An SCT associated with this log server would be treated as untrusted
             .filterNot { it.state == null || it.state is State.Pending || it.state is State.Rejected }
             .map {
@@ -110,7 +110,7 @@ internal class LogListNetworkDataSourceV2(
 
                 // FROZEN, RETIRED -> Validate SCT against this if it was issued before the state timestamp, otherwise SCT is untrusted
                 // QUALIFIED, USABLE -> Validate SCT against this (any timestamp okay)
-                val validUntil = if (it.state is State.Retired || it.state is State.Frozen) it.state.timestamp else null
+                val validUntil = if (it.state is State.Retired || it.state is State.ReadOnly) it.state.timestamp else null
 
                 val key = try {
                     PublicKeyFactory.fromByteArray(keyBytes)

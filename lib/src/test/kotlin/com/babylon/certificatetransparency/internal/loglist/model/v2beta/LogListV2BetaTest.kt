@@ -30,24 +30,26 @@ class LogListV2BetaTest {
 
         val logList = GsonBuilder().setLenient().create().fromJson(json, LogListV2Beta::class.java)
 
+        val google = logList.operators.first { it.name == "Google" }
+        val cloudflare = logList.operators.first { it.name == "Cloudflare" }
+        val certly = logList.operators.first { it.name == "Certly" }
 
-        assertEquals(3, logList.operators["Google"]!!.logs.size)
-        assertEquals(1, logList.operators["Cloudflare"]!!.logs.size)
-        assertEquals(1, logList.operators["Certly"]!!.logs.size)
+        assertEquals(3, google.logs.size)
+        assertEquals(1, cloudflare.logs.size)
+        assertEquals(1, certly.logs.size)
 
-        val xenonLog = logList.operators["Google"]!!.logs["google_xenon2018"]!!
+        val xenonLog = google.logs.first { it.description == "Google 'Xenon2018' log" }
         assertEquals(
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1syJvwQdrv0a8dM2VAnK/SmHJNw/+FxC+CncFcnXMX2jNH9Xs7Q56FiV3taG5G2CokMsizhpcm7xXzuR3IHmag==",
             xenonLog.key
         )
         assertTrue(xenonLog.state is State.Pending)
 
-        val aviatorLog = logList.operators["Google"]!!.logs["google_aviator"]!!
-        assertTrue(aviatorLog.state is State.Frozen)
-        assertEquals(46466472, (aviatorLog.state as State.Frozen).finalTreeHead.treeSize)
+        val aviatorLog = google.logs.first { it.description == "Google 'Aviator' log" }
+        assertTrue(aviatorLog.state is State.ReadOnly)
+        assertEquals(46466472, (aviatorLog.state as State.ReadOnly).finalTreeHead.treeSize)
 
-
-        val nimbusLog = logList.operators["Cloudflare"]!!.logs["cloudflare_nimbus2018"]!!
+        val nimbusLog = cloudflare.logs.first { it.description == "Cloudflare 'Nimbus2018' Log" }
         assertEquals(LogType.PROD, nimbusLog.logType)
         assertEquals(86400, nimbusLog.maximumMergeDelay)
         assertEquals(1534095762000, nimbusLog.state?.timestamp)

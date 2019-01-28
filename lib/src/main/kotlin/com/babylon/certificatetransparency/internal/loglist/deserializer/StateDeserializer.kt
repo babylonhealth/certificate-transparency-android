@@ -32,10 +32,10 @@ internal class StateDeserializer : JsonDeserializer<State> {
             "pending" -> State.Pending::class
             "qualified" -> State.Qualified::class
             "usable" -> State.Usable::class
-            "frozen" -> State.Frozen::class
+            "readonly" -> State.ReadOnly::class
             "retired" -> State.Retired::class
             "rejected" -> State.Rejected::class
-            else -> throw IllegalStateException("Unknown state")
+            else -> throw IllegalStateException("Unknown state: $stateType")
         }
 
         return context.deserialize(data, stateClass.java)
