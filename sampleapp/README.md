@@ -4,6 +4,7 @@ This module provides a living example of how to use the certificate
 transparency library in an Android app.
 
 The following examples are provided:
+
 - [OkHttp](https://square.github.io/okhttp/)
   - Kotlin - [OkHttpKotlinExampleViewModel.kt](./src/main/java/com/babylon/certificatetransparency/sampleapp/examples/okhttp/kotlin/OkHttpKotlinExampleViewModel.kt)
   - Java - [OkHttpJavaExampleViewModel.java](./src/main/java/com/babylon/certificatetransparency/sampleapp/examples/okhttp/java/OkHttpJavaExampleViewModel.java)

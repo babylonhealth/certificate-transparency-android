@@ -14,8 +14,7 @@ version of an app which can still take a while to reach every user.
 So with certificate pinning falling out of favour, what should you do?
 The new kid in town is **certificate transparency**.
 
-
-## What is Certificate Transparency?
+## What is Certificate Transparency
 
 > Certificate Transparency helps eliminate these flaws by providing an
 open framework for monitoring and auditing SSL certificates in nearly
@@ -24,7 +23,7 @@ detect SSL certificates that have been mistakenly issued by a
 certificate authority or maliciously acquired from an otherwise
 unimpeachable certificate authority. It also makes it possible to
 identify certificate authorities that have gone rogue and are
-maliciously issuing certificates. https://www.certificate-transparency.org
+maliciously issuing certificates. [https://www.certificate-transparency.org](https://www.certificate-transparency.org)
 
 Certificate transparency works by having a network of publicly
 accessible log servers that provide cryptographic evidence when a
@@ -129,7 +128,6 @@ Overriding the *HostnameVerifier* can be achieved by overriding
 `createConnection` when creating the `RequestQueue`:
 
 ```kotlin
-
 val requestQueue = Volley.newRequestQueue(applicationContext, object : HurlStack() {
     override fun createConnection(url: URL): HttpURLConnection {
         val connection = super.createConnection(url)
@@ -172,22 +170,22 @@ The network interceptor allows you to configure the following
 properties:
 
 **Trust Manager** [X509TrustManager](https://docs.oracle.com/javase/6/docs/api/javax/net/ssl/X509TrustManager.html)
-used to clean the certificate chain
-<br/>*Default:* Platform default [X509TrustManager](https://docs.oracle.com/javase/6/docs/api/javax/net/ssl/X509TrustManager.html)
+used to clean the certificate chain  
+*Default:* Platform default [X509TrustManager](https://docs.oracle.com/javase/6/docs/api/javax/net/ssl/X509TrustManager.html)
 created through [TrustManagerFactory](http://docs.oracle.com/javase/6/docs/api/javax/net/ssl/TrustManagerFactory.html)
 
 **Log List Data Source** A [DataSource](./lib/src/main/kotlin/com/babylon/certificatetransparency/datasource/DataSource.kt)
-providing a list of [LogServer](./lib/src/main/kotlin/com/babylon/certificatetransparency/loglist/LogServer.kt)
-<br/>*Default:* In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
+providing a list of [LogServer](./lib/src/main/kotlin/com/babylon/certificatetransparency/loglist/LogServer.kt)  
+*Default:* In memory cached log list loaded from [https://www.gstatic.com/ct/log_list/log_list.json](https://www.gstatic.com/ct/log_list/log_list.json)
 
 **Fail On Error** Determine if a failure to pass certificate
 transparency results in the connection being closed. A value of true
-ensures the connection is closed on errors
-<br/>*Default:* true
+ensures the connection is closed on errors  
+*Default:* true
 
 **Logger** [Logger](./lib/src/main/kotlin/com/babylon/certificatetransparency/Logger.kt)
-which will be called with all results.
-<br/>Default: none
+which will be called with all results.  
+*Default:* none
 
 **Hosts** Verify certificate transparency for hosts that match a
 pattern which is a lower-case host name or wildcard pattern such as
