@@ -31,7 +31,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:2.25.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.5")
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.6")
 }
 
 tasks.withType(KotlinCompile::class.java).all {

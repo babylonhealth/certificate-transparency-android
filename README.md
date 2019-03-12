@@ -33,9 +33,9 @@ well as audited to prove the logs are working as expected.
 
 These log servers help achieve the three main goals:
 
-* Make it hard to issue certificates without the domain owners knowledge
-* Provide auditing and monitoring to spot mis-issued certificates
-* Protect users from mis-issued certificates
+- Make it hard to issue certificates without the domain owners knowledge
+- Provide auditing and monitoring to spot mis-issued certificates
+- Protect users from mis-issued certificates
 
 When you submit a certificate to a log server, the server responds with
 a signed certificate timestamp (SCT), which is a promise that the
