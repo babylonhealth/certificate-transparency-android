@@ -1,6 +1,8 @@
-# Certificate Transparency for Android
+# NOTICES
 
-Copyright &copy; 2018 Babylon Healthcare Services Limited.
+## Certificate Transparency for Android
+
+Copyright &copy; 2019 Babylon Partners Limited.
 
 This product includes software developed at [Babylon Health](http://www.babylonhealth.com/).
 
