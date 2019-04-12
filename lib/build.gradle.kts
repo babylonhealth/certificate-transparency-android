@@ -28,10 +28,10 @@ dependencies {
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.5.0")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:2.25.0")
+    testImplementation("org.mockito:mockito-core:2.27.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.6")
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.8")
 }
 
 tasks.withType(KotlinCompile::class.java).all {
