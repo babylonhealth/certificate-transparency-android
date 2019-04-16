@@ -1,0 +1,66 @@
+defaults: &defaults
+  working_directory: ~/code
+  docker:
+    - image: circleci/android:api-28
+  environment:
+    JVM_OPTS: -Xmx3200m
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "lib/build.gradle" }}-{{ checksum  "android/build.gradle" }}
+      - run:
+          name: Run Tests
+          command: ./gradlew build
+      - save_cache:
+          paths:
+            - ~/.gradle
+            - ~/.m2
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "lib/build.gradle" }}-{{ checksum  "android/build.gradle" }}
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit/ \;
+            find . -type f -regex ".*/build/test-results/testDebug*/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_artifacts:
+          path: lib/build/reports
+          destination: reports
+      - store_test_results:
+          path: ~/junit
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ./
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "lib/build.gradle" }}-{{ checksum  "android/build.gradle" }}
+      - run:
+          name: Upload build
+          command: ./gradlew bintrayUpload
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
