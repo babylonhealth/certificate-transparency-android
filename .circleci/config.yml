@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "lib/build.gradle" }}-{{ checksum  "android/build.gradle" }}
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
       - run:
           name: Run Tests
           command: ./gradlew build
@@ -20,7 +20,7 @@ jobs:
           paths:
             - ~/.gradle
             - ~/.m2
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "lib/build.gradle" }}-{{ checksum  "android/build.gradle" }}
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
       - run:
           name: Save test results
           command: |
@@ -43,7 +43,7 @@ jobs:
       - attach_workspace:
           at: ./
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "lib/build.gradle" }}-{{ checksum  "android/build.gradle" }}
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
       - run:
           name: Upload build
           command: ./gradlew bintrayUpload
