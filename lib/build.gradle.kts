@@ -8,6 +8,8 @@ plugins {
     id("kotlin")
     id("org.jetbrains.dokka")
     id("org.owasp.dependencycheck")
+    id("jacoco")
+    id("com.github.kt3k.coveralls")
 }
 
 java {
@@ -62,6 +64,22 @@ dependencyCheck {
         directory = if (System.getenv("CI")?.isNotEmpty() == true) "/home/circleci/.nvd" else null
     }
 }
+
+tasks.withType<JacocoReport> {
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+coveralls {
+    sourceDirs = sourceSets.main.get().allSource.srcDirs.map { it.path }
+    jacocoReportPath = "$buildDir/reports/jacoco/test/jacocoTestReport.xml"
+}
+
+tasks.getByName("test").finalizedBy(tasks.getByName("jacocoTestReport"))
+tasks.getByName("jacocoTestReport").finalizedBy(tasks.getByName("coveralls"))
+tasks.getByName("coveralls").onlyIf { System.getenv("CI")?.isNotEmpty() == true }
 
 tasks.getByName("check").dependsOn(tasks.dependencyCheckAnalyze)
 tasks.getByName("check").dependsOn(rootProject.tasks.getByName("detekt"))

@@ -13,7 +13,7 @@ jobs:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
-      - restore_nvd_cache:
+      - restore_cache:
           key: nvd
       - run:
           name: Run Tests
@@ -23,7 +23,7 @@ jobs:
             - ~/.gradle
             - ~/.m2
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
-      - save_nvd_cache:
+      - save_cache:
           paths:
             - ~/.nvd
           key: nvd
