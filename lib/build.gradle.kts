@@ -56,6 +56,11 @@ dependencyCheck {
     analyzers {
         assemblyEnabled = false
     }
+
+    data {
+        // "~/.nvd" does not work correctly so we explicitly write out the circleci path
+        directory = if (System.getenv("CI")?.isNotEmpty() == true) "/home/circleci/.nvd" else null
+    }
 }
 
 tasks.getByName("check").dependsOn(tasks.dependencyCheckAnalyze)
