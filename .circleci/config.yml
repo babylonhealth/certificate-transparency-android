@@ -18,7 +18,7 @@ jobs:
           name: Restore NVD cache
           key: nvd
       - run:
-          name: Run Build
+          name: Build
           command: ./gradlew build
       - save_cache:
           name: Save gradle cache
@@ -27,7 +27,7 @@ jobs:
             - ~/.m2
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
       - save_cache:
-          name: Safe NVD cache
+          name: Save NVD cache
           paths:
             - ~/.nvd
           key: nvd
