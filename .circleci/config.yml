@@ -14,10 +14,19 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
       - restore_cache:
+          name: Restore NVD cache
           key: nvd
       - run:
           name: Run Tests
           command: ./gradlew build
+      - run:
+          name: Upload Coverage Results to Codecov
+          command: |
+            bash <(curl -s https://codecov.io/bash) \
+              -f lib/build/jacoco/test.exec \
+              -n ${CIRCLE_BUILD_NUM} \
+              -t ${CODECOV_TOKEN} \
+              -y .codecov.yml
       - save_cache:
           paths:
             - ~/.gradle
