@@ -23,7 +23,7 @@ jobs:
           name: Upload Coverage Results to Codecov
           command: |
             bash <(curl -s https://codecov.io/bash) \
-              -f lib/build/jacoco/test.exec \
+              -f lib/build/reports/jacoco/jacocoTestReport.xml \
               -n ${CIRCLE_BUILD_NUM} \
               -t ${CODECOV_TOKEN} \
               -y .codecov.yml
