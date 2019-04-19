@@ -31,8 +31,9 @@ jobs:
           name: Save test results
           command: |
             mkdir -p ~/junit/
-            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit/ \;
-            find . -type f -regex ".*/build/test-results/testDebug*/.*xml" -exec cp {} ~/junit/ \;
+            cp lib/build/test-results/test ~/junit/lib
+#            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit/ \;
+#            find . -type f -regex ".*/build/test-results/testDebug*/.*xml" -exec cp {} ~/junit/ \;
           when: always
       - store_artifacts:
           path: build/reports
