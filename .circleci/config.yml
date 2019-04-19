@@ -57,6 +57,10 @@ jobs:
           name: Upload test and jacoco reports
           path: lib/build/reports
           destination: reports
+      - store_artifacts:
+          name: Upload lint report
+          path: lib/build/test-results/lint-results.html
+          destination: reports/lint-results.html
       - persist_to_workspace:
           root: ./
           paths:

@@ -10,6 +10,7 @@ plugins {
     id("org.owasp.dependencycheck")
     id("jacoco")
     id("com.github.kt3k.coveralls")
+    id("com.android.lint")
 }
 
 java {
@@ -23,7 +24,7 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk15on:1.61")
     implementation("org.bouncycastle:bcprov-jdk15on:1.61")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.5.0")
     implementation("com.squareup.retrofit2:converter-gson:2.5.0")
@@ -55,6 +56,8 @@ tasks.getting(DokkaTask::class) {
 dependencyCheck {
     failBuildOnCVSS = 0f
 
+    suppressionFile = file("cve-suppressions.xml").toString()
+
     analyzers {
         assemblyEnabled = false
     }
@@ -75,6 +78,11 @@ tasks.withType<JacocoReport> {
 coveralls {
     sourceDirs = sourceSets.main.get().allSource.srcDirs.map { it.path }
     jacocoReportPath = "$buildDir/reports/jacoco/test/jacocoTestReport.xml"
+}
+
+lintOptions {
+    isAbortOnError = true
+    isWarningsAsErrors = true
 }
 
 tasks.getByName("test").finalizedBy(tasks.getByName("jacocoTestReport"))

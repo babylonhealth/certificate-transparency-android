@@ -31,6 +31,7 @@ android {
     }
     packagingOptions {
         exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/atomicfu.kotlin_module")
     }
 }
 
@@ -56,8 +57,8 @@ dependencies {
     implementation("android.arch.navigation:navigation-ui-ktx:1.0.0")
     implementation("com.xwray:groupie:2.3.0")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.3.0")
-    implementation("com.afollestad.material-dialogs:core:2.7.0")
-    implementation("com.afollestad.material-dialogs:input:2.7.0")
+    implementation("com.afollestad.material-dialogs:core:2.8.0")
+    implementation("com.afollestad.material-dialogs:input:2.8.0")
     implementation("com.pddstudio:highlightjs-android:1.5.0")
     implementation("com.android.volley:volley:1.1.1")
     implementation("com.github.spullara.mustache.java:compiler:0.9.6")
