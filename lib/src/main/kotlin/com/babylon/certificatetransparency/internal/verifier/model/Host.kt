@@ -22,7 +22,7 @@ import okhttp3.HttpUrl
  * @property pattern A hostname like `example.com` or a pattern like `*.example.com`.
  */
 internal data class Host(
-    val pattern: String
+    private val pattern: String
 ) {
     /**
      * The canonical hostname, i.e. `EXAMPLE.com` becomes `example.com`.
