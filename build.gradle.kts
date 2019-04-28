@@ -1,5 +1,8 @@
+import com.appmattus.markdown.rules.LineLengthRule
+import com.appmattus.markdown.rules.ProperNamesRule
+
 buildscript {
-    extra["kotlin_version"] = "1.3.21"
+    extra["kotlin_version"] = "1.3.31"
 
     repositories {
         google()
@@ -17,7 +20,7 @@ buildscript {
 plugins {
     id("io.gitlab.arturbosch.detekt") version "1.0.0-RC14"
     id("com.github.ben-manes.versions") version "0.21.0"
-    id("com.appmattus.markdown") version "0.3.2"
+    id("com.appmattus.markdown") version "0.4.0"
 }
 
 allprojects {
@@ -41,5 +44,8 @@ detekt {
 }
 
 markdownlint {
-    configFile = File("markdownlint.gradle.kts")
+    rules {
+        +LineLengthRule(codeBlocks = false)
+        +ProperNamesRule { excludes = listOf(".*/NOTICE.md") }
+    }
 }

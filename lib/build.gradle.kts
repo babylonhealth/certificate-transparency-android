@@ -24,7 +24,7 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk15on:1.61")
     implementation("org.bouncycastle:bcprov-jdk15on:1.61")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.5.0")
     implementation("com.squareup.retrofit2:converter-gson:2.5.0")
