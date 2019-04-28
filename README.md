@@ -1,5 +1,8 @@
 # Certificate Transparency for Android
 
+[![CircleCI](https://circleci.com/gh/Babylonpartners/certificate-transparency-android/tree/master.svg?style=svg)](https://circleci.com/gh/Babylonpartners/certificate-transparency-android/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/Babylonpartners/certificate-transparency-android/badge.svg?branch=master)](https://coveralls.io/github/Babylonpartners/certificate-transparency-android?branch=master)
+
 To protect our apps from man-in-the-middle attacks one of the first
 things that usually springs to mind is certificate pinning. However, the
 issues of certificate pinning are numerous. Firstly deciding on a
