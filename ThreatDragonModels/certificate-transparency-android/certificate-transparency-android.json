@@ -508,6 +508,87 @@
                   "class": "connection hasNoOpenThreats isInScope"
                 }
               }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "target": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "vertices": [
+                {
+                  "x": 489,
+                  "y": 244
+                }
+              ],
+              "id": "b9ab8409-bd0f-4c93-961e-89a3824d5046",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 17,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "target": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "vertices": [
+                {
+                  "x": 490,
+                  "y": 286
+                }
+              ],
+              "id": "fa0ac542-2a7e-4efd-9588-ae3d734cd05a",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.44229097874442713,
+                    "offset": 4.483389719389379
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "loglist.json &\nloglist.sig",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 18,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
             }
           ]
         },
