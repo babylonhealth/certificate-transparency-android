@@ -1,0 +1,14 @@
+{
+  "summary": {
+    "title": "certificate-transparency-android",
+    "owner": "Matthew Dolan"
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "Sakis Kaliakoudas"
+      }
+    ],
+    "diagrams": []
+  }
+}
