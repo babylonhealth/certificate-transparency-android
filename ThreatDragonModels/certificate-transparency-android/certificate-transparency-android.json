@@ -259,7 +259,7 @@
                   "type": "Repudiation",
                   "title": "Failures blocked from logging",
                   "description": "An attacker blocking the connection to a logging service can hide a targeted attack on certificate transparency.",
-                  "mitigation": "Mitigations depend on the logging service used."
+                  "mitigation": "- Mitigations depend on the logging service used."
                 },
                 {
                   "status": "Open",
@@ -267,7 +267,7 @@
                   "title": "Fake failures sent to logging service",
                   "type": "Repudiation",
                   "description": "Fake failures sent to logging service can make it look like there are failures that didn't really happen.",
-                  "mitigation": "Mitigations depend on the logging service used."
+                  "mitigation": "- Mitigations depend on the logging service used."
                 }
               ],
               "attrs": {
@@ -451,7 +451,7 @@
                   "severity": "Medium",
                   "title": "Change in Googles private key breaks signature verification",
                   "type": "Denial of service",
-                  "description": "If Google's private key used to sign the loglist.json file is changed then verification will fail causing the CT checks to fail resulting in outgoing connections being rejected.",
+                  "description": "If Google's private key used to sign the loglist.json file is changed then verification will fail causing the CT checks to fail resulting in outgoing connections being rejected and so a DoS.",
                   "mitigation": "- Use our own private key so we have more visibility and management of the private key used.\n- Store local copy of the loglist so clients can continue to work without relying on loading from the network.\n- Monitor Google's public key to detect key changes so updates to the library.\n- Monitor the certificate transparency forums to be aware of future key changes."
                 }
               ],
@@ -616,16 +616,34 @@
                 }
               ],
               "z": 18,
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "protocol": "https",
               "isEncrypted": true,
               "isPublicNetwork": true,
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "title": "Stale snapshot of loglist.json/loglist.sig can hide availability of new log servers",
+                  "type": "Denial of service",
+                  "description": "An attacker could present an old snapshot of loglist.json along with its loglist.sig which will pass validation resulting in the CT library not being aware of a new log server causing a DoS",
+                  "mitigation": "- Detect age of loglist.json and reject if older than a certain age."
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "description": "An attacker could present an old snapshot of loglist.json along with its loglist.sig which will pass validation resulting in the CT library accepting a log server that has since been rejected.\n\nThis is only an issue if the certificate presented was generated after the date/time the server was rejected.",
+                  "title": "Stale snapshot of loglist.json/loglist.sig can accept rejected log servers",
+                  "mitigation": "- Mitigated by CT checks requiring more than one SCT to validate.",
+                  "type": "Tampering"
+                }
+              ],
               "attrs": {
                 ".marker-target": {
-                  "class": "marker-target hasNoOpenThreats isInScope"
+                  "class": "marker-target hasOpenThreats isInScope"
                 },
                 ".connection": {
-                  "class": "connection hasNoOpenThreats isInScope"
+                  "class": "connection hasOpenThreats isInScope"
                 }
               }
             },
