@@ -627,7 +627,7 @@
                   "title": "Stale snapshot of loglist.json/loglist.sig can hide availability of new log servers",
                   "type": "Denial of service",
                   "description": "An attacker could present an old snapshot of loglist.json along with its loglist.sig which will pass validation resulting in the CT library not being aware of a new log server causing a DoS",
-                  "mitigation": "- Detect age of loglist.json and reject if older than a certain age."
+                  "mitigation": "- Detect age of loglist.json and reject if older than a certain age.\n- Can be mitigated by ensuring certificates are logged in more than the minimum required number of log servers."
                 },
                 {
                   "status": "Mitigated",
@@ -636,6 +636,14 @@
                   "title": "Stale snapshot of loglist.json/loglist.sig can accept rejected log servers",
                   "mitigation": "- Mitigated by CT checks requiring more than one SCT to validate.",
                   "type": "Tampering"
+                },
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "Block loglist.json/loglist.sig from loading",
+                  "mitigation": "- Store local copy of the loglist so clients can continue to work without relying on loading from the network.",
+                  "description": "Blocking the loading of either loglist.json or loglist.sig will mean validation of SCTs cannot be completed resulting in a DoS."
                 }
               ],
               "attrs": {
