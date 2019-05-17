@@ -350,13 +350,39 @@
                 }
               ],
               "z": 11,
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Tampering",
+                  "title": "Set failOnError to false",
+                  "description": "A compromised device could override the 'failOnError' flag in memory causing CT failures to be allowed through.",
+                  "mitigation": "- Create separate debug & release versions with 'failOnError' only available in the debug variant."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "title": "Domain config changed to remove domain from CT checks",
+                  "type": "Tampering",
+                  "description": "Changing the domain config in memory can allow an attacker to remove a domain from CT checks resulting in an attacker being able to present certificates that don't pass CT validation.",
+                  "mitigation": "- Have release only build that enforces CT checks for all domains, i.e. so there is no configuration"
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "description": "Changing the domain config in memory can allow an attacker to add a domain that has no SCTs to CT checks resulting in calls to that domain failing.",
+                  "title": "Domain config changed to add domain to CT checks",
+                  "type": "Denial of service",
+                  "mitigation": "- Ensure all domains the app uses through the CT library have SCTs in their certificates."
+                }
+              ],
               "attrs": {
                 ".marker-target": {
-                  "class": "marker-target hasNoOpenThreats isInScope"
+                  "class": "marker-target hasOpenThreats isInScope"
                 },
                 ".connection": {
-                  "class": "connection hasNoOpenThreats isInScope"
+                  "class": "connection hasOpenThreats isInScope"
                 }
               }
             },
