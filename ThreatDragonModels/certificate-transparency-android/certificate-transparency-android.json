@@ -57,11 +57,11 @@
               "id": "9df4bc7e-0c76-4fce-bfc7-585f8614106d",
               "z": 2,
               "hasOpenThreats": false,
-              "outOfScope": false,
-              "reasonOutOfScope": "",
+              "outOfScope": true,
+              "reasonOutOfScope": "Logging is the implementors responsibility and depends on the service used.",
               "attrs": {
                 ".element-shape": {
-                  "class": "element-shape hasNoOpenThreats isInScope"
+                  "class": "element-shape hasNoOpenThreats isOutOfScope"
                 },
                 "text": {
                   "text": "Log service\n(e.g. Fabric)"
@@ -248,16 +248,34 @@
                 }
               ],
               "z": 9,
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isEncrypted": true,
               "isPublicNetwork": true,
               "protocol": "https",
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Repudiation",
+                  "title": "Failures blocked from logging",
+                  "description": "An attacker blocking the connection to a logging service can hide a targeted attack on certificate transparency.",
+                  "mitigation": "Mitigations depend on the logging service used."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "title": "Fake failures sent to logging service",
+                  "type": "Repudiation",
+                  "description": "Fake failures sent to logging service can make it look like there are failures that didn't really happen.",
+                  "mitigation": "Mitigations depend on the logging service used."
+                }
+              ],
               "attrs": {
                 ".marker-target": {
-                  "class": "marker-target hasNoOpenThreats isInScope"
+                  "class": "marker-target hasOpenThreats isInScope"
                 },
                 ".connection": {
-                  "class": "connection hasNoOpenThreats isInScope"
+                  "class": "connection hasOpenThreats isInScope"
                 }
               }
             },
