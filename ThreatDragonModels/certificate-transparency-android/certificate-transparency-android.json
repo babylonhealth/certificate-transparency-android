@@ -375,6 +375,22 @@
                   "title": "Domain config changed to add domain to CT checks",
                   "type": "Denial of service",
                   "mitigation": "- Ensure all domains the app uses through the CT library have SCTs in their certificates."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "title": "Log list changed to allow an otherwise denied connection",
+                  "type": "Tampering",
+                  "description": "An attacker could change the log list in memory to add or alter log server entries setting their own public key allowing them to create a certificate with SCTs that would pass validation.",
+                  "mitigation": "- Encrypt log list when in memory at rest"
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "description": "An attacker could change the log list in memory to remove log server entries causing SCT verification to fail resulting in a DoS.",
+                  "type": "Denial of service",
+                  "title": "Log list entries removed to block otherwise valid connections",
+                  "mitigation": "- Encrypt log list when in memory at rest"
                 }
               ],
               "attrs": {
