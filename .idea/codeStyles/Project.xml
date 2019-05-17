@@ -19,6 +19,7 @@
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
     <MarkdownNavigatorCodeStyleSettings>
+      <option name="WRAP_ON_TYPING" value="0" />
       <option name="RIGHT_MARGIN" value="80" />
     </MarkdownNavigatorCodeStyleSettings>
     <XML>

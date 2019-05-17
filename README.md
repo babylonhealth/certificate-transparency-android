@@ -54,6 +54,13 @@ from Networking @Scale 2017.
 More details about how the verification works in the library can be
 found at [Android Security: Certificate Transparency](https://medium.com/@appmattus/android-security-certificate-transparency-601c18157c44)
 
+## Security
+
+We are open about the security of our library and provide a threat model in the
+[source code](ThreatDragonModels/), created using
+[OWASP Threat Dragon](https://threatdragon.org). If you feel there is something
+we have missed please reach out so we can keep this up to date.
+
 ## Getting started
 
 For Android modules include the *android* dependency in your
@@ -211,7 +218,9 @@ requests to us.
 We use [SemVer](http://semver.org/) for versioning. For the versions
 available, see the [tags on this repository](https://github.com/Babylonpartners/certificate-transparency-android/tags).
 
-## License [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
+## License
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 This project is licensed under the Apache License, Version 2.0 - see the
 [LICENSE.md](LICENSE.md) file for details
