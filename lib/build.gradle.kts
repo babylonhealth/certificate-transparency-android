@@ -107,7 +107,7 @@ configure<PublishExtension> {
     desc = "Certificate transparency for Android and Java"
     website = "https://github.com/Babylonpartners/certificate-transparency-android"
 
-    dryRun = true
+    dryRun = false
 }
 
 // Fix for https://github.com/novoda/bintray-release/issues/262
