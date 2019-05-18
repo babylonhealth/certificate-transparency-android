@@ -1,0 +1,805 @@
+{
+  "summary": {
+    "title": "certificate-transparency-android",
+    "owner": "Matthew Dolan"
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "Sakis Kaliakoudas"
+      }
+    ],
+    "diagrams": [
+      {
+        "title": "Overview",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0,
+        "diagramJson": {
+          "cells": [
+            {
+              "type": "tm.Process",
+              "size": {
+                "width": 100,
+                "height": 100
+              },
+              "position": {
+                "x": 250,
+                "y": 210
+              },
+              "angle": 0,
+              "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117",
+              "z": 1,
+              "hasOpenThreats": false,
+              "outOfScope": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "CT library"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Process",
+              "size": {
+                "width": 100,
+                "height": 100
+              },
+              "position": {
+                "x": 612,
+                "y": 64
+              },
+              "angle": 0,
+              "id": "9df4bc7e-0c76-4fce-bfc7-585f8614106d",
+              "z": 2,
+              "hasOpenThreats": false,
+              "outOfScope": true,
+              "reasonOutOfScope": "Logging is the implementors responsibility and depends on the service used.",
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isOutOfScope"
+                },
+                "text": {
+                  "text": "Log service\n(e.g. Fabric)"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Process",
+              "size": {
+                "width": 100,
+                "height": 100
+              },
+              "position": {
+                "x": 614,
+                "y": 231
+              },
+              "angle": 0,
+              "id": "9686da38-8db5-40e7-8869-3a0838494063",
+              "z": 3,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "Google"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Process",
+              "size": {
+                "width": 100,
+                "height": 100
+              },
+              "position": {
+                "x": 615,
+                "y": 387
+              },
+              "angle": 0,
+              "id": "f7fbe375-91b3-4302-858b-71e145872456",
+              "z": 4,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "CT protected\nendpoint"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Store",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 222,
+                "y": 414
+              },
+              "angle": 0,
+              "id": "e2512b82-39a7-4427-b411-b2c55a21a6aa",
+              "z": 5,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "memory (i.e. RAM)"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Store",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 854,
+                "y": 298
+              },
+              "angle": 0,
+              "id": "19c1b93e-94f0-47d1-b74d-f471ec339b3e",
+              "z": 6,
+              "hasOpenThreats": false,
+              "outOfScope": true,
+              "isSigned": true,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isOutOfScope"
+                },
+                "text": {
+                  "text": "loglist.json & loglist.sig"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Store",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 855,
+                "y": 169
+              },
+              "angle": 0,
+              "id": "2544b035-3ef5-4aa6-8d83-adab274b7cfa",
+              "z": 7,
+              "hasOpenThreats": false,
+              "outOfScope": true,
+              "storesCredentials": true,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isOutOfScope"
+                },
+                "text": {
+                  "text": "private key"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Boundary",
+              "smooth": true,
+              "source": {
+                "x": 355,
+                "y": 58
+              },
+              "target": {
+                "x": 476,
+                "y": 521
+              },
+              "vertices": [],
+              "id": "e112518e-0bd1-4ed8-aaff-868426646a18",
+              "z": 8,
+              "attrs": {}
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "target": {
+                "id": "9df4bc7e-0c76-4fce-bfc7-585f8614106d"
+              },
+              "vertices": [],
+              "id": "ae0b44de-6432-4b88-bdb3-f472272b318a",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.7667161557484664,
+                    "offset": 14.384646272286773
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "logs (domain & failure\nreason)",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 9,
+              "hasOpenThreats": true,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "https",
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Repudiation",
+                  "title": "Failures blocked from logging",
+                  "description": "An attacker blocking the connection to a logging service can hide a targeted attack on certificate transparency.",
+                  "mitigation": "- Mitigations depend on the logging service used."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "title": "Fake failures sent to logging service",
+                  "type": "Repudiation",
+                  "description": "Fake failures sent to logging service can make it look like there are failures that didn't really happen.",
+                  "mitigation": "- Mitigations depend on the logging service used."
+                }
+              ],
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "target": {
+                "id": "e2512b82-39a7-4427-b411-b2c55a21a6aa"
+              },
+              "vertices": [
+                {
+                  "x": 333,
+                  "y": 362
+                }
+              ],
+              "id": "ea7ffbd8-895d-4d93-b72e-f89ea3c6f6e6",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.5317910182042024,
+                    "offset": -19.483070556540042
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 10,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "e2512b82-39a7-4427-b411-b2c55a21a6aa"
+              },
+              "target": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "vertices": [
+                {
+                  "x": 270,
+                  "y": 356
+                }
+              ],
+              "id": "45ec6782-68c5-4ef5-97c6-d6a14cf7b51c",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "config & log list",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 11,
+              "hasOpenThreats": true,
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Tampering",
+                  "title": "Set failOnError to false",
+                  "description": "A compromised device could override the 'failOnError' flag in memory causing CT failures to be allowed through.",
+                  "mitigation": "- Create separate debug & release versions with 'failOnError' only available in the debug variant."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "title": "Domain config changed to remove domain from CT checks",
+                  "type": "Tampering",
+                  "description": "Changing the domain config in memory can allow an attacker to remove a domain from CT checks resulting in an attacker being able to present certificates that don't pass CT validation.",
+                  "mitigation": "- Have release only build that enforces CT checks for all domains, i.e. so there is no configuration"
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "description": "Changing the domain config in memory can allow an attacker to add a domain that has no SCTs to CT checks resulting in calls to that domain failing.",
+                  "title": "Domain config changed to add domain to CT checks",
+                  "type": "Denial of service",
+                  "mitigation": "- Ensure all domains the app uses through the CT library have SCTs in their certificates."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "title": "Log list changed to allow an otherwise denied connection",
+                  "type": "Tampering",
+                  "description": "An attacker could change the log list in memory to add or alter log server entries setting their own public key allowing them to create a certificate with SCTs that would pass validation.",
+                  "mitigation": "- Encrypt log list when in memory at rest"
+                },
+                {
+                  "status": "Open",
+                  "severity": "Low",
+                  "description": "An attacker could change the log list in memory to remove log server entries causing SCT verification to fail resulting in a DoS.",
+                  "type": "Denial of service",
+                  "title": "Log list entries removed to block otherwise valid connections",
+                  "mitigation": "- Encrypt log list when in memory at rest"
+                }
+              ],
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Boundary",
+              "smooth": true,
+              "source": {
+                "x": 220,
+                "y": 330
+              },
+              "target": {
+                "x": 370,
+                "y": 354
+              },
+              "vertices": [],
+              "id": "078aef8a-2709-4f7d-a744-03f5aefa7db7",
+              "z": 12,
+              "attrs": {}
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "target": {
+                "id": "2544b035-3ef5-4aa6-8d83-adab274b7cfa"
+              },
+              "vertices": [
+                {
+                  "x": 776,
+                  "y": 221
+                }
+              ],
+              "id": "45a20b11-0cde-47ca-be67-50097e52f91f",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 13,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "2544b035-3ef5-4aa6-8d83-adab274b7cfa"
+              },
+              "target": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "vertices": [
+                {
+                  "x": 786,
+                  "y": 242
+                }
+              ],
+              "id": "5f8f77b2-d896-44ac-acfc-4bfcb8582e0b",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 14,
+              "hasOpenThreats": true,
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "title": "Change in Googles private key breaks signature verification",
+                  "type": "Denial of service",
+                  "description": "If Google's private key used to sign the loglist.json file is changed then verification will fail causing the CT checks to fail resulting in outgoing connections being rejected and so a DoS.",
+                  "mitigation": "- Use our own private key so we have more visibility and management of the private key used.\n- Store local copy of the loglist so clients can continue to work without relying on loading from the network.\n- Monitor Google's public key to detect key changes so updates to the library.\n- Monitor the certificate transparency forums to be aware of future key changes."
+                }
+              ],
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "target": {
+                "id": "19c1b93e-94f0-47d1-b74d-f471ec339b3e"
+              },
+              "vertices": [
+                {
+                  "x": 789,
+                  "y": 322
+                }
+              ],
+              "id": "1e25bfa4-1c81-4a06-b3a5-6e6ac4acfdde",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "private key",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 15,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "19c1b93e-94f0-47d1-b74d-f471ec339b3e"
+              },
+              "target": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "vertices": [
+                {
+                  "x": 781,
+                  "y": 363
+                }
+              ],
+              "id": "5bf40224-f4ee-42bb-afe2-e5b54a5e7554",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "loglist.json &\nloglist.sig",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 16,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "target": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "vertices": [
+                {
+                  "x": 489,
+                  "y": 244
+                }
+              ],
+              "id": "b9ab8409-bd0f-4c93-961e-89a3824d5046",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 17,
+              "hasOpenThreats": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "https",
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "target": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "vertices": [
+                {
+                  "x": 490,
+                  "y": 286
+                }
+              ],
+              "id": "fa0ac542-2a7e-4efd-9588-ae3d734cd05a",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.44229097874442713,
+                    "offset": 4.483389719389379
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "loglist.json &\nloglist.sig",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 18,
+              "hasOpenThreats": true,
+              "protocol": "https",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "title": "Stale snapshot of loglist.json/loglist.sig can hide availability of new log servers",
+                  "type": "Denial of service",
+                  "description": "An attacker could present an old snapshot of loglist.json along with its loglist.sig which will pass validation resulting in the CT library not being aware of a new log server causing a DoS",
+                  "mitigation": "- Detect age of loglist.json and reject if older than a certain age.\n- Can be mitigated by ensuring certificates are logged in more than the minimum required number of log servers."
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "description": "An attacker could present an old snapshot of loglist.json along with its loglist.sig which will pass validation resulting in the CT library accepting a log server that has since been rejected.\n\nThis is only an issue if the certificate presented was generated after the date/time the server was rejected.",
+                  "title": "Stale snapshot of loglist.json/loglist.sig can accept rejected log servers",
+                  "mitigation": "- Mitigated by CT checks requiring more than one SCT to validate.",
+                  "type": "Tampering"
+                },
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "Block loglist.json/loglist.sig from loading",
+                  "mitigation": "- Store local copy of the loglist so clients can continue to work without relying on loading from the network.",
+                  "description": "Blocking the loading of either loglist.json or loglist.sig will mean validation of SCTs cannot be completed resulting in a DoS."
+                }
+              ],
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "target": {
+                "id": "f7fbe375-91b3-4302-858b-71e145872456"
+              },
+              "vertices": [
+                {
+                  "x": 506,
+                  "y": 368
+                }
+              ],
+              "id": "bf14586d-513d-4861-b9ac-629a669e6f22",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 19,
+              "hasOpenThreats": false,
+              "protocol": "https",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "f7fbe375-91b3-4302-858b-71e145872456"
+              },
+              "target": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "vertices": [
+                {
+                  "x": 465,
+                  "y": 397
+                }
+              ],
+              "id": "3c282042-9119-472d-8b26-18a4129674dd",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.38797196670228,
+                    "offset": 0.16655738977715373
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "domain & certificate\n(with SCTs)",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 20,
+              "hasOpenThreats": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "https",
+              "threats": [
+                {
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "title": "Malicious certificate presented",
+                  "description": "For a malicious certificate to be trusted, it still has to be signed using a CA in the trust root as well as having at least two valid SCTs, i.e. the loglist will have to be compromised or two log servers private keys known.",
+                  "type": "Tampering"
+                }
+              ],
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            }
+          ]
+        },
+        "size": {
+          "height": 596.3015747070312,
+          "width": 3017
+        }
+      }
+    ]
+  }
+}
