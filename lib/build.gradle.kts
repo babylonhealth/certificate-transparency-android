@@ -105,7 +105,7 @@ configure<PublishExtension> {
     userOrg = "babylonpartners"
     groupId = "com.babylon.certificatetransparency"
     artifactId = "certificatetransparency"
-    publishVersion = System.getenv("TRAVIS_TAG") ?: System.getProperty("TRAVIS_TAG") ?: "unknown"
+    publishVersion = System.getenv("CIRCLE_TAG") ?: System.getProperty("CIRCLE_TAG") ?: "unknown"
     desc = "Certificate transparency for Android and Java"
     website = "https://github.com/Babylonpartners/certificate-transparency-android"
 
