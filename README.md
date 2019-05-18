@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/Babylonpartners/certificate-transparency-android/tree/master.svg?style=svg)](https://circleci.com/gh/Babylonpartners/certificate-transparency-android/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/Babylonpartners/certificate-transparency-android/badge.svg?branch=master)](https://coveralls.io/github/Babylonpartners/certificate-transparency-android?branch=master)
+[![Download](https://api.bintray.com/packages/babylonpartners/maven/certificatetransparency/images/download.svg)](https://bintray.com/babylonpartners/maven/certificatetransparency/_latestVersion)
 
 To protect our apps from man-in-the-middle attacks one of the first
 things that usually springs to mind is certificate pinning. However, the
@@ -62,6 +63,8 @@ We are open about the security of our library and provide a threat model in the
 we have missed please reach out so we can keep this up to date.
 
 ## Getting started
+
+[![Download](https://api.bintray.com/packages/babylonpartners/maven/certificatetransparency/images/download.svg)](https://bintray.com/babylonpartners/maven/certificatetransparency/_latestVersion)
 
 For Android modules include the *android* dependency in your
 build.gradle file which ensures the necessary ProGuard rules are
