@@ -1,3 +1,4 @@
+import com.novoda.gradle.release.PublishExtension
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -12,6 +13,8 @@ plugins {
     id("com.github.kt3k.coveralls")
     id("com.android.lint")
 }
+
+apply(plugin = "com.novoda.bintray-release")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -92,3 +95,25 @@ tasks.getByName("coveralls").onlyIf { System.getenv("CI")?.isNotEmpty() == true 
 tasks.getByName("check").dependsOn(tasks.dependencyCheckAnalyze)
 tasks.getByName("check").dependsOn(rootProject.tasks.getByName("detekt"))
 tasks.getByName("check").dependsOn(rootProject.tasks.getByName("markdownlint"))
+
+configure<PublishExtension> {
+    bintrayUser = System.getenv("BINTRAY_USER") ?: System.getProperty("BINTRAY_USER") ?: "unknown"
+    bintrayKey = System.getenv("BINTRAY_KEY") ?: System.getProperty("BINTRAY_KEY") ?: "unknown"
+
+    userOrg = "babylonpartners"
+    groupId = "com.babylon.certificatetransparency"
+    artifactId = "certificatetransparency"
+    publishVersion = System.getenv("TRAVIS_TAG") ?: System.getProperty("TRAVIS_TAG") ?: "unknown"
+    desc = "Certificate transparency for Android and Java"
+    website = "https://github.com/Babylonpartners/certificate-transparency-android"
+
+    dryRun = true
+}
+
+// Fix for https://github.com/novoda/bintray-release/issues/262
+tasks.whenTaskAdded {
+    if (name == "generateSourcesJarForMavenPublication") {
+        this as Jar
+        from(sourceSets.main.get().allSource)
+    }
+}
