@@ -1,0 +1,5 @@
+include(
+    "sampleapp",
+    "lib",
+    "android"
+)

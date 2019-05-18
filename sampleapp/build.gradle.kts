@@ -31,6 +31,7 @@ android {
     }
     packagingOptions {
         exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/atomicfu.kotlin_module")
     }
 }
 
@@ -44,8 +45,8 @@ dependencies {
     implementation(project(":android"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.extra["kotlin_version"]}")
     implementation("androidx.appcompat:appcompat:1.0.2")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.0-alpha4")
-    implementation("com.google.android.material:material:1.1.0-alpha05")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta1")
+    implementation("com.google.android.material:material:1.1.0-alpha06")
     implementation("com.google.android.gms:play-services-base:16.1.0")
     implementation("com.squareup.retrofit2:retrofit:2.5.0")
     implementation("com.squareup.retrofit2:converter-gson:2.5.0")
@@ -56,8 +57,8 @@ dependencies {
     implementation("android.arch.navigation:navigation-ui-ktx:1.0.0")
     implementation("com.xwray:groupie:2.3.0")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.3.0")
-    implementation("com.afollestad.material-dialogs:core:2.7.0")
-    implementation("com.afollestad.material-dialogs:input:2.7.0")
+    implementation("com.afollestad.material-dialogs:core:2.8.1")
+    implementation("com.afollestad.material-dialogs:input:2.8.1")
     implementation("com.pddstudio:highlightjs-android:1.5.0")
     implementation("com.android.volley:volley:1.1.1")
     implementation("com.github.spullara.mustache.java:compiler:0.9.6")

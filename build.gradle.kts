@@ -1,22 +1,27 @@
+import com.appmattus.markdown.rules.LineLengthRule
+import com.appmattus.markdown.rules.ProperNamesRule
+
 buildscript {
-    extra["kotlin_version"] = "1.3.21"
+    extra["kotlin_version"] = "1.3.31"
 
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.3.2")
+        classpath("com.android.tools.build:gradle:3.4.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${extra["kotlin_version"]}")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
-        classpath("org.owasp:dependency-check-gradle:5.0.0-M2")
+        classpath("org.owasp:dependency-check-gradle:5.0.0-M3.1")
+        classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2")
+        classpath("com.novoda:bintray-release:0.9.1")
     }
 }
 
 plugins {
     id("io.gitlab.arturbosch.detekt") version "1.0.0-RC14"
     id("com.github.ben-manes.versions") version "0.21.0"
-    id("com.appmattus.markdown") version "0.2.1"
+    id("com.appmattus.markdown") version "0.4.1"
 }
 
 allprojects {
@@ -40,5 +45,8 @@ detekt {
 }
 
 markdownlint {
-    configFile = File("markdownlint.gradle.kts")
+    rules {
+        +LineLengthRule(codeBlocks = false)
+        +ProperNamesRule { excludes = listOf(".*/NOTICE.md") }
+    }
 }

@@ -1,4 +1,4 @@
-# _sampleapp_ module
+# *sampleapp* module
 
 This module provides a living example of how to use the certificate
 transparency library in an Android app.

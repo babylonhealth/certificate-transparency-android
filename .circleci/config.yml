@@ -1,0 +1,94 @@
+defaults: &defaults
+  working_directory: ~/code
+  docker:
+    - image: circleci/android:api-28
+  environment:
+    JVM_OPTS: -Xmx3200m
+
+version: 2.1
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore gradle cache
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
+      - restore_cache:
+          name: Restore NVD cache
+          key: nvd
+      - run:
+          name: Build
+          command: ./gradlew build
+      - save_cache:
+          name: Save gradle cache
+          paths:
+            - ~/.gradle
+            - ~/.m2
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
+      - save_cache:
+          name: Save NVD cache
+          paths:
+            - ~/.nvd
+          key: nvd
+      - run:
+          name: Upload code coverage to codecov
+          command: |
+            bash <(curl -s https://codecov.io/bash) \
+              -f lib/build/reports/jacoco/test/jacocoTestReport.xml \
+              -n ${CIRCLE_BUILD_NUM} \
+              -t ${CODECOV_TOKEN}
+      - run:
+          name: Copy test results
+          command: |
+            mkdir -p ~/junit/
+            cp -r lib/build/test-results/test ~/junit/lib
+#            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit/ \;
+#            find . -type f -regex ".*/build/test-results/testDebug*/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          name: Upload test results
+          path: ~/junit
+      - store_artifacts:
+          name: Upload markdown and detekt reports
+          path: build/reports
+          destination: reports
+      - store_artifacts:
+          name: Upload test and jacoco reports
+          path: lib/build/reports
+          destination: reports
+      - store_artifacts:
+          name: Upload lint report
+          path: lib/build/test-results/lint-results.html
+          destination: reports/lint-results.html
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ./
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle.kts" }}-{{ checksum  "lib/build.gradle.kts" }}-{{ checksum  "android/build.gradle.kts" }}
+      - run:
+          name: Upload build
+          command: ./gradlew bintrayUpload
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
