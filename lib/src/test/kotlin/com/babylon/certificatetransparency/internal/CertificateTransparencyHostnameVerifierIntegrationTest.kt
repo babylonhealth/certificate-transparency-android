@@ -20,6 +20,7 @@ import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifi
 import com.babylon.certificatetransparency.utils.LogListDataSourceTestFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.internal.tls.OkHostnameVerifier
 import org.junit.Test
 import javax.net.ssl.SSLPeerUnverifiedException
 
@@ -28,7 +29,7 @@ class CertificateTransparencyHostnameVerifierIntegrationTest {
     companion object {
         private const val invalidSctDomain = "www.tauntonstore.com"
 
-        val hostnameVerifier = certificateTransparencyHostnameVerifier {
+        val hostnameVerifier = certificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE) {
             +"*.babylonhealth.com"
             +"letsencrypt.org"
             +invalidSctDomain
@@ -74,7 +75,7 @@ class CertificateTransparencyHostnameVerifierIntegrationTest {
 
     @Test
     fun invalidAllowedWhenSctNotChecked() {
-        val client = OkHttpClient.Builder().hostnameVerifier(certificateTransparencyHostnameVerifier {
+        val client = OkHttpClient.Builder().hostnameVerifier(certificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE) {
             +"*.babylonhealth.com"
 
             logListDataSource {

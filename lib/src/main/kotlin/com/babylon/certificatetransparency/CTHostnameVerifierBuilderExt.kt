@@ -16,17 +16,16 @@
 
 package com.babylon.certificatetransparency
 
-import okhttp3.internal.tls.OkHostnameVerifier
 import javax.net.ssl.HostnameVerifier
 
 /**
  * DSL to create a [HostnameVerifier] that will verify a host is trusted using certificate transparency
- * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks. Default: `OkHostnameVerifier.INSTANCE`
+ * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks
  * @property init Block to execute as a [CTHostnameVerifierBuilder]
  */
 @JvmSynthetic
 fun certificateTransparencyHostnameVerifier(
-    delegate: HostnameVerifier = OkHostnameVerifier.INSTANCE,
+    delegate: HostnameVerifier,
     init: CTHostnameVerifierBuilder.() -> Unit = {}
 ) = CTHostnameVerifierBuilder(delegate)
     .apply(init)
