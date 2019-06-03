@@ -59,7 +59,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import java.io.File
-import java.security.cert.X509Certificate
 
 /**
  * This test verifies that the data is correctly serialized for signature comparison, so signature
@@ -120,7 +119,7 @@ class LogSignatureVerifierTest {
         val verifier = verifier
         assertIsA<SctVerificationResult.Valid>(
             "Expected signature to verify OK",
-            verifier.verifySCTOverPreCertificate(sct, preCertificate as X509Certificate, signerCert.issuerInformation())
+            verifier.verifySCTOverPreCertificate(sct, preCertificate, signerCert.issuerInformation())
         )
     }
 
@@ -139,7 +138,7 @@ class LogSignatureVerifierTest {
         val verifier = verifierRSA
         assertIsA<SctVerificationResult.Valid>(
             "Expected signature to verify OK",
-            verifier.verifySCTOverPreCertificate(sct, preCertificate as X509Certificate, signerCert.issuerInformation())
+            verifier.verifySCTOverPreCertificate(sct, preCertificate, signerCert.issuerInformation())
         )
     }
 
@@ -228,7 +227,7 @@ class LogSignatureVerifierTest {
         val certsChain = loadCertificates(TEST_GITHUB_CHAIN)
 
         // the leaf cert is the first one in this test data
-        val leafcert = certsChain[0] as X509Certificate
+        val leafcert = certsChain[0]
         val issuerCert = certsChain[1]
         assertTrue("The test certificate does have embedded SCTs", leafcert.hasEmbeddedSct())
 

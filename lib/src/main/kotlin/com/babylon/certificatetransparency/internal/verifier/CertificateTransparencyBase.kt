@@ -20,6 +20,7 @@ package com.babylon.certificatetransparency.internal.verifier
 
 import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.loglist.LogListDataSourceFactory
 import com.babylon.certificatetransparency.internal.loglist.NoLogServers
@@ -29,10 +30,10 @@ import com.babylon.certificatetransparency.internal.utils.signedCertificateTimes
 import com.babylon.certificatetransparency.internal.verifier.model.Host
 import com.babylon.certificatetransparency.loglist.LogListResult
 import kotlinx.coroutines.runBlocking
-import okhttp3.internal.tls.CertificateChainCleaner
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
+import java.security.cert.X509Certificate
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
@@ -62,7 +63,7 @@ internal open class CertificateTransparencyBase(
         } else if (certificates.isEmpty()) {
             VerificationResult.Failure.NoCertificates
         } else {
-            val cleanedCerts = cleaner.clean(certificates, host)
+            val cleanedCerts = cleaner.clean(certificates.filterIsInstance<X509Certificate>(), host)
             hasValidSignedCertificateTimestamp(cleanedCerts)
         }
     }
