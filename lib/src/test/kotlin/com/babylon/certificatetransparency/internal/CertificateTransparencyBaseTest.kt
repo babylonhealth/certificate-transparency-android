@@ -146,7 +146,7 @@ class CertificateTransparencyBaseTest {
 
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
-        val certWithSingleSct = singleSctOnly(certsToCheck.first() as X509Certificate)
+        val certWithSingleSct = singleSctOnly(certsToCheck.first())
 
         val filtered = listOf(certWithSingleSct, *certsToCheck.drop(1).toTypedArray())
 

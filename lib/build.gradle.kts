@@ -22,7 +22,7 @@ java {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.extra["kotlin_version"]}")
+    implementation(kotlin("stdlib-jdk7"))
 
     implementation("org.bouncycastle:bcpkix-jdk15on:1.61")
     implementation("org.bouncycastle:bcprov-jdk15on:1.61")
@@ -34,7 +34,7 @@ dependencies {
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.5.0")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:2.27.0")
+    testImplementation("org.mockito:mockito-core:2.28.2")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.9")

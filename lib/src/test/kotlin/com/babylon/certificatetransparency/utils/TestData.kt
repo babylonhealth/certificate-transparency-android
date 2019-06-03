@@ -20,7 +20,7 @@ package com.babylon.certificatetransparency.utils
 
 import org.junit.Ignore
 import java.io.File
-import java.security.cert.Certificate
+import java.security.cert.X509Certificate
 
 /** Constants for tests.  */
 @Ignore
@@ -73,9 +73,17 @@ object TestData {
     const val TEST_MITMPROXY_ATTACK_CHAIN = DATA_ROOT + "mitmproxy-attack-chain.pem"
     const val TEST_MITMPROXY_ORIGINAL_CHAIN = DATA_ROOT + "mitmproxy-original-chain.pem"
 
-    fun loadCertificates(filename: String): List<Certificate> {
+    const val TEN_CERTS_CHAIN = DATA_ROOT + "chaincleaner/ten-certs-chain.pem"
+    const val TEN_CERTS_ROOT_CERT = DATA_ROOT + "chaincleaner/ten-certs-root-cert.pem"
+
+    const val ELEVEN_CERTS_CHAIN = DATA_ROOT + "chaincleaner/eleven-certs-chain.pem"
+    const val ELEVEN_CERTS_ROOT_CERT = DATA_ROOT + "chaincleaner/eleven-certs-root-cert.pem"
+
+    const val SELF_SIGNED_ROOT_CERT = DATA_ROOT + "chaincleaner/self-signed-root-cert.pem"
+
+    fun loadCertificates(filename: String): List<X509Certificate> {
         val file = File(TestData::class.java.getResource(filename)!!.file)
-        return CryptoDataLoader.certificatesFromFile(file)
+        return CryptoDataLoader.certificatesFromFile(file).filterIsInstance<X509Certificate>()
     }
 
     fun file(name: String): File {

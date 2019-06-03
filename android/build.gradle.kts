@@ -4,6 +4,7 @@ import com.novoda.gradle.release.PublishExtension
 
 plugins {
     id("com.android.library")
+    kotlin("android")
 }
 
 apply(plugin = "com.novoda.bintray-release")
@@ -21,10 +22,22 @@ android {
 
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
+
+    sourceSets {
+        getByName("main").java.srcDirs("src/main/kotlin")
+        getByName("test").java.srcDirs("src/test/kotlin")
+        getByName("androidTest").java.srcDirs("src/androidTest/kotlin")
+    }
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk7"))
+
     api(project(":lib"))
+
+    testImplementation("junit:junit:4.12")
+    testImplementation("org.mockito:mockito-core:2.28.2")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 }
 
 configure<PublishExtension> {
