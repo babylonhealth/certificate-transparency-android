@@ -3,8 +3,8 @@ defaults: &defaults
   docker:
     - image: circleci/android:api-28
   environment:
-    JVM_OPTS: -Xmx2048m
-    _JAVA_OPTS: -Xmx2048m
+    JVM_OPTS: -Xmx3200m
+    GRADLE_OPTS: -Xmx3200m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
 
 version: 2.1
 jobs:
