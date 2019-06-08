@@ -50,6 +50,13 @@ sealed class VerificationResult {
              */
             override fun toString() = "Success: SCT trusted logs $scts"
         }
+
+        data class InsecureConnection(val host: String) : Success() {
+            /**
+             * Returns a string representation of the object.
+             */
+            override fun toString() = "Success: SCT not enabled for insecure connection to $host"
+        }
     }
 
     /**

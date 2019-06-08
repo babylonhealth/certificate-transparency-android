@@ -63,6 +63,17 @@ class CertificateTransparencyInterceptorIntegrationTest {
     }
 
     @Test
+    fun insecureConnectionAllowed() {
+        val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
+
+        val request = Request.Builder()
+            .url("http://www.babylonhealth.com")
+            .build()
+
+        client.newCall(request).execute()
+    }
+
+    @Test
     fun letsEncryptAllowed() {
         val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
 

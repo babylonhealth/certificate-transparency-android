@@ -25,6 +25,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
+import javax.net.ssl.SSLSocket
 import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyInterceptor(
@@ -39,7 +40,11 @@ internal class CertificateTransparencyInterceptor(
         val host = chain.request().url().host()
         val certs = chain.connection()?.handshake()?.peerCertificates()?.map { it as X509Certificate } ?: emptyList()
 
-        val result = verifyCertificateTransparency(host, certs)
+        val result = if (chain.connection()?.socket() is SSLSocket) {
+            verifyCertificateTransparency(host, certs)
+        } else {
+            VerificationResult.Success.InsecureConnection(host)
+        }
 
         logger?.log(host, result)
 
