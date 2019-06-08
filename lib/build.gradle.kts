@@ -24,8 +24,8 @@ java {
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.61")
-    implementation("org.bouncycastle:bcprov-jdk15on:1.61")
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.62")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.62")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
 
