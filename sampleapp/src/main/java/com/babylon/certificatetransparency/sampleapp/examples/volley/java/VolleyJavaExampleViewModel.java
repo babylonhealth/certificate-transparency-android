@@ -23,7 +23,7 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.babylon.certificatetransparency.CTHostnameVerifierBuilder;
-import com.babylon.certificatetransparency.Logger;
+import com.babylon.certificatetransparency.CTLogger;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
             HttpURLConnection connection,
             Set<String> hosts,
             boolean isFailOnError,
-            Logger defaultLogger
+            CTLogger defaultLogger
     ) {
         if (connection instanceof HttpsURLConnection) {
             HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
@@ -71,7 +71,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
 
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
-    private RequestQueue createRequestQueue(Set<String> hosts, boolean isFailOnError, Logger defaultLogger) {
+    private RequestQueue createRequestQueue(Set<String> hosts, boolean isFailOnError, CTLogger defaultLogger) {
         return Volley.newRequestQueue(applicationContext,
                 new HurlStack() {
                     @Override
@@ -87,7 +87,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
     }
 
     @Override
-    public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull Logger defaultLogger) {
+    public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull CTLogger defaultLogger) {
         RequestQueue queue = createRequestQueue(hosts, isFailOnError, defaultLogger);
 
         // Failure. Send message to the UI as logger won't catch generic network exceptions

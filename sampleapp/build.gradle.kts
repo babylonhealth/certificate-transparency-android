@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(29)
     defaultConfig {
         applicationId = "com.babylon.certificatetransparency.sampleapp"
         minSdkVersion(19)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
@@ -46,10 +46,10 @@ dependencies {
     implementation(kotlin("stdlib-jdk7"))
     implementation("androidx.appcompat:appcompat:1.0.2")
     implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta2")
-    implementation("com.google.android.material:material:1.1.0-alpha07")
-    implementation("com.google.android.gms:play-services-base:17.0.0")
-    implementation("com.squareup.retrofit2:retrofit:2.6.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.6.0")
+    implementation("com.google.android.material:material:1.1.0-alpha09")
+    implementation("com.google.android.gms:play-services-base:17.1.0")
+    implementation("com.squareup.retrofit2:retrofit:2.6.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.6.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata:2.0.0")
@@ -57,8 +57,8 @@ dependencies {
     implementation("android.arch.navigation:navigation-ui-ktx:1.0.0")
     implementation("com.xwray:groupie:2.3.0")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.3.0")
-    implementation("com.afollestad.material-dialogs:core:2.8.1")
-    implementation("com.afollestad.material-dialogs:input:2.8.1")
+    implementation("com.afollestad.material-dialogs:core:3.1.0")
+    implementation("com.afollestad.material-dialogs:input:3.1.0")
     implementation("com.pddstudio:highlightjs-android:1.5.0")
     implementation("com.android.volley:volley:1.1.1")
     implementation("com.github.spullara.mustache.java:compiler:0.9.6")

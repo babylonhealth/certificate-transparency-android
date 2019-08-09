@@ -29,12 +29,12 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
 
-    implementation("com.squareup.retrofit2:retrofit:2.6.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.6.0")
-    testImplementation("com.squareup.retrofit2:retrofit-mock:2.6.0")
+    implementation("com.squareup.retrofit2:retrofit:2.6.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.6.1")
+    testImplementation("com.squareup.retrofit2:retrofit-mock:2.6.1")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:2.28.2")
+    testImplementation("org.mockito:mockito-core:3.0.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.9")

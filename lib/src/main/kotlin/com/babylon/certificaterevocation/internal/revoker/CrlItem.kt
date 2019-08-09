@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.utils
+package com.babylon.certificaterevocation.internal.revoker
 
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.security.PublicKey
+import java.math.BigInteger
+import javax.security.auth.x500.X500Principal
 
-/**
- * @throws NoSuchAlgorithmException
- */
-internal fun PublicKey.sha256Hash(): ByteArray = MessageDigest.getInstance("SHA-256").digest(encoded)
-
-/**
- * @throws NoSuchAlgorithmException
- */
-internal fun PublicKey.sha1Hash(): ByteArray = MessageDigest.getInstance("SHA-1").digest(encoded)
+internal data class CrlItem(
+    val issuerDistinguishedName: X500Principal,
+    val serialNumbers: List<BigInteger>
+)

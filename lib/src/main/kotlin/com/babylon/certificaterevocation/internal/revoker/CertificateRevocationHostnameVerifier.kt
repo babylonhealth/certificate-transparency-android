@@ -14,35 +14,31 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.verifier
+package com.babylon.certificaterevocation.internal.revoker
 
-import com.babylon.certificatetransparency.CTLogger
-import com.babylon.certificatetransparency.VerificationResult
-import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.internal.verifier.model.Host
-import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificaterevocation.CRLogger
+import com.babylon.certificaterevocation.RevocationResult
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
-internal class CertificateTransparencyHostnameVerifier(
+internal class CertificateRevocationHostnameVerifier(
     private val delegate: HostnameVerifier,
-    hosts: Set<Host>,
+    crlSet: Set<CrlItem>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<LogListResult>?,
     private val failOnError: Boolean = true,
-    private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), HostnameVerifier {
+    private val logger: CRLogger? = null
+) : CertificateRevocationBase(crlSet, trustManager), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
         if (!delegate.verify(host, sslSession)) {
             return false
         }
 
-        val result = verifyCertificateTransparency(host, sslSession.peerCertificates.toList())
+        val result = verifyCertificateRevocation(host, sslSession.peerCertificates.toList())
 
         logger?.log(host, result)
 
-        return !(result is VerificationResult.Failure && failOnError)
+        return !(result is RevocationResult.Failure && failOnError)
     }
 }

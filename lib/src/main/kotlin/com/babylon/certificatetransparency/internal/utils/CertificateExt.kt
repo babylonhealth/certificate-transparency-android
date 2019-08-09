@@ -95,4 +95,4 @@ internal fun Certificate.issuerInformationFromPreCertificate(preCertificate: Cer
 /**
  * @throws NoSuchAlgorithmException
  */
-private fun Certificate.keyHash() = publicKey.hash()
+private fun Certificate.keyHash() = publicKey.sha256Hash()

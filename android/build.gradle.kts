@@ -36,7 +36,7 @@ dependencies {
     api(project(":lib"))
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:2.28.2")
+    testImplementation("org.mockito:mockito-core:3.0.0")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 }
 

@@ -16,8 +16,7 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.httpurlconnection.kotlin
 
-import android.content.Context
-import com.babylon.certificatetransparency.Logger
+import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifier
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import java.io.IOException
@@ -25,7 +24,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class HttpURLConnectionKotlinExampleViewModel(private val applicationContext: Context) : BaseExampleViewModel() {
+class HttpURLConnectionKotlinExampleViewModel : BaseExampleViewModel() {
 
     override val sampleCodeTemplate
         get() = "httpurlconnection-kotlin.txt"
@@ -33,7 +32,7 @@ class HttpURLConnectionKotlinExampleViewModel(private val applicationContext: Co
     private fun HttpURLConnection.enableCertificateTransparencyChecks(
         hosts: Set<String>,
         isFailOnError: Boolean,
-        defaultLogger: Logger
+        defaultLogger: CTLogger
     ) {
         if (this is HttpsURLConnection) {
             // Create a hostname verifier wrapping the original
@@ -47,7 +46,7 @@ class HttpURLConnectionKotlinExampleViewModel(private val applicationContext: Co
         }
     }
 
-    override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger) {
+    override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger) {
         // Quick and dirty way to push the network call onto a background thread, don't do this is a real app
         Thread {
             try {

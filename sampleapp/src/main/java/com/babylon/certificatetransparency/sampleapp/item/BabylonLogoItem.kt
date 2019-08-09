@@ -24,5 +24,5 @@ object BabylonLogoItem : Item() {
 
     override fun getLayout() = R.layout.babylon_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {}
+    override fun bind(viewHolder: ViewHolder, position: Int) = Unit
 }

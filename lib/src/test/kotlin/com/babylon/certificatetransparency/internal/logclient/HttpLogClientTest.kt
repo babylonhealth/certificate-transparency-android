@@ -119,28 +119,20 @@ class HttpLogClientTest {
         assertTrue("jdH9k+/lb9abMz3N8rVmwrw8MWU7v55+nSAXej3hqPg=" == rootHash)
     }
 
-    @Test
+    @Test(expected = CertificateTransparencyException::class)
     fun getLogSthBadResponseTimestamp() {
         expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_TIMESTAMP)
 
         val client = HttpLogClient(logClientService)
-        try {
-            client.logSth
-            fail()
-        } catch (e: CertificateTransparencyException) {
-        }
+        client.logSth
     }
 
-    @Test
+    @Test(expected = CertificateTransparencyException::class)
     fun getLogSTHBadResponseRootHash() {
         expectInterceptor("http://ctlog/get-sth", BAD_STH_RESPONSE_INVALID_ROOT_HASH)
 
         val client = HttpLogClient(logClientService)
-        try {
-            client.logSth
-            fail()
-        } catch (e: CertificateTransparencyException) {
-        }
+        client.logSth
     }
 
     @Test
@@ -326,6 +318,7 @@ class HttpLogClientTest {
                         + "i4Kd1F2QRIn18ADB8dHDmFYT9czQiRyf1HWkLxHqd81TbD26yWVXeGJPE3VICskovPkQNJ0tU4b03YmnKliibduyqQ"
                         + "QkOFPOwqULg==\" } ] }")
 
+        @Suppress("MaxLineLength")
         const val MERKLE_AUDIT_PROOF = (
                 "{\n"
                         + "\t\"leaf_index\":\"198743\",\n"

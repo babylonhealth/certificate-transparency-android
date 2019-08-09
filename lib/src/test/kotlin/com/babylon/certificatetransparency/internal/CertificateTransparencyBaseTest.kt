@@ -170,6 +170,7 @@ class CertificateTransparencyBaseTest {
 
     private fun singleSctOnly(cert: X509Certificate) = spy(cert).apply {
         whenever(getExtensionValue(CTConstants.SCT_CERTIFICATE_OID)).thenAnswer {
+            @Suppress("MaxLineLength")
             Base64.decode("BHwEegB4AHYAu9nfvB+KcbWTlCOXqpJ7RzhXlQqrUugakJZkNo4e0YUAAAFj7ztQ3wAABAMARzBFAiEA53gntK6Dnr6ROwYGBjqjt5dS4tWM6Zw/TtxIxOvobW8CIF3n4XjIX7/w66gThQD47iF7YmxelwgUQgPzEWNlHQiu")
         }
     }

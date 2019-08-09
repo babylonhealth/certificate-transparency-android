@@ -23,7 +23,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.babylon.certificatetransparency.Logger
+import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifier
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import java.net.HttpURLConnection
@@ -38,7 +38,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
     private fun HttpURLConnection.enableCertificateTransparencyChecks(
         hosts: Set<String>,
         isFailOnError: Boolean,
-        defaultLogger: Logger
+        defaultLogger: CTLogger
     ) {
         if (this is HttpsURLConnection) {
             // Create a hostname verifier wrapping the original
@@ -54,7 +54,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
 
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
-    private fun createRequestQueue(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger): RequestQueue {
+    private fun createRequestQueue(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger): RequestQueue {
         return Volley.newRequestQueue(applicationContext,
             object : HurlStack() {
                 override fun createConnection(url: URL): HttpURLConnection {
@@ -65,7 +65,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
             })
     }
 
-    override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger) {
+    override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger) {
         val queue = createRequestQueue(hosts, isFailOnError, defaultLogger)
 
         val request = StringRequest(Request.Method.GET, "https://$connectionHost",

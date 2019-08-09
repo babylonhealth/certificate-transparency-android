@@ -14,41 +14,37 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.verifier
+package com.babylon.certificaterevocation.internal.revoker
 
-import com.babylon.certificatetransparency.CTLogger
-import com.babylon.certificatetransparency.VerificationResult
-import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.internal.verifier.model.Host
-import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificaterevocation.CRLogger
+import com.babylon.certificaterevocation.RevocationResult
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.X509TrustManager
 
-internal class CertificateTransparencyInterceptor(
-    hosts: Set<Host>,
+internal class CertificateRevocationInterceptor(
+    crlSet: Set<CrlItem>,
     trustManager: X509TrustManager?,
-    logListDataSource: DataSource<LogListResult>?,
     private val failOnError: Boolean = true,
-    private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
+    private val logger: CRLogger? = null
+) : CertificateRevocationBase(crlSet, trustManager), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()
         val certs = chain.connection()?.handshake()?.peerCertificates() ?: emptyList()
 
         val result = if (chain.connection()?.socket() is SSLSocket) {
-            verifyCertificateTransparency(host, certs)
+            verifyCertificateRevocation(host, certs)
         } else {
-            VerificationResult.Success.InsecureConnection(host)
+            RevocationResult.Success.InsecureConnection
         }
 
         logger?.log(host, result)
 
-        if (result is VerificationResult.Failure && failOnError) {
-            throw SSLPeerUnverifiedException("Certificate transparency failed")
+        if (result is RevocationResult.Failure && failOnError) {
+            throw SSLPeerUnverifiedException("Certificate revocation failed")
         }
 
         return chain.proceed(chain.request())
