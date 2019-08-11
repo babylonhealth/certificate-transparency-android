@@ -73,10 +73,10 @@ internal open class CertificateTransparencyBase(
      * from a trusted CT log.
      *
      * @property certificates the certificate chain provided by the server
-     * @return true if the certificates can be trusted, false otherwise.
+     * @return [VerificationResult.Success] if the certificates can be trusted, [VerificationResult.Failure] otherwise.
      */
     @Suppress("ReturnCount")
-    private fun hasValidSignedCertificateTimestamp(certificates: List<Certificate>): VerificationResult {
+    private fun hasValidSignedCertificateTimestamp(certificates: List<X509Certificate>): VerificationResult {
 
         val result = runBlocking {
             logListDataSource.get()

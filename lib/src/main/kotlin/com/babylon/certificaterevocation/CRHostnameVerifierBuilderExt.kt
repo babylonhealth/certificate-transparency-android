@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.utils
+package com.babylon.certificaterevocation
 
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.security.PublicKey
+import javax.net.ssl.HostnameVerifier
 
 /**
- * @throws NoSuchAlgorithmException
+ * DSL to create a [HostnameVerifier] that will reject cert chains containing revoked certificates
+ * @property delegate [HostnameVerifier] to delegate to before performing certificate revocation checks
+ * @property init Block to execute as a [CRHostnameVerifierBuilder]
  */
-internal fun PublicKey.sha256Hash(): ByteArray = MessageDigest.getInstance("SHA-256").digest(encoded)
-
-/**
- * @throws NoSuchAlgorithmException
- */
-internal fun PublicKey.sha1Hash(): ByteArray = MessageDigest.getInstance("SHA-1").digest(encoded)
+@JvmSynthetic
+fun certificateRevocationHostnameVerifier(
+    delegate: HostnameVerifier,
+    init: CRHostnameVerifierBuilder.() -> Unit = {}
+) = CRHostnameVerifierBuilder(delegate)
+    .apply(init)
+    .build()

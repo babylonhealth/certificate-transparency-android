@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.kotlin
 
-import com.babylon.certificatetransparency.Logger
+import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.certificateTransparencyInterceptor
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import okhttp3.Call
@@ -33,7 +33,7 @@ class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
 
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
-    private fun createOkHttpClient(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger): OkHttpClient {
+    private fun createOkHttpClient(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger): OkHttpClient {
         // Create a network interceptor
         val networkInterceptor = certificateTransparencyInterceptor {
             hosts.forEach {
@@ -49,7 +49,7 @@ class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
         }.build()
     }
 
-    override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger) {
+    override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger) {
         val client = createOkHttpClient(hosts, isFailOnError, defaultLogger)
 
         val request = Request.Builder().url("https://$connectionHost").build()

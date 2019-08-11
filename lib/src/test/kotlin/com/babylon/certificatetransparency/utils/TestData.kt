@@ -23,7 +23,7 @@ import java.io.File
 import java.security.cert.X509Certificate
 
 /** Constants for tests.  */
-@Ignore
+@Ignore("Contains constants for tests")
 object TestData {
     private const val DATA_ROOT = "/testdata/"
     // Public log key

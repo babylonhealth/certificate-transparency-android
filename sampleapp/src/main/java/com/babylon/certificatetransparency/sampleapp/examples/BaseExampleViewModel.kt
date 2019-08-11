@@ -19,7 +19,7 @@ package com.babylon.certificatetransparency.sampleapp.examples
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.babylon.certificatetransparency.Logger
+import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.VerificationResult
 import com.github.mustachejava.DefaultMustacheFactory
 import okhttp3.HttpUrl
@@ -88,7 +88,7 @@ abstract class BaseExampleViewModel : ViewModel() {
         _liveData.postValue(state)
     }
 
-    private val defaultLogger = object : Logger {
+    private val defaultLogger = object : CTLogger {
         override fun log(host: String, result: VerificationResult) {
             val message = when (result) {
                 is VerificationResult.Success -> State.Message.Success(result.toString())
@@ -107,7 +107,7 @@ abstract class BaseExampleViewModel : ViewModel() {
         }
     }
 
-    abstract fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: Logger)
+    abstract fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger)
 
     fun openConnection(connectionHost: String) {
         openConnection(connectionHost, state.hosts, state.failOnError, defaultLogger)

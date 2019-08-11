@@ -49,12 +49,12 @@ class CTHostnameVerifierBuilder(
         @JvmSynthetic set
 
     /**
-     * [Logger] which will be called with all results
+     * [CTLogger] which will be called with all results
      * Default: none
      */
     // public for access in DSL
     @Suppress("MemberVisibilityCanBePrivate")
-    var logger: Logger? = null
+    var logger: CTLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -105,11 +105,11 @@ class CTHostnameVerifierBuilder(
     fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
 
     /**
-     * [Logger] which will be called with all results
+     * [CTLogger] which will be called with all results
      * Default: none
      */
     @Suppress("unused")
-    fun setLogger(logger: Logger) = apply { this.logger = logger }
+    fun setLogger(logger: CTLogger) = apply { this.logger = logger }
 
     /**
      * Verify certificate transparency for hosts that match [pattern].

@@ -16,10 +16,9 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.httpurlconnection.java;
 
-import android.content.Context;
-import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import com.babylon.certificatetransparency.CTHostnameVerifierBuilder;
-import com.babylon.certificatetransparency.Logger;
+import com.babylon.certificatetransparency.CTLogger;
+import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -29,12 +28,6 @@ import java.net.URL;
 import java.util.Set;
 
 public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel {
-
-    private final Context applicationContext;
-
-    public HttpURLConnectionJavaExampleViewModel(Context applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     @NotNull
     @Override
@@ -46,7 +39,7 @@ public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel 
             HttpURLConnection connection,
             Set<String> hosts,
             boolean isFailOnError,
-            Logger defaultLogger
+            CTLogger defaultLogger
     ) {
         if (connection instanceof HttpsURLConnection) {
             HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
@@ -65,7 +58,7 @@ public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel 
     }
 
     @Override
-    public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull Logger defaultLogger) {
+    public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull CTLogger defaultLogger) {
         // Quick and dirty way to push the network call onto a background thread, don't do this is a real app
         new Thread(() -> {
             try {

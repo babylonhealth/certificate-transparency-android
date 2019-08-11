@@ -7,18 +7,18 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.4.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.31")
+        classpath("com.android.tools.build:gradle:3.4.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
-        classpath("org.owasp:dependency-check-gradle:5.0.0")
+        classpath("org.owasp:dependency-check-gradle:5.2.1")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
         classpath("com.novoda:bintray-release:0.9.1")
     }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.0.0-RC14"
-    id("com.github.ben-manes.versions") version "0.21.0"
+    id("io.gitlab.arturbosch.detekt") version "1.0.0-RC16"
+    id("com.github.ben-manes.versions") version "0.22.0"
     id("com.appmattus.markdown") version "0.4.1"
 }
 
@@ -38,7 +38,7 @@ task("clean", type = Delete::class) {
 
 detekt {
     input = files("$projectDir")
-    filters = ".*test.*,.*androidTest.*,.*/resources/.*,.*/tmp/.*"
+    buildUponDefaultConfig = true
     config = files("detekt-config.yml")
 }
 

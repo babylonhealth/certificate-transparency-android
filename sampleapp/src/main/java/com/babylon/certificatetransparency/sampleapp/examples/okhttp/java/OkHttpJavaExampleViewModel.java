@@ -17,7 +17,7 @@
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.java;
 
 import com.babylon.certificatetransparency.CTInterceptorBuilder;
-import com.babylon.certificatetransparency.Logger;
+import com.babylon.certificatetransparency.CTLogger;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,7 +43,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
 
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
-    private OkHttpClient createOkHttpClient(Set<String> hosts, boolean isFailOnError, Logger defaultLogger) {
+    private OkHttpClient createOkHttpClient(Set<String> hosts, boolean isFailOnError, CTLogger defaultLogger) {
         // Create a network interceptor
         CTInterceptorBuilder builder = new CTInterceptorBuilder()
                 .setFailOnError(isFailOnError)
@@ -62,7 +62,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
     }
 
     @Override
-    public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull Logger defaultLogger) {
+    public void openConnection(@NotNull String connectionHost, @NotNull Set<String> hosts, boolean isFailOnError, @NotNull CTLogger defaultLogger) {
         OkHttpClient client = createOkHttpClient(hosts, isFailOnError, defaultLogger);
 
         Request request = new Request.Builder().url("https://" + connectionHost).build();

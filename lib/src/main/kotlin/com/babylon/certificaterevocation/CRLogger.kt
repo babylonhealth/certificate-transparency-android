@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.loglist
-
-import com.babylon.certificatetransparency.internal.utils.sha256Hash
-import java.security.PublicKey
+package com.babylon.certificaterevocation
 
 /**
- * Representation of a log server, usually loaded from log-list.json
- * @property key The log servers [PublicKey]
- * @property validUntil Timestamp denoting when a log server is valid until, or null if it is valid for all time
+ * A [CRLogger] object is used to log the results of performing certificate revocation for a particular host
  */
-data class LogServer(
-    val key: PublicKey,
-    val validUntil: Long? = null
-) {
+interface CRLogger {
     /**
-     * The log servers id. A SHA-256 hash of the log servers [PublicKey]
+     * Log a [host] and its [result] from performing certificate revocation
      */
-    val id: ByteArray = key.sha256Hash()
-
-    companion object
+    fun log(host: String, result: RevocationResult) = Unit
 }

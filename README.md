@@ -196,7 +196,7 @@ transparency results in the connection being closed. A value of true
 ensures the connection is closed on errors  
 *Default:* true
 
-**Logger** [Logger](./lib/src/main/kotlin/com/babylon/certificatetransparency/Logger.kt)
+**Logger** [CTLogger](./lib/src/main/kotlin/com/babylon/certificatetransparency/CTLogger.kt)
 which will be called with all results.  
 *Default:* none
 

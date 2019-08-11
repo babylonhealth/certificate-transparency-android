@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency
+package com.babylon.certificaterevocation
+
+import okhttp3.Interceptor
 
 /**
- * A [Logger] object is used to log the results of performing certificate transparency for a particular host
+ * DSL to create an OkHttp network [Interceptor] that will reject cert chains containing revoked certificates
+ * @property init Block to execute as a [CRInterceptorBuilder]
  */
-interface Logger {
-    /**
-     * Log a [host] and its [result] from performing certificate transparency
-     */
-    fun log(host: String, result: VerificationResult)
-}
+@JvmSynthetic
+fun certificateRevocationInterceptor(
+    init: CRInterceptorBuilder.() -> Unit = {}
+) = CRInterceptorBuilder()
+    .apply(init)
+    .build()
