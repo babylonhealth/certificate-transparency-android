@@ -166,7 +166,7 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<LogListJsonFailedLoading>(result)
+        assertIsA<LogListJsonFailedLoadingWithException>(result)
     }
 
     @Test
@@ -179,7 +179,7 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<LogListSigFailedLoading>(result)
+        assertIsA<LogListSigFailedLoadingWithException>(result)
     }
 
     @Test

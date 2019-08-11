@@ -3,7 +3,6 @@ package com.babylon.certificatetransparency.internal.loglist
 import com.babylon.certificatetransparency.internal.utils.stringStackTrace
 import com.babylon.certificatetransparency.loglist.LogListResult
 import com.google.gson.JsonParseException
-import java.io.IOException
 
 internal data class SignatureVerificationFailed(val signatureResult: LogServerSignatureResult.Invalid) : LogListResult.Invalid()
 
@@ -19,11 +18,11 @@ internal object LogListSigFailedLoading : LogListResult.Invalid() {
     override fun toString() = "log-list.sig failed to load"
 }
 
-internal data class LogListJsonFailedLoadingWithException(val exception: IOException) : LogListResult.Invalid() {
+internal data class LogListJsonFailedLoadingWithException(val exception: Exception) : LogListResult.Invalid() {
     override fun toString() = "log-list.json failed to load with ${exception.stringStackTrace()}"
 }
 
-internal data class LogListSigFailedLoadingWithException(val exception: IOException) : LogListResult.Invalid() {
+internal data class LogListSigFailedLoadingWithException(val exception: Exception) : LogListResult.Invalid() {
     override fun toString() = "log-list.sig failed to load with ${exception.stringStackTrace()}"
 }
 

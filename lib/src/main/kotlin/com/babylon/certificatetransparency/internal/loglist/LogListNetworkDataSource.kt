@@ -26,7 +26,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import java.io.IOException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
@@ -44,18 +43,18 @@ internal class LogListNetworkDataSource(
 
     @Suppress("ReturnCount")
     override suspend fun get(): LogListResult {
-        val logListJob = async { logService.getLogList().execute().body()?.string() }
-        val signatureJob = async { logService.getLogListSignature().execute().body()?.bytes() }
+        val logListJob = async { logService.getLogList().string() }
+        val signatureJob = async { logService.getLogListSignature().bytes() }
 
         val logListJson = try {
             logListJob.await() ?: return LogListJsonFailedLoading
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             return LogListJsonFailedLoadingWithException(e)
         }
 
         val signature = try {
             signatureJob.await() ?: return LogListSigFailedLoading
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             return LogListSigFailedLoadingWithException(e)
         }
 
