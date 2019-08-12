@@ -199,7 +199,9 @@ ensures the connection is closed on errors
 **Logger** [CTLogger](./lib/src/main/kotlin/com/babylon/certificatetransparency/CTLogger.kt)
 which will be called with all results.  
 On Android you can use the provided [BasicAndroidCTLogger](./android/src/main/kotlin/com/babylon/certificatetransparency/BasicAndroidCTLogger.kt)
-which logs using the tag `CertificateTransparency` in debug mode only.  
+which logs with the tag `CertificateTransparency` by setting
+`logger = BasicAndroidCRLogger(BuildConfig.DEBUG)` using your apps
+`BuildConfig`.  
 *Default:* none
 
 **Hosts** Verify certificate transparency for hosts that match a

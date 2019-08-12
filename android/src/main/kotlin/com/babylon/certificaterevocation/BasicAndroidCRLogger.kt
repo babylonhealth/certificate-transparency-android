@@ -1,11 +1,10 @@
 package com.babylon.certificaterevocation
 
 import android.util.Log
-import com.babylon.certificatetransparency.BuildConfig
 
-class BasicAndroidCRLogger : CRLogger {
+class BasicAndroidCRLogger(private val isDebugMode: Boolean) : CRLogger {
     override fun log(host: String, result: RevocationResult) {
-        if (BuildConfig.DEBUG) {
+        if (isDebugMode) {
             Log.i("CertificateRevocation", "$host $result")
         }
     }

@@ -11,30 +11,26 @@ class BasicAndroidCTLoggerTest {
 
     @Test
     fun logsInDebugMode() {
-        if (BuildConfig.DEBUG) {
-            // given a basic logger
-            val logger = BasicAndroidCTLogger()
+        // given a basic logger
+        val logger = BasicAndroidCTLogger(true)
 
-            // when we log
-            logger.log("a.b.c", VerificationResult.Failure.NoCertificates)
+        // when we log
+        logger.log("a.b.c", VerificationResult.Failure.NoCertificates)
 
-            // then a message is output
-            assertEquals("a.b.c Failure: No certificates", logEntries.first().msg)
-        }
+        // then a message is output
+        assertEquals("a.b.c Failure: No certificates", logEntries.first().msg)
     }
 
     @Test
-    fun nothingIsLoggedInReleaseMode() {
-        if (!BuildConfig.DEBUG) {
-            // given a basic logger
-            val logger = BasicAndroidCTLogger()
+    fun nothingLoggedInReleaseMode() {
+        // given a basic logger
+        val logger = BasicAndroidCTLogger(false)
 
-            // when we log
-            logger.log("a.b.c", VerificationResult.Failure.NoCertificates)
+        // when we log
+        logger.log("a.b.c", VerificationResult.Failure.NoCertificates)
 
-            // then nothing is output
-            assertEquals(0, logEntries.size)
-        }
+        // then nothing is output
+        assertEquals(0, logEntries.size)
     }
 
     private val logEntries
