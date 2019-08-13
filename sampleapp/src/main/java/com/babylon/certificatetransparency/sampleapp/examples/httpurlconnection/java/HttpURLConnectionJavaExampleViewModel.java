@@ -50,7 +50,7 @@ public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel 
                     .setLogger(defaultLogger);
 
             for (String host : hosts) {
-                builder.addHost(host);
+                builder.includeHost(host);
             }
 
             httpsConnection.setHostnameVerifier(builder.build());

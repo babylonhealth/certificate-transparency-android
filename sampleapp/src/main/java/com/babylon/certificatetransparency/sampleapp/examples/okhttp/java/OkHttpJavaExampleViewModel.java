@@ -50,7 +50,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
                 .setLogger(defaultLogger);
 
         for (String host : hosts) {
-            builder.addHost(host);
+            builder.includeHost(host);
         }
 
         Interceptor networkInterceptor = builder.build();

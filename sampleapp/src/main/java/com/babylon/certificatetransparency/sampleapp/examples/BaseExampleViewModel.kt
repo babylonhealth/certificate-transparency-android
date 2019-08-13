@@ -47,7 +47,7 @@ abstract class BaseExampleViewModel : ViewModel() {
     val liveData: LiveData<State>
         get() = _liveData
 
-    fun addHost(title: String) {
+    fun includeHost(title: String) {
         state = if (isValidHost(title)) {
             state.copy(hosts = state.hosts.toMutableSet().apply { add(title) }.toSet())
         } else {
