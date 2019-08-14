@@ -205,7 +205,7 @@ providing a list of [LogServer](./lib/src/main/kotlin/com/babylon/certificatetra
 
 **Policy** [CTPolicy](./lib/src/main/kotlin/com/babylon/certificatetransparency/CTPolicy.kt)
 which will verify correct number of SCTs are present  
-*Default:* [CTPolicy] which follows rules of [Chromium CT Policy](https://github.com/chromium/ct-policy/blob/master/ct_policy.md)
+*Default:* Policy which follows rules of [Chromium CT Policy](https://github.com/chromium/ct-policy/blob/master/ct_policy.md)
 
 **Fail On Error** Determine if a failure to pass certificate
 transparency results in the connection being closed. A value of `true`
