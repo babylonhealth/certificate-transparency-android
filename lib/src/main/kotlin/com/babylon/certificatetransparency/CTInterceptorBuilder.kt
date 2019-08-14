@@ -58,6 +58,16 @@ class CTInterceptorBuilder {
         @JvmSynthetic set
 
     /**
+     * [CTPolicy] which will verify correct number of SCTs are present
+     * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
+     */
+    // public for access in DSL
+    @Suppress("MemberVisibilityCanBePrivate")
+    var policy: CTPolicy? = null
+        @JvmSynthetic get
+        @JvmSynthetic set
+
+    /**
      * [X509TrustManager] used to clean the certificate chain
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
@@ -109,6 +119,13 @@ class CTInterceptorBuilder {
      */
     @Suppress("unused")
     fun setLogger(logger: CTLogger) = apply { this.logger = logger }
+
+    /**
+     * [CTPolicy] which will verify correct number of SCTs are present
+     * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
+     */
+    @Suppress("unused")
+    fun setPolicy(policy: CTPolicy) = apply { this.policy = policy }
 
     /**
      * Verify certificate transparency for hosts that match [pattern].
@@ -173,6 +190,13 @@ class CTInterceptorBuilder {
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor =
-        CertificateTransparencyInterceptor(includeHosts.toSet(), excludeHosts.toSet(), trustManager, logListDataSource, failOnError, logger)
+    fun build(): Interceptor = CertificateTransparencyInterceptor(
+        includeHosts.toSet(),
+        excludeHosts.toSet(),
+        trustManager,
+        logListDataSource,
+        policy,
+        failOnError,
+        logger
+    )
 }
