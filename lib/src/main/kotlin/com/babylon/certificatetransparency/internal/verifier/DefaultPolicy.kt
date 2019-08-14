@@ -34,6 +34,7 @@ internal class DefaultPolicy : CTPolicy {
 
         val (lifetimeInMonths, hasPartialMonth) = roundedDownMonthDifference(before, after)
 
+        @Suppress("MagicNumber")
         val minimumValidSignedCertificateTimestamps = when {
             lifetimeInMonths > 39 || lifetimeInMonths == 39 && hasPartialMonth -> 5
             lifetimeInMonths > 27 || lifetimeInMonths == 27 && hasPartialMonth -> 4
@@ -53,8 +54,10 @@ internal class DefaultPolicy : CTPolicy {
             return MonthDifference(roundedMonthDifference = 0, hasPartialMonth = false)
         }
 
+        @Suppress("MagicNumber")
         return MonthDifference(
-            roundedMonthDifference = (expiry.year - start.year) * 12 + (expiry.month - start.month) - if (expiry.dayOfMonth < start.dayOfMonth) 1 else 0,
+            roundedMonthDifference = (expiry.year - start.year) * 12 + (expiry.month - start.month)
+                    - if (expiry.dayOfMonth < start.dayOfMonth) 1 else 0,
             hasPartialMonth = expiry.dayOfMonth != start.dayOfMonth
         )
     }
