@@ -64,10 +64,10 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
 
         setFooter(
             OutlinedButtonItem(
-                R.string.add_host,
+                R.string.include_host,
                 iconResId = R.drawable.plus
             ) {
-                showAddHostDialog()
+                showIncludeHostDialog()
             })
     }
 
@@ -178,15 +178,15 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
         })
     }
 
-    private fun showAddHostDialog() {
+    private fun showIncludeHostDialog() {
         MaterialDialog(requireContext()).show {
-            title(R.string.add_host_title)
-            message(R.string.add_host_message)
+            title(R.string.include_host_title)
+            message(R.string.include_host_message)
             input { _, text ->
-                viewModel.addHost(text.toString())
+                viewModel.includeHost(text.toString())
             }
 
-            positiveButton(text = "Add")
+            positiveButton(text = "Include")
             negativeButton(text = "Cancel")
         }
     }

@@ -17,6 +17,7 @@
 package com.babylon.certificatetransparency.internal.verifier.model
 
 import okhttp3.HttpUrl
+import java.util.Arrays
 
 /**
  * @property pattern A hostname like `example.com` or a pattern like `*.example.com`.
@@ -29,8 +30,10 @@ internal data class Host(
      */
     private val canonicalHostname: String
 
+    val startsWithWildcard = pattern.startsWith(WILDCARD)
+
     init {
-        this.canonicalHostname = if (pattern.startsWith(WILDCARD)) {
+        this.canonicalHostname = if (startsWithWildcard) {
             HttpUrl.parse("http://" + pattern.substring(WILDCARD.length))?.host()
         } else {
             HttpUrl.parse("http://$pattern")?.host()
@@ -38,7 +41,7 @@ internal data class Host(
     }
 
     fun matches(hostname: String): Boolean {
-        if (pattern.startsWith(WILDCARD)) {
+        if (startsWithWildcard) {
             val firstDot = hostname.indexOf('.')
             return hostname.length - firstDot - 1 == canonicalHostname.length && hostname.regionMatches(
                 firstDot + 1, canonicalHostname, 0,
@@ -47,6 +50,18 @@ internal data class Host(
         }
 
         return hostname == canonicalHostname
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+
+        return (other is Host && canonicalHostname == other.canonicalHostname && startsWithWildcard == other.startsWithWildcard)
+    }
+
+    override fun hashCode(): Int {
+        return Arrays.hashCode(arrayOf(canonicalHostname, startsWithWildcard))
     }
 
     companion object {

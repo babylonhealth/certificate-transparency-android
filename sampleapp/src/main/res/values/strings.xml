@@ -4,11 +4,11 @@
     <string name="kotlin">Kotlin</string>
     <string name="java">Java</string>
     <string name="certificate_transparency">Certificate Transparency</string>
-    <string name="add_host_title">Add host</string>
-    <string name="add_host_message">e.g. example.com, *.example.com, subdomain.example.com</string>
+    <string name="include_host_title">Include host</string>
+    <string name="include_host_message">e.g. example.com, *.example.com, subdomain.example.com</string>
     <string name="fail_on_error">Fail on error</string>
     <string name="test_certificate_transparency">Test certificate transparency</string>
-    <string name="add_host">Add Host</string>
+    <string name="include_host">Include Host</string>
     <string name="configuration">Configuration</string>
     <string name="sample_code">Sample code</string>
     <string name="remove">Remove</string>

@@ -89,7 +89,11 @@ match any sub-domain but not "babylonhealth.com" with no subdomain.
 
 ```kotlin
 val interceptor = certificateTransparencyInterceptor {
+    // Enable for the provided hosts
     +"*.babylonhealth.com"
+
+    // Exclude specific hosts
+    -"legacy.babylonhealth.com"
 }
 
 val client = OkHttpClient.Builder().apply {
@@ -127,7 +131,11 @@ before calling connect() on the connection:
 val connection = URL("https://www.babylonhealth.com").openConnection()
 if (connection is HttpsURLConnection) {
     connection.hostnameVerifier = certificateTransparencyHostnameVerifier(connection.hostnameVerifier) {
+        // Enable for the provided hosts
         +"*.babylonhealth.com"
+
+        // Exclude specific hosts
+        -"legacy.babylonhealth.com"
     }
 }
 ```
@@ -146,7 +154,11 @@ val requestQueue = Volley.newRequestQueue(applicationContext, object : HurlStack
         val connection = super.createConnection(url)
         if (connection is HttpsURLConnection) {
             connection.hostnameVerifier = certificateTransparencyHostnameVerifier(connection.hostnameVerifier) {
+                // Enable for the provided hosts
                 +"*.babylonhealth.com"
+
+                // Exclude specific hosts
+                -"legacy.babylonhealth.com"
             }
         }
         return connection

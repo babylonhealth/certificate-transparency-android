@@ -28,12 +28,13 @@ import javax.net.ssl.SSLSocket
 import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyInterceptor(
-    hosts: Set<Host>,
+    inlcudeHosts: Set<Host>,
+    excludeHosts: Set<Host>,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<LogListResult>?,
     private val failOnError: Boolean = true,
     private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
+) : CertificateTransparencyBase(inlcudeHosts, excludeHosts, trustManager, logListDataSource), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()

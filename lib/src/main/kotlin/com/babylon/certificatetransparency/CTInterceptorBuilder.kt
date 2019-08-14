@@ -29,10 +29,12 @@ import javax.net.ssl.X509TrustManager
  * Builder to create an OkHttp network interceptor that will verify a host is trusted using
  * certificate transparency
  */
+@Suppress("TooManyFunctions")
 class CTInterceptorBuilder {
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
-    private val hosts = mutableSetOf<Host>()
+    private val includeHosts = mutableSetOf<Host>()
+    private val excludeHosts = mutableSetOf<Host>()
 
     /**
      * Determine if a failure to pass certificate transparency results in the connection being closed. A value of true ensures the connection is
@@ -114,18 +116,18 @@ class CTInterceptorBuilder {
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun addHost(pattern: String) = apply {
-        hosts.add(Host(pattern))
+    fun includeHost(pattern: String) = apply {
+        includeHosts.add(Host(pattern))
     }
 
     /**
-     * Verify certificate transparency for host that match [this].
+     * Verify certificate transparency for hosts that match [this].
      *
      * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
     operator fun String.unaryPlus() {
-        addHost(this)
+        includeHost(this)
     }
 
     /**
@@ -135,11 +137,42 @@ class CTInterceptorBuilder {
      */
     @JvmSynthetic
     operator fun List<String>.unaryPlus() {
-        forEach { addHost(it) }
+        forEach { includeHost(it) }
+    }
+
+    /**
+     * Ignore certificate transparency for hosts that match [pattern].
+     *
+     * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun excludeHost(vararg pattern: String) = apply {
+        pattern.forEach { excludeHosts.add(Host(it)) }
+    }
+
+    /**
+     * Ignore certificate transparency for hosts that match [this].
+     *
+     * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
+     */
+    @JvmSynthetic
+    operator fun String.unaryMinus() {
+        excludeHost(this)
+    }
+
+    /**
+     * Ignore certificate transparency for hosts that match one of [this].
+     *
+     * @receiver [List] of lower-case host name or wildcard pattern such as `*.example.com`.
+     */
+    @JvmSynthetic
+    operator fun List<String>.unaryMinus() {
+        forEach { excludeHost(it) }
     }
 
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts.toSet(), trustManager, logListDataSource, failOnError, logger)
+    fun build(): Interceptor =
+        CertificateTransparencyInterceptor(includeHosts.toSet(), excludeHosts.toSet(), trustManager, logListDataSource, failOnError, logger)
 }
