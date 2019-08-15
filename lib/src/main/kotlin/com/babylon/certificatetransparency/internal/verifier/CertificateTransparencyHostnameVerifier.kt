@@ -18,7 +18,7 @@ package com.babylon.certificatetransparency.internal.verifier
 
 import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.VerificationResult
-import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.verifier.model.Host
 import com.babylon.certificatetransparency.loglist.LogListResult

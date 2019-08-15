@@ -20,7 +20,7 @@ package com.babylon.certificatetransparency.internal.verifier
 
 import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
-import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.loglist.LogListDataSourceFactory

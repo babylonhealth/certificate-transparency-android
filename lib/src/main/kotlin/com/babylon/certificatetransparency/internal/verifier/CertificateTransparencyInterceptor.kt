@@ -16,22 +16,26 @@
 
 package com.babylon.certificatetransparency.internal.verifier
 
-import com.babylon.certificatetransparency.*
-import com.babylon.certificatetransparency.cache.*
-import com.babylon.certificatetransparency.datasource.*
-import com.babylon.certificatetransparency.internal.verifier.model.*
-import com.babylon.certificatetransparency.loglist.*
-import okhttp3.*
-import javax.net.ssl.*
+import com.babylon.certificatetransparency.CTLogger
+import com.babylon.certificatetransparency.VerificationResult
+import com.babylon.certificatetransparency.cache.DiskCache
+import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.internal.verifier.model.Host
+import com.babylon.certificatetransparency.loglist.LogListResult
+import okhttp3.Interceptor
+import okhttp3.Response
+import javax.net.ssl.SSLPeerUnverifiedException
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyInterceptor(
-        inlcudeHosts: Set<Host>,
+    inlcudeHosts: Set<Host>,
     excludeHosts: Set<Host>,
-        trustManager: X509TrustManager?,
-        logListDataSource: DataSource<LogListResult>?,
-        diskCache: DiskCache? = null,
-        private val failOnError: Boolean = true,
-        private val logger: CTLogger? = null
+    trustManager: X509TrustManager?,
+    logListDataSource: DataSource<LogListResult>?,
+    diskCache: DiskCache? = null,
+    private val failOnError: Boolean = true,
+    private val logger: CTLogger? = null
 ) : CertificateTransparencyBase(inlcudeHosts, excludeHosts, trustManager, logListDataSource, diskCache), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
