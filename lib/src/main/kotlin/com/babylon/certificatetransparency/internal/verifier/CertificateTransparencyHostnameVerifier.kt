@@ -18,6 +18,7 @@ package com.babylon.certificatetransparency.internal.verifier
 
 import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.VerificationResult
+import com.babylon.certificatetransparency.cache.*
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.verifier.model.Host
 import com.babylon.certificatetransparency.loglist.LogListResult
@@ -30,9 +31,10 @@ internal class CertificateTransparencyHostnameVerifier(
     hosts: Set<Host>,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<LogListResult>?,
+    diskCache: DiskCache?,
     private val failOnError: Boolean = true,
     private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), HostnameVerifier {
+) : CertificateTransparencyBase(hosts, trustManager, logListDataSource, diskCache), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
         if (!delegate.verify(host, sslSession)) {

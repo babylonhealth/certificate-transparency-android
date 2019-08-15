@@ -16,24 +16,22 @@
 
 package com.babylon.certificatetransparency.internal.verifier
 
-import com.babylon.certificatetransparency.CTLogger
-import com.babylon.certificatetransparency.VerificationResult
-import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.internal.verifier.model.Host
-import com.babylon.certificatetransparency.loglist.LogListResult
-import okhttp3.Interceptor
-import okhttp3.Response
-import javax.net.ssl.SSLPeerUnverifiedException
-import javax.net.ssl.SSLSocket
-import javax.net.ssl.X509TrustManager
+import com.babylon.certificatetransparency.*
+import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.datasource.*
+import com.babylon.certificatetransparency.internal.verifier.model.*
+import com.babylon.certificatetransparency.loglist.*
+import okhttp3.*
+import javax.net.ssl.*
 
 internal class CertificateTransparencyInterceptor(
-    hosts: Set<Host>,
-    trustManager: X509TrustManager?,
-    logListDataSource: DataSource<LogListResult>?,
-    private val failOnError: Boolean = true,
-    private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource), Interceptor {
+        hosts: Set<Host>,
+        trustManager: X509TrustManager?,
+        logListDataSource: DataSource<LogListResult>?,
+        diskCache: DiskCache? = null,
+        private val failOnError: Boolean = true,
+        private val logger: CTLogger? = null
+) : CertificateTransparencyBase(hosts, trustManager, logListDataSource, diskCache), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()

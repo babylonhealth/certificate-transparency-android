@@ -16,10 +16,9 @@
 
 package com.babylon.certificatetransparency.sampleapp
 
-import androidx.multidex.MultiDexApplication
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.security.ProviderInstaller
+import androidx.multidex.*
+import com.google.android.gms.common.*
+import com.google.android.gms.security.*
 
 // Used by AndroidManifest.xml
 @Suppress("unused")
@@ -28,6 +27,7 @@ class Application : MultiDexApplication() {
         super.onCreate()
 
         updateSecurityProvider()
+        instance = this
     }
 
     /**
@@ -41,5 +41,10 @@ class Application : MultiDexApplication() {
         } catch (e: GooglePlayServicesNotAvailableException) {
             println("Failed to update security provider")
         }
+    }
+
+    companion object {
+        lateinit var instance: Application
+            private set
     }
 }

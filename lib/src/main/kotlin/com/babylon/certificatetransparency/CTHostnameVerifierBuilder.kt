@@ -16,14 +16,12 @@
 
 package com.babylon.certificatetransparency
 
-import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyHostnameVerifier
-import com.babylon.certificatetransparency.internal.verifier.model.Host
-import com.babylon.certificatetransparency.loglist.LogListResult
-import com.babylon.certificatetransparency.loglist.LogServer
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
+import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.datasource.*
+import com.babylon.certificatetransparency.internal.verifier.*
+import com.babylon.certificatetransparency.internal.verifier.model.*
+import com.babylon.certificatetransparency.loglist.*
+import javax.net.ssl.*
 
 /**
  * Builder to create a [HostnameVerifier] that will verify a host is trusted using certificate
@@ -31,7 +29,7 @@ import javax.net.ssl.X509TrustManager
  * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks
  */
 class CTHostnameVerifierBuilder(
-    @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
+        @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
 ) {
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
@@ -59,12 +57,22 @@ class CTHostnameVerifierBuilder(
         @JvmSynthetic set
 
     /**
+     * [DiskCache] which will cache the log list
+     * Default: none
+     */
+    // public for access in DSL
+    @Suppress("MemberVisibilityCanBePrivate")
+    var diskCache: DiskCache? = null
+        @JvmSynthetic get
+        @JvmSynthetic set
+
+    /**
      * [X509TrustManager] used to clean the certificate chain
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun setTrustManager(trustManager: X509TrustManager) =
-        apply { this.trustManager = trustManager }
+            apply { this.trustManager = trustManager }
 
     /**
      * [X509TrustManager] used to clean the certificate chain
@@ -82,9 +90,9 @@ class CTHostnameVerifierBuilder(
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun setLogListDataSource(logListDataSource: DataSource<LogListResult>) =
-        apply {
-            this.logListDataSource = logListDataSource
-        }
+            apply {
+                this.logListDataSource = logListDataSource
+            }
 
     /**
      * A [DataSource] providing a list of [LogServer]
@@ -110,6 +118,13 @@ class CTHostnameVerifierBuilder(
      */
     @Suppress("unused")
     fun setLogger(logger: CTLogger) = apply { this.logger = logger }
+
+    /**
+     * [DiskCache] which will cache the log list
+     * Default: none
+     */
+    @Suppress("unused")
+    fun setDiskCache(diskCache: DiskCache) = apply { this.diskCache = diskCache }
 
     /**
      * Verify certificate transparency for hosts that match [pattern].
@@ -145,11 +160,12 @@ class CTHostnameVerifierBuilder(
      * Build the [HostnameVerifier]
      */
     fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(
-        delegate,
-        hosts.toSet(),
-        trustManager,
-        logListDataSource,
-        failOnError,
-        logger
+            delegate,
+            hosts.toSet(),
+            trustManager,
+            logListDataSource,
+            diskCache,
+            failOnError,
+            logger
     )
 }

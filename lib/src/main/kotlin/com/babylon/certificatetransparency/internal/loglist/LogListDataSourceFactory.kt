@@ -16,24 +16,30 @@
 
 package com.babylon.certificatetransparency.internal.loglist
 
-import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.loglist.LogListResult
-import retrofit2.Retrofit
+import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.datasource.*
+import com.babylon.certificatetransparency.internal.loglist.parser.*
+import com.babylon.certificatetransparency.loglist.*
+import retrofit2.*
 
 internal object LogListDataSourceFactory {
-    fun create(): DataSource<LogListResult> {
+    fun create(diskCache: DiskCache?): DataSource<LogListResult> {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.gstatic.com/ct/log_list/")
-            .build()
+                .baseUrl("https://www.gstatic.com/ct/log_list/")
+                .build()
 
         val logService = retrofit.create(LogListService::class.java)
+        val transformer = RawLogListToLogListResultTransformer()
+        val diskCacheOrNoOp = diskCache ?: object : DiskCache{}
 
         return InMemoryCache()
-            .compose(LogListNetworkDataSource(logService))
-            .reuseInflight()
+                .compose(diskCacheOrNoOp)
+                .compose(LogListNetworkDataSource(logService))
+                .oneWayTransform { transformer.transform(it) }
+                .reuseInflight()
     }
 
-    private class InMemoryCache : InMemoryDataSource<LogListResult>() {
-        override suspend fun isValid(value: LogListResult?) = value is LogListResult.Valid
+    private class InMemoryCache : InMemoryDataSource<RawLogListResult>() {
+        override suspend fun isValid(value: RawLogListResult?) = value is RawLogListResult.Success
     }
 }

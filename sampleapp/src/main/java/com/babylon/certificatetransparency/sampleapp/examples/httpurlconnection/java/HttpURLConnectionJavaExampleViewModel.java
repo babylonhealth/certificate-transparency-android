@@ -18,6 +18,8 @@ package com.babylon.certificatetransparency.sampleapp.examples.httpurlconnection
 
 import com.babylon.certificatetransparency.CTHostnameVerifierBuilder;
 import com.babylon.certificatetransparency.CTLogger;
+import com.babylon.certificatetransparency.cache.AndroidDiskCache;
+import com.babylon.certificatetransparency.sampleapp.Application;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +49,8 @@ public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel 
             // Create a hostname verifier wrapping the original
             CTHostnameVerifierBuilder builder = new CTHostnameVerifierBuilder(httpsConnection.getHostnameVerifier())
                     .setFailOnError(isFailOnError)
-                    .setLogger(defaultLogger);
+                    .setLogger(defaultLogger)
+                    .setDiskCache(new AndroidDiskCache(Application.Companion.getInstance()));
 
             for (String host : hosts) {
                 builder.addHost(host);

@@ -17,7 +17,9 @@
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.kotlin
 
 import com.babylon.certificatetransparency.CTLogger
+import com.babylon.certificatetransparency.cache.*
 import com.babylon.certificatetransparency.certificateTransparencyInterceptor
+import com.babylon.certificatetransparency.sampleapp.*
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import okhttp3.Call
 import okhttp3.Callback
@@ -41,6 +43,7 @@ class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
             }
             failOnError = isFailOnError
             logger = defaultLogger
+            diskCache = AndroidDiskCache(Application.instance)
         }
 
         // Set the interceptor when creating the OkHttp client

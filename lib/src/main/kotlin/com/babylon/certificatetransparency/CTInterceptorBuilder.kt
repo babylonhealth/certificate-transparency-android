@@ -16,11 +16,11 @@
 
 package com.babylon.certificatetransparency
 
+import com.babylon.certificatetransparency.cache.*
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyInterceptor
 import com.babylon.certificatetransparency.internal.verifier.model.Host
-import com.babylon.certificatetransparency.loglist.LogListResult
-import com.babylon.certificatetransparency.loglist.LogServer
+import com.babylon.certificatetransparency.loglist.*
 import okhttp3.Interceptor
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
@@ -52,6 +52,16 @@ class CTInterceptorBuilder {
     // public for access in DSL
     @Suppress("MemberVisibilityCanBePrivate")
     var logger: CTLogger? = null
+        @JvmSynthetic get
+        @JvmSynthetic set
+
+    /**
+     * [DiskCache] which will cache the log list
+     * Default: none
+     */
+    // public for access in DSL
+    @Suppress("MemberVisibilityCanBePrivate")
+    var diskCache: DiskCache? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -109,6 +119,13 @@ class CTInterceptorBuilder {
     fun setLogger(logger: CTLogger) = apply { this.logger = logger }
 
     /**
+     * [DiskCache] which will cache the log list
+     * Default: none
+     */
+    @Suppress("unused")
+    fun setDiskCache(diskCache: DiskCache) = apply { this.diskCache = diskCache }
+
+    /**
      * Verify certificate transparency for hosts that match [pattern].
      *
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
@@ -141,5 +158,12 @@ class CTInterceptorBuilder {
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateTransparencyInterceptor(hosts.toSet(), trustManager, logListDataSource, failOnError, logger)
+    fun build(): Interceptor = CertificateTransparencyInterceptor(
+            hosts.toSet(),
+            trustManager,
+            logListDataSource,
+            diskCache,
+            failOnError,
+            logger
+    )
 }

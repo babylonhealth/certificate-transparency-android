@@ -18,6 +18,8 @@ package com.babylon.certificatetransparency.sampleapp.examples.okhttp.java;
 
 import com.babylon.certificatetransparency.CTInterceptorBuilder;
 import com.babylon.certificatetransparency.CTLogger;
+import com.babylon.certificatetransparency.cache.AndroidDiskCache;
+import com.babylon.certificatetransparency.sampleapp.Application;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,7 +49,8 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
         // Create a network interceptor
         CTInterceptorBuilder builder = new CTInterceptorBuilder()
                 .setFailOnError(isFailOnError)
-                .setLogger(defaultLogger);
+                .setLogger(defaultLogger)
+                .setDiskCache(new AndroidDiskCache(Application.Companion.getInstance()));
 
         for (String host : hosts) {
             builder.addHost(host);

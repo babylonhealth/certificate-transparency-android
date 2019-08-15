@@ -20,6 +20,7 @@ package com.babylon.certificatetransparency.internal.verifier
 
 import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
+import com.babylon.certificatetransparency.cache.*
 import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.loglist.LogListDataSourceFactory
@@ -41,6 +42,7 @@ internal open class CertificateTransparencyBase(
     private val hosts: Set<Host>,
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<LogListResult>? = null,
+    diskCache: DiskCache? = null,
     private val minimumValidSignedCertificateTimestamps: Int = 2
 ) {
     init {
@@ -55,7 +57,7 @@ internal open class CertificateTransparencyBase(
         CertificateChainCleaner.get(localTrustManager)
     }
 
-    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create())
+    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create(diskCache))
 
     fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): VerificationResult {
         return if (!enabledForCertificateTransparency(host)) {
