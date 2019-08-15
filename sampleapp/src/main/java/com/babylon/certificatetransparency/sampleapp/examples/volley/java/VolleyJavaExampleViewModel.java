@@ -40,10 +40,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
 
-    private final Context applicationContext;
-
-    public VolleyJavaExampleViewModel(Context applicationContext) {
-        this.applicationContext = applicationContext;
+    public VolleyJavaExampleViewModel(@NotNull Context context) {
+        super(context);
     }
 
     @NotNull
@@ -65,7 +63,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
             CTHostnameVerifierBuilder builder = new CTHostnameVerifierBuilder(httpsConnection.getHostnameVerifier())
                     .setFailOnError(isFailOnError)
                     .setLogger(defaultLogger)
-                    .setDiskCache(new AndroidDiskCache(Application.Companion.getInstance()));
+                    .setDiskCache(new AndroidDiskCache(getApplication()));
 
             for (String host : hosts) {
                 builder.includeHost(host);
@@ -78,7 +76,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private RequestQueue createRequestQueue(Set<String> hosts, boolean isFailOnError, CTLogger defaultLogger) {
-        return Volley.newRequestQueue(applicationContext,
+        return Volley.newRequestQueue(getApplication(),
                 new HurlStack() {
                     @Override
                     protected HttpURLConnection createConnection(URL url) throws IOException {

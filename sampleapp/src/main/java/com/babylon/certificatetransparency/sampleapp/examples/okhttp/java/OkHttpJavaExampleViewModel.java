@@ -16,10 +16,11 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.java;
 
+import android.content.Context;
+
 import com.babylon.certificatetransparency.CTInterceptorBuilder;
 import com.babylon.certificatetransparency.CTLogger;
 import com.babylon.certificatetransparency.cache.AndroidDiskCache;
-import com.babylon.certificatetransparency.sampleapp.Application;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,14 +37,16 @@ import okhttp3.Response;
 
 public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
 
+    public OkHttpJavaExampleViewModel(@NotNull Context context) {
+        super(context);
+    }
+
     @NotNull
     @Override
     public String getSampleCodeTemplate() {
         return "okhttp-java.txt";
     }
 
-    public OkHttpJavaExampleViewModel() {
-    }
 
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
@@ -52,7 +55,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
         CTInterceptorBuilder builder = new CTInterceptorBuilder()
                 .setFailOnError(isFailOnError)
                 .setLogger(defaultLogger)
-                .setDiskCache(new AndroidDiskCache(Application.Companion.getInstance()));
+                .setDiskCache(new AndroidDiskCache(getApplication()));
 
         for (String host : hosts) {
             builder.includeHost(host);

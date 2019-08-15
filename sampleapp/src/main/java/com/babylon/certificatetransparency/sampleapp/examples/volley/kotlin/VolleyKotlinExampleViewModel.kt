@@ -32,7 +32,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class VolleyKotlinExampleViewModel(private val applicationContext: Context) : BaseExampleViewModel() {
+class VolleyKotlinExampleViewModel(context: Context) : BaseExampleViewModel(context) {
 
     override val sampleCodeTemplate
         get() = "volley-kotlin.txt"
@@ -50,7 +50,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
                 }
                 failOnError = isFailOnError
                 logger = defaultLogger
-                diskCache = AndroidDiskCache(Application.instance)
+                diskCache = AndroidDiskCache(getApplication())
             }
         }
     }
@@ -58,7 +58,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private fun createRequestQueue(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger): RequestQueue {
-        return Volley.newRequestQueue(applicationContext,
+        return Volley.newRequestQueue(getApplication(),
             object : HurlStack() {
                 override fun createConnection(url: URL): HttpURLConnection {
                     return super.createConnection(url).apply {

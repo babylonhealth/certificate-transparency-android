@@ -28,7 +28,6 @@ class Application : MultiDexApplication() {
         super.onCreate()
 
         updateSecurityProvider()
-        instance = this
     }
 
     /**
@@ -42,10 +41,5 @@ class Application : MultiDexApplication() {
         } catch (e: GooglePlayServicesNotAvailableException) {
             println("Failed to update security provider")
         }
-    }
-
-    companion object {
-        lateinit var instance: Application
-            private set
     }
 }
