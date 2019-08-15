@@ -1,20 +1,27 @@
 package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.internal.loglist.*
-import com.babylon.certificatetransparency.internal.utils.*
-import com.babylon.certificatetransparency.loglist.*
-import com.babylon.certificatetransparency.utils.*
-import com.nhaarman.mockitokotlin2.*
-import kotlinx.coroutines.*
-import okhttp3.*
-import okhttp3.Response
-import org.junit.*
-import org.junit.Assert.*
-import retrofit2.*
-import java.io.*
-import java.security.*
-import javax.net.ssl.*
-import kotlin.math.*
+import com.babylon.certificatetransparency.internal.loglist.JsonFormat
+import com.babylon.certificatetransparency.internal.loglist.LogListJsonFailedLoadingWithException
+import com.babylon.certificatetransparency.internal.loglist.LogListSigFailedLoadingWithException
+import com.babylon.certificatetransparency.internal.loglist.RawLogListJsonFailedLoadingWithException
+import com.babylon.certificatetransparency.internal.loglist.RawLogListSigFailedLoadingWithException
+import com.babylon.certificatetransparency.internal.loglist.SignatureVerificationFailed
+import com.babylon.certificatetransparency.internal.utils.Base64
+import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificatetransparency.loglist.RawLogListResult
+import com.babylon.certificatetransparency.utils.TestData
+import com.babylon.certificatetransparency.utils.assertIsA
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Test
+import java.io.IOException
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.PrivateKey
+import java.security.Signature
+import javax.net.ssl.SSLException
 
 class RawLogListToLogListResultTransformerTest {
 
@@ -24,10 +31,10 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListResult.Success(
-                        json,
-                        sig
-                )
+            RawLogListResult.Success(
+                json,
+                sig
+            )
         )
 
         // then 32 items are returned
@@ -44,11 +51,11 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer(
-                logListVerifier = LogListVerifier(keyPair.public)
+            logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
-                RawLogListResult.Success(
-                        jsonIncomplete, signature
-                )
+            RawLogListResult.Success(
+                jsonIncomplete, signature
+            )
         )
 
         // then invalid is returned
@@ -61,9 +68,9 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListResult.Success(
-                        json,ByteArray(512)
-                )
+            RawLogListResult.Success(
+                json, ByteArray(512)
+            )
         )
 
         // then invalid is returned
@@ -76,9 +83,9 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListResult.Success(
-                        json,ByteArray(32)
-                )
+            RawLogListResult.Success(
+                json, ByteArray(32)
+            )
         )
 
         // then invalid is returned
@@ -91,7 +98,7 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListJsonFailedLoadingWithException(IOException("bogo"))
+            RawLogListJsonFailedLoadingWithException(IOException("bogo"))
         )
 
         // then invalid is returned
@@ -104,7 +111,7 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListSigFailedLoadingWithException(IOException("bogo"))
+            RawLogListSigFailedLoadingWithException(IOException("bogo"))
         )
 
         // then invalid is returned
@@ -117,7 +124,7 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListJsonFailedLoadingWithException(SSLException("bogo"))
+            RawLogListJsonFailedLoadingWithException(SSLException("bogo"))
         )
 
         // then invalid is returned
@@ -130,7 +137,7 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
-                RawLogListSigFailedLoadingWithException(SSLException("bogo"))
+            RawLogListSigFailedLoadingWithException(SSLException("bogo"))
         )
 
         // then invalid is returned
@@ -145,11 +152,11 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer(
-                logListVerifier = LogListVerifier(keyPair.public)
+            logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
-                RawLogListResult.Success(
-                        jsonValidUntil, signature
-                )
+            RawLogListResult.Success(
+                jsonValidUntil, signature
+            )
         )
 
         // then validUntil is set to the the STH timestamp
@@ -166,11 +173,11 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer(
-                logListVerifier = LogListVerifier(keyPair.public)
+            logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
-                RawLogListResult.Success(
-                        jsonValidUntil, signature
-                )
+            RawLogListResult.Success(
+                jsonValidUntil, signature
+            )
         )
 
         // then validUntil is set to the the STH timestamp
@@ -188,11 +195,11 @@ class RawLogListToLogListResultTransformerTest {
 
         // when we ask for data
         val result = RawLogListToLogListResultTransformer(
-                logListVerifier = LogListVerifier(keyPair.public)
+            logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
-                RawLogListResult.Success(
-                        jsonValidUntil, signature
-                )
+            RawLogListResult.Success(
+                jsonValidUntil, signature
+            )
         )
 
         // then validUntil is set to the the STH timestamp

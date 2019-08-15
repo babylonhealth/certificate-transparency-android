@@ -16,27 +16,28 @@
 
 package com.babylon.certificatetransparency.internal.loglist
 
-import com.babylon.certificatetransparency.cache.*
-import com.babylon.certificatetransparency.datasource.*
-import com.babylon.certificatetransparency.internal.loglist.parser.*
-import com.babylon.certificatetransparency.loglist.*
-import retrofit2.*
+import com.babylon.certificatetransparency.cache.DiskCache
+import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.internal.loglist.parser.RawLogListToLogListResultTransformer
+import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificatetransparency.loglist.RawLogListResult
+import retrofit2.Retrofit
 
 internal object LogListDataSourceFactory {
     fun create(diskCache: DiskCache?): DataSource<LogListResult> {
         val retrofit = Retrofit.Builder()
-                .baseUrl("https://www.gstatic.com/ct/log_list/")
-                .build()
+            .baseUrl("https://www.gstatic.com/ct/log_list/")
+            .build()
 
         val logService = retrofit.create(LogListService::class.java)
         val transformer = RawLogListToLogListResultTransformer()
-        val diskCacheOrNoOp = diskCache ?: object : DiskCache{}
+        val diskCacheOrNoOp = diskCache ?: object : DiskCache {}
 
         return InMemoryCache()
-                .compose(diskCacheOrNoOp)
-                .compose(LogListNetworkDataSource(logService))
-                .oneWayTransform { transformer.transform(it) }
-                .reuseInflight()
+            .compose(diskCacheOrNoOp)
+            .compose(LogListNetworkDataSource(logService))
+            .oneWayTransform { transformer.transform(it) }
+            .reuseInflight()
     }
 
     private class InMemoryCache : InMemoryDataSource<RawLogListResult>() {

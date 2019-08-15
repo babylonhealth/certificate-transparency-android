@@ -16,12 +16,15 @@
 
 package com.babylon.certificatetransparency
 
-import com.babylon.certificatetransparency.cache.*
-import com.babylon.certificatetransparency.datasource.*
-import com.babylon.certificatetransparency.internal.verifier.*
-import com.babylon.certificatetransparency.internal.verifier.model.*
-import com.babylon.certificatetransparency.loglist.*
-import javax.net.ssl.*
+import com.babylon.certificatetransparency.cache.DiskCache
+import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyHostnameVerifier
+import com.babylon.certificatetransparency.internal.verifier.model.Host
+import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificatetransparency.loglist.LogServer
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 /**
  * Builder to create a [HostnameVerifier] that will verify a host is trusted using certificate
@@ -30,7 +33,7 @@ import javax.net.ssl.*
  */
 @Suppress("TooManyFunctions")
 class CTHostnameVerifierBuilder(
-        @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
+    @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
 ) {
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
@@ -74,7 +77,7 @@ class CTHostnameVerifierBuilder(
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun setTrustManager(trustManager: X509TrustManager) =
-            apply { this.trustManager = trustManager }
+        apply { this.trustManager = trustManager }
 
     /**
      * [X509TrustManager] used to clean the certificate chain
@@ -92,9 +95,9 @@ class CTHostnameVerifierBuilder(
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun setLogListDataSource(logListDataSource: DataSource<LogListResult>) =
-            apply {
-                this.logListDataSource = logListDataSource
-            }
+        apply {
+            this.logListDataSource = logListDataSource
+        }
 
     /**
      * A [DataSource] providing a list of [LogServer]
@@ -192,13 +195,13 @@ class CTHostnameVerifierBuilder(
      * Build the [HostnameVerifier]
      */
     fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(
-            delegate,
-            includeHosts.toSet(),
+        delegate,
+        includeHosts.toSet(),
         excludeHosts.toSet(),
-            trustManager,
-            logListDataSource,
-            diskCache,
-            failOnError,
-            logger
+        trustManager,
+        logListDataSource,
+        diskCache,
+        failOnError,
+        logger
     )
 }

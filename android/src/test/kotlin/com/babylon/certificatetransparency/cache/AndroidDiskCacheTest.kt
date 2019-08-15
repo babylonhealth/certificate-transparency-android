@@ -1,13 +1,13 @@
 package com.babylon.certificatetransparency.cache
 
-import androidx.test.core.app.*
-import androidx.test.ext.junit.runners.*
-import com.babylon.certificatetransparency.loglist.*
-import kotlinx.coroutines.*
-import org.junit.*
-import org.junit.Assert.*
-import org.junit.runner.*
-import java.util.*
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.babylon.certificatetransparency.loglist.RawLogListResult
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class AndroidDiskCacheTest {
@@ -20,8 +20,8 @@ class AndroidDiskCacheTest {
 
         // given a disk cache with a non-expiring cache policy
         val diskCache = AndroidDiskCache(
-                ApplicationProvider.getApplicationContext(),
-                givenDiskCachePolicy(false)
+            ApplicationProvider.getApplicationContext(),
+            givenDiskCachePolicy(false)
         )
 
         // when I write the result
@@ -46,8 +46,8 @@ class AndroidDiskCacheTest {
 
         // given a disk cache with an always-expired cache policy
         val diskCache = AndroidDiskCache(
-                ApplicationProvider.getApplicationContext(),
-                givenDiskCachePolicy(true)
+            ApplicationProvider.getApplicationContext(),
+            givenDiskCachePolicy(true)
         )
 
         // when I write the result
@@ -64,7 +64,7 @@ class AndroidDiskCacheTest {
         assertEquals(null, actual)
     }
 
-    private fun givenDiskCachePolicy(expiring: Boolean)  = object : DiskCachePolicy {
+    private fun givenDiskCachePolicy(expiring: Boolean) = object : DiskCachePolicy {
         override fun isExpired(lastWriteDate: Date, currentDate: Date): Boolean {
             return expiring
         }

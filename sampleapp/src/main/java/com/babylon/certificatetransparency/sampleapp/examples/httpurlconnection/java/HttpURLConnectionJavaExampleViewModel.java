@@ -21,13 +21,15 @@ import com.babylon.certificatetransparency.CTLogger;
 import com.babylon.certificatetransparency.cache.AndroidDiskCache;
 import com.babylon.certificatetransparency.sampleapp.Application;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Set;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel {
 

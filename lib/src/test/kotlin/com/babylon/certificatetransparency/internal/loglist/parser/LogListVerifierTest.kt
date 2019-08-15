@@ -1,10 +1,14 @@
 package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.internal.loglist.*
-import com.babylon.certificatetransparency.utils.*
-import kotlinx.coroutines.*
-import org.junit.*
-import java.security.*
+import com.babylon.certificatetransparency.internal.loglist.LogServerSignatureResult
+import com.babylon.certificatetransparency.utils.TestData
+import com.babylon.certificatetransparency.utils.assertIsA
+import kotlinx.coroutines.runBlocking
+import org.junit.Test
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.PrivateKey
+import java.security.Signature
 
 class LogListVerifierTest {
 

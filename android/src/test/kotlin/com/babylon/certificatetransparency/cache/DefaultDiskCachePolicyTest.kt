@@ -1,8 +1,10 @@
 package com.babylon.certificatetransparency.cache
 
-import org.junit.*
-import org.junit.Assert.*
-import java.util.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.util.Calendar
+import java.util.Date
 
 class DefaultDiskCachePolicyTest {
 

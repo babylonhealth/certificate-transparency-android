@@ -16,9 +16,10 @@
 
 package com.babylon.certificatetransparency.sampleapp
 
-import androidx.multidex.*
-import com.google.android.gms.common.*
-import com.google.android.gms.security.*
+import androidx.multidex.MultiDexApplication
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
+import com.google.android.gms.security.ProviderInstaller
 
 // Used by AndroidManifest.xml
 @Suppress("unused")

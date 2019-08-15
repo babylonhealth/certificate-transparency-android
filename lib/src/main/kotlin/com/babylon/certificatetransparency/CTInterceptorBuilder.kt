@@ -16,11 +16,12 @@
 
 package com.babylon.certificatetransparency
 
-import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyInterceptor
 import com.babylon.certificatetransparency.internal.verifier.model.Host
-import com.babylon.certificatetransparency.loglist.*
+import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificatetransparency.loglist.LogServer
 import okhttp3.Interceptor
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
@@ -191,11 +192,11 @@ class CTInterceptorBuilder {
      * Build the network [Interceptor]
      */
     fun build(): Interceptor = CertificateTransparencyInterceptor(
-            includeHosts.toSet(), excludeHosts.toSet(),
-            trustManager,
-            logListDataSource,
-            diskCache,
-            failOnError,
-            logger
+        includeHosts.toSet(), excludeHosts.toSet(),
+        trustManager,
+        logListDataSource,
+        diskCache,
+        failOnError,
+        logger
     )
 }

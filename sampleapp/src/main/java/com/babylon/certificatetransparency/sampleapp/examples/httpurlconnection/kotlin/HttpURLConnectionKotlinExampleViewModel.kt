@@ -17,9 +17,9 @@
 package com.babylon.certificatetransparency.sampleapp.examples.httpurlconnection.kotlin
 
 import com.babylon.certificatetransparency.CTLogger
-import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.cache.AndroidDiskCache
 import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifier
-import com.babylon.certificatetransparency.sampleapp.*
+import com.babylon.certificatetransparency.sampleapp.Application
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import java.io.IOException
 import java.net.HttpURLConnection

@@ -16,13 +16,14 @@
 
 package com.babylon.certificatetransparency.internal.loglist
 
-import com.babylon.certificatetransparency.datasource.*
-import com.babylon.certificatetransparency.loglist.*
-import kotlinx.coroutines.*
+import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.loglist.RawLogListResult
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 // Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
 internal class LogListNetworkDataSource(
-        private val logService: LogListService
+    private val logService: LogListService
 ) : DataSource<RawLogListResult> {
 
     override val coroutineContext = GlobalScope.coroutineContext

@@ -21,16 +21,18 @@ import com.babylon.certificatetransparency.CTLogger;
 import com.babylon.certificatetransparency.cache.AndroidDiskCache;
 import com.babylon.certificatetransparency.sampleapp.Application;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Set;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.Set;
 
 public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
 

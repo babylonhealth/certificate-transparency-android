@@ -18,10 +18,10 @@
 
 package com.babylon.certificatetransparency.cache
 
-import com.babylon.certificatetransparency.datasource.*
-import com.babylon.certificatetransparency.loglist.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.*
+import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.loglist.RawLogListResult
+import kotlinx.coroutines.GlobalScope
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A disk cache which stores and retrieves raw log list data

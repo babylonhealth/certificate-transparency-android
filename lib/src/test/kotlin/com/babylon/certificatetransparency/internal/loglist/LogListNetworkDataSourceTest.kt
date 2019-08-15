@@ -16,16 +16,22 @@
 
 package com.babylon.certificatetransparency.internal.loglist
 
-import com.babylon.certificatetransparency.internal.utils.*
-import com.babylon.certificatetransparency.loglist.*
-import com.babylon.certificatetransparency.utils.*
-import com.nhaarman.mockitokotlin2.*
-import kotlinx.coroutines.*
-import okhttp3.*
+import com.babylon.certificatetransparency.loglist.RawLogListResult
+import com.babylon.certificatetransparency.utils.TestData
+import com.babylon.certificatetransparency.utils.assertIsA
+import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.runBlocking
+import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.Response
-import org.junit.*
-import retrofit2.*
-import javax.net.ssl.*
+import okhttp3.ResponseBody
+import org.junit.Test
+import retrofit2.Retrofit
+import javax.net.ssl.SSLPeerUnverifiedException
 
 class LogListNetworkDataSourceTest {
 
@@ -41,12 +47,12 @@ class LogListNetworkDataSourceTest {
             val chain = it.arguments[0] as Interceptor.Chain
 
             Response.Builder()
-                    .body(ResponseBody.create(MediaType.parse("application/json"), jsonResponse))
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_2)
-                    .code(200)
-                    .message("")
-                    .build()
+                .body(ResponseBody.create(MediaType.parse("application/json"), jsonResponse))
+                .request(chain.request())
+                .protocol(Protocol.HTTP_2)
+                .code(200)
+                .message("")
+                .build()
         }
     }
 
@@ -56,12 +62,12 @@ class LogListNetworkDataSourceTest {
             val chain = it.arguments[0] as Interceptor.Chain
 
             Response.Builder()
-                    .body(ResponseBody.create(MediaType.parse("application/octet-stream"), ByteArray(0)))
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_2)
-                    .code(404)
-                    .message("")
-                    .build()
+                .body(ResponseBody.create(MediaType.parse("application/octet-stream"), ByteArray(0)))
+                .request(chain.request())
+                .protocol(Protocol.HTTP_2)
+                .code(404)
+                .message("")
+                .build()
         }
     }
 
@@ -77,12 +83,12 @@ class LogListNetworkDataSourceTest {
             val chain = it.arguments[0] as Interceptor.Chain
 
             Response.Builder()
-                    .body(ResponseBody.create(MediaType.parse("application/octet-stream"), byteResponse))
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_2)
-                    .code(200)
-                    .message("")
-                    .build()
+                .body(ResponseBody.create(MediaType.parse("application/octet-stream"), byteResponse))
+                .request(chain.request())
+                .protocol(Protocol.HTTP_2)
+                .code(200)
+                .message("")
+                .build()
         }
     }
 

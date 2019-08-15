@@ -24,9 +24,9 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.babylon.certificatetransparency.CTLogger
-import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.cache.AndroidDiskCache
 import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifier
-import com.babylon.certificatetransparency.sampleapp.*
+import com.babylon.certificatetransparency.sampleapp.Application
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import java.net.HttpURLConnection
 import java.net.URL

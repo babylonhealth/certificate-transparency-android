@@ -17,9 +17,9 @@
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.kotlin
 
 import com.babylon.certificatetransparency.CTLogger
-import com.babylon.certificatetransparency.cache.*
+import com.babylon.certificatetransparency.cache.AndroidDiskCache
 import com.babylon.certificatetransparency.certificateTransparencyInterceptor
-import com.babylon.certificatetransparency.sampleapp.*
+import com.babylon.certificatetransparency.sampleapp.Application
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import okhttp3.Call
 import okhttp3.Callback
