@@ -44,7 +44,7 @@ class CertificateTransparencyBaseTest {
         val trustManager = mitmProxyTrustManager()
 
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             trustManager = trustManager,
             logListDataSource = LogListDataSourceTestFactory.logListDataSource
         )
@@ -59,7 +59,7 @@ class CertificateTransparencyBaseTest {
         val trustManager = mitmProxyTrustManager()
 
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.random.com")),
+            includeHosts = setOf(Host("*.random.com")),
             trustManager = trustManager,
             logListDataSource = LogListDataSourceTestFactory.logListDataSource
         )
@@ -72,7 +72,7 @@ class CertificateTransparencyBaseTest {
     @Test
     fun originalChainAllowedWhenHostNotChecked() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.random.com")),
+            includeHosts = setOf(Host("*.random.com")),
             logListDataSource = LogListDataSourceTestFactory.logListDataSource
         )
 
@@ -84,7 +84,7 @@ class CertificateTransparencyBaseTest {
     @Test
     fun originalChainAllowedWhenHostChecked() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             logListDataSource = LogListDataSourceTestFactory.logListDataSource
         )
 
@@ -99,7 +99,7 @@ class CertificateTransparencyBaseTest {
     @Test(expected = SSLPeerUnverifiedException::class)
     fun untrustedCertificateThrowsException() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             logListDataSource = LogListDataSourceTestFactory.logListDataSource
         )
 
@@ -110,13 +110,13 @@ class CertificateTransparencyBaseTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun noHostsDefinedThrowsException() {
-        CertificateTransparencyBase(hosts = emptySet())
+        CertificateTransparencyBase(includeHosts = emptySet())
     }
 
     @Test
     fun originalChainDisallowedWhenEmptyLogs() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             logListDataSource = LogListDataSourceTestFactory.emptySource
         )
 
@@ -128,7 +128,7 @@ class CertificateTransparencyBaseTest {
     @Test
     fun originalChainDisallowedWhenNullLogs() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             logListDataSource = LogListDataSourceTestFactory.nullSource
         )
 
@@ -140,7 +140,7 @@ class CertificateTransparencyBaseTest {
     @Test
     fun originalChainDisallowedWhenOnlyOneSct() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             logListDataSource = LogListDataSourceTestFactory.logListDataSource
         )
 
@@ -156,11 +156,67 @@ class CertificateTransparencyBaseTest {
     @Test
     fun noCertificatesDisallowed() {
         val ctb = CertificateTransparencyBase(
-            hosts = setOf(Host("*.babylonhealth.com")),
+            includeHosts = setOf(Host("*.babylonhealth.com")),
             logListDataSource = LogListDataSourceTestFactory.nullSource
         )
 
         assertIsA<VerificationResult.Failure.NoCertificates>(ctb.verifyCertificateTransparency("www.babylonhealth.com", emptyList()))
+    }
+
+    @Test
+    fun includeHostsRuleMatchesSubdomain() {
+        val ctb = CertificateTransparencyBase(
+            includeHosts = setOf(Host("*.random.com")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
+
+        val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
+
+        assertIsA<VerificationResult.Success.Trusted>(ctb.verifyCertificateTransparency("allowed.random.com", certsToCheck))
+    }
+
+    @Test
+    fun excludeHostsRuleBlocksSubdomainMatching() {
+        val ctb = CertificateTransparencyBase(
+            includeHosts = setOf(Host("*.random.com")),
+            excludeHosts = setOf(Host("disallowed.random.com")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
+
+        val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
+
+        assertIsA<VerificationResult.Success.DisabledForHost>(ctb.verifyCertificateTransparency("disallowed.random.com", certsToCheck))
+    }
+
+    @Test
+    fun excludeHostsRuleOnlyBlocksSpecifiedSubdomainMatching() {
+        val ctb = CertificateTransparencyBase(
+            includeHosts = setOf(Host("*.random.com")),
+            excludeHosts = setOf(Host("disallowed.random.com")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
+
+        val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
+
+        assertIsA<VerificationResult.Success.Trusted>(ctb.verifyCertificateTransparency("allowed.random.com", certsToCheck))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun excludeHostsWithWildcardNotAllowed() {
+        CertificateTransparencyBase(
+            includeHosts = setOf(Host("allowed.random.com")),
+            excludeHosts = setOf(Host("*.random.com")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun excludeHostMatchingIncludeNotAllowed() {
+        CertificateTransparencyBase(
+            includeHosts = setOf(Host("allowed.random.com")),
+            excludeHosts = setOf(Host("allowed.random.com")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
     }
 
     private fun mitmProxyTrustManager(): X509TrustManager {

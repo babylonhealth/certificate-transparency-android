@@ -25,13 +25,14 @@ import okhttp3.*
 import javax.net.ssl.*
 
 internal class CertificateTransparencyInterceptor(
-        hosts: Set<Host>,
+        inlcudeHosts: Set<Host>,
+    excludeHosts: Set<Host>,
         trustManager: X509TrustManager?,
         logListDataSource: DataSource<LogListResult>?,
         diskCache: DiskCache? = null,
         private val failOnError: Boolean = true,
         private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource, diskCache), Interceptor {
+) : CertificateTransparencyBase(inlcudeHosts, excludeHosts, trustManager, logListDataSource, diskCache), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()

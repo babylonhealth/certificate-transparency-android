@@ -28,12 +28,14 @@ import javax.net.ssl.*
  * transparency
  * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks
  */
+@Suppress("TooManyFunctions")
 class CTHostnameVerifierBuilder(
         @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
 ) {
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
-    private val hosts = mutableSetOf<Host>()
+    private val includeHosts = mutableSetOf<Host>()
+    private val excludeHosts = mutableSetOf<Host>()
 
     /**
      * Determine if a failure to pass certificate transparency results in the connection being closed. A value of true ensures the connection is
@@ -132,18 +134,18 @@ class CTHostnameVerifierBuilder(
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun addHost(vararg pattern: String) = apply {
-        pattern.forEach { hosts.add(Host(it)) }
+    fun includeHost(vararg pattern: String) = apply {
+        pattern.forEach { includeHosts.add(Host(it)) }
     }
 
     /**
-     * Verify certificate transparency for host that match [this].
+     * Verify certificate transparency for hosts that match [this].
      *
      * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
     operator fun String.unaryPlus() {
-        addHost(this)
+        includeHost(this)
     }
 
     /**
@@ -153,7 +155,37 @@ class CTHostnameVerifierBuilder(
      */
     @JvmSynthetic
     operator fun List<String>.unaryPlus() {
-        forEach { addHost(it) }
+        forEach { includeHost(it) }
+    }
+
+    /**
+     * Ignore certificate transparency for hosts that match [pattern].
+     *
+     * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun excludeHost(vararg pattern: String) = apply {
+        pattern.forEach { excludeHosts.add(Host(it)) }
+    }
+
+    /**
+     * Ignore certificate transparency for hosts that match [this].
+     *
+     * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
+     */
+    @JvmSynthetic
+    operator fun String.unaryMinus() {
+        excludeHost(this)
+    }
+
+    /**
+     * Ignore certificate transparency for hosts that match one of [this].
+     *
+     * @receiver [List] of lower-case host name or wildcard pattern such as `*.example.com`.
+     */
+    @JvmSynthetic
+    operator fun List<String>.unaryMinus() {
+        forEach { excludeHost(it) }
     }
 
     /**
@@ -161,7 +193,8 @@ class CTHostnameVerifierBuilder(
      */
     fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(
             delegate,
-            hosts.toSet(),
+            includeHosts.toSet(),
+        excludeHosts.toSet(),
             trustManager,
             logListDataSource,
             diskCache,

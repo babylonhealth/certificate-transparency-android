@@ -39,14 +39,19 @@ import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 internal open class CertificateTransparencyBase(
-    private val hosts: Set<Host>,
+    private val includeHosts: Set<Host>,
+    private val excludeHosts: Set<Host> = emptySet(),
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<LogListResult>? = null,
     diskCache: DiskCache? = null,
     private val minimumValidSignedCertificateTimestamps: Int = 2
 ) {
     init {
-        require(hosts.isNotEmpty()) { "Please provide at least one host to enable certificate transparency verification" }
+        require(includeHosts.isNotEmpty()) { "Please provide at least one host to enable certificate transparency verification" }
+        excludeHosts.forEach {
+            require(!it.startsWithWildcard) { "Certificate transparency exclusions cannot use wildcards" }
+            require(!includeHosts.contains(it)) { "Certificate transparency exclusions must not match include directly" }
+        }
     }
 
     private val cleaner: CertificateChainCleaner by lazy {
@@ -117,5 +122,5 @@ internal open class CertificateTransparencyBase(
         }
     }
 
-    private fun enabledForCertificateTransparency(host: String) = hosts.any { it.matches(host) }
+    private fun enabledForCertificateTransparency(host: String) = includeHosts.any { it.matches(host) } && !excludeHosts.any { it.matches(host) }
 }

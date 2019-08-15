@@ -53,7 +53,7 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
                 .setDiskCache(new AndroidDiskCache(Application.Companion.getInstance()));
 
         for (String host : hosts) {
-            builder.addHost(host);
+            builder.includeHost(host);
         }
 
         Interceptor networkInterceptor = builder.build();

@@ -28,13 +28,14 @@ import javax.net.ssl.X509TrustManager
 
 internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
-    hosts: Set<Host>,
+    includeHosts: Set<Host>,
+    excludeHosts: Set<Host>,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<LogListResult>?,
     diskCache: DiskCache?,
     private val failOnError: Boolean = true,
     private val logger: CTLogger? = null
-) : CertificateTransparencyBase(hosts, trustManager, logListDataSource, diskCache), HostnameVerifier {
+) : CertificateTransparencyBase(includeHosts, excludeHosts, trustManager, logListDataSource, diskCache), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
         if (!delegate.verify(host, sslSession)) {

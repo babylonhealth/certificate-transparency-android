@@ -65,7 +65,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
                     .setDiskCache(new AndroidDiskCache(Application.Companion.getInstance()));
 
             for (String host : hosts) {
-                builder.addHost(host);
+                builder.includeHost(host);
             }
 
             httpsConnection.setHostnameVerifier(builder.build());
