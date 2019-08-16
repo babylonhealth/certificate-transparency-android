@@ -269,7 +269,9 @@ internal class LogSignatureVerifier(private val logServer: LogServer) : Signatur
      * @throws IOException
      */
     private fun serializeSignedSctDataForPreCertificate(
-        preCertBytes: ByteArray, issuerKeyHash: ByteArray, sct: SignedCertificateTimestamp
+        preCertBytes: ByteArray,
+        issuerKeyHash: ByteArray,
+        sct: SignedCertificateTimestamp
     ): ByteArray {
         return ByteArrayOutputStream().use {
             it.serializeCommonSctFields(sct)

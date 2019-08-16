@@ -35,7 +35,6 @@ class Rfc3339Test {
     @Parameterized.Parameter(1)
     lateinit var expected: String
 
-
     @Test
     fun test() {
         if (expected == "fail") {

@@ -51,5 +51,4 @@ class BasicAndroidCTLoggerTest {
 
     private val logEntries
         get() = ShadowLog.getLogsForTag("CertificateTransparency")
-
 }

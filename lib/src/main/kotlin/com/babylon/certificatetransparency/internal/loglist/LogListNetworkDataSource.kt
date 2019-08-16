@@ -35,14 +35,14 @@ internal class LogListNetworkDataSource(
 
         val logListJson = try {
             logListJob.await() ?: return RawLogListJsonFailedLoading
-        } catch (e: Exception) {
-            return RawLogListJsonFailedLoadingWithException(e)
+        } catch (expected: Exception) {
+            return RawLogListJsonFailedLoadingWithException(expected)
         }
 
         val signature = try {
             signatureJob.await() ?: return RawLogListSigFailedLoading
-        } catch (e: Exception) {
-            return RawLogListSigFailedLoadingWithException(e)
+        } catch (expected: Exception) {
+            return RawLogListSigFailedLoadingWithException(expected)
         }
 
         return RawLogListResult.Success(logListJson, signature)

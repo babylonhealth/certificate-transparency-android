@@ -70,7 +70,6 @@ class OutputStreamExtTest {
         }
     }
 
-
     companion object {
         const val TEST_CERT_SCT = "/testdata/test-cert.proof"
 

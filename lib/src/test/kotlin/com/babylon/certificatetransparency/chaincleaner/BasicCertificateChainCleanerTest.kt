@@ -25,7 +25,6 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.X509TrustManager
 
-
 class BasicCertificateChainCleanerTest {
 
     @Test(expected = SSLPeerUnverifiedException::class)
@@ -152,7 +151,6 @@ class BasicCertificateChainCleanerTest {
         // then the expected chain is returned
         assertEquals(expectedValidChain, cleanedChain)
     }
-
 
     @Test
     fun largeValidChainReturnsSuccessfully() {

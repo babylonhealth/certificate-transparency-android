@@ -36,5 +36,4 @@ internal data class GetSthConsistencyResponse(
     fun toMerkleTreeNodes(): List<ByteArray> {
         return consistency.map { Base64.decode(it) }
     }
-
 }

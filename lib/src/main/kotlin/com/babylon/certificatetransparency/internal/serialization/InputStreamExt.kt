@@ -81,8 +81,7 @@ internal fun InputStream.readVariableLength(maxDataLength: Int): ByteArray {
     try {
         bytesRead = read(rawData)
     } catch (e: IOException) {
-        //Note: A finer-grained exception type should be thrown if the client
-        // ever cares to handle transient I/O errors.
+        // Note: A finer-grained exception type should be thrown if the client ever cares to handle transient I/O errors.
         throw IOException("Error while reading variable-length data", e)
     }
 
