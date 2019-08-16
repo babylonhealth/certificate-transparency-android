@@ -203,8 +203,12 @@ created through [TrustManagerFactory](http://docs.oracle.com/javase/6/docs/api/j
 providing a list of [LogServer](./lib/src/main/kotlin/com/babylon/certificatetransparency/loglist/LogServer.kt)  
 *Default:* In memory cached log list loaded from [https://www.gstatic.com/ct/log_list/log_list.json](https://www.gstatic.com/ct/log_list/log_list.json)
 
+**Policy** [CTPolicy](./lib/src/main/kotlin/com/babylon/certificatetransparency/CTPolicy.kt)
+which will verify correct number of SCTs are present  
+*Default:* Policy which follows rules of [Chromium CT Policy](https://github.com/chromium/ct-policy/blob/master/ct_policy.md)
+
 **Fail On Error** Determine if a failure to pass certificate
-transparency results in the connection being closed. A value of true
+transparency results in the connection being closed. A value of `true`
 ensures the connection is closed on errors  
 *Default:* true
 

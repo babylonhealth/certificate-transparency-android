@@ -17,6 +17,7 @@
 package com.babylon.certificatetransparency.internal.verifier
 
 import com.babylon.certificatetransparency.CTLogger
+import com.babylon.certificatetransparency.CTPolicy
 import com.babylon.certificatetransparency.VerificationResult
 import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.datasource.DataSource
@@ -33,10 +34,11 @@ internal class CertificateTransparencyInterceptor(
     excludeHosts: Set<Host>,
     trustManager: X509TrustManager?,
     logListDataSource: DataSource<LogListResult>?,
+    policy: CTPolicy?,
     diskCache: DiskCache? = null,
     private val failOnError: Boolean = true,
     private val logger: CTLogger? = null
-) : CertificateTransparencyBase(inlcudeHosts, excludeHosts, trustManager, logListDataSource, diskCache), Interceptor {
+) : CertificateTransparencyBase(inlcudeHosts, excludeHosts, trustManager, logListDataSource, policy, diskCache), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()

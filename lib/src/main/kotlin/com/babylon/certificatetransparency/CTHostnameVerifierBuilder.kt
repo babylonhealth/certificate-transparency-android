@@ -62,6 +62,16 @@ class CTHostnameVerifierBuilder(
         @JvmSynthetic set
 
     /**
+     * [CTPolicy] which will verify correct number of SCTs are present
+     * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
+     */
+    // public for access in DSL
+    @Suppress("MemberVisibilityCanBePrivate")
+    var policy: CTPolicy? = null
+        @JvmSynthetic get
+        @JvmSynthetic set
+
+    /**
      * [DiskCache] which will cache the log list
      * Default: none
      */
@@ -123,6 +133,13 @@ class CTHostnameVerifierBuilder(
      */
     @Suppress("unused")
     fun setLogger(logger: CTLogger) = apply { this.logger = logger }
+
+    /**
+     * [CTPolicy] which will verify correct number of SCTs are present
+     * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
+     */
+    @Suppress("unused")
+    fun setPolicy(policy: CTPolicy) = apply { this.policy = policy }
 
     /**
      * [DiskCache] which will cache the log list
@@ -200,6 +217,7 @@ class CTHostnameVerifierBuilder(
         excludeHosts.toSet(),
         trustManager,
         logListDataSource,
+        policy,
         diskCache,
         failOnError,
         logger
