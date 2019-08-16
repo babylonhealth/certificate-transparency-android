@@ -24,13 +24,15 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.babylon.certificatetransparency.CTLogger
+import com.babylon.certificatetransparency.cache.AndroidDiskCache
 import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifier
+import com.babylon.certificatetransparency.sampleapp.Application
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class VolleyKotlinExampleViewModel(private val applicationContext: Context) : BaseExampleViewModel() {
+class VolleyKotlinExampleViewModel(context: Context) : BaseExampleViewModel(context) {
 
     override val sampleCodeTemplate
         get() = "volley-kotlin.txt"
@@ -48,6 +50,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
                 }
                 failOnError = isFailOnError
                 logger = defaultLogger
+                diskCache = AndroidDiskCache(getApplication())
             }
         }
     }
@@ -55,7 +58,7 @@ class VolleyKotlinExampleViewModel(private val applicationContext: Context) : Ba
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private fun createRequestQueue(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger): RequestQueue {
-        return Volley.newRequestQueue(applicationContext,
+        return Volley.newRequestQueue(getApplication(),
             object : HurlStack() {
                 override fun createConnection(url: URL): HttpURLConnection {
                     return super.createConnection(url).apply {

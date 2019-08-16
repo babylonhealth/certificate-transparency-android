@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist
+package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.internal.loglist.LogListJsonBadFormat
+import com.babylon.certificatetransparency.internal.loglist.LogServerInvalidKey
 import com.babylon.certificatetransparency.internal.loglist.model.v2beta.LogListV2Beta
 import com.babylon.certificatetransparency.internal.loglist.model.v2beta.State
 import com.babylon.certificatetransparency.internal.utils.Base64
@@ -25,74 +26,16 @@ import com.babylon.certificatetransparency.loglist.LogListResult
 import com.babylon.certificatetransparency.loglist.LogServer
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
-import java.security.PublicKey
-import java.security.Signature
-import java.security.SignatureException
 import java.security.spec.InvalidKeySpecException
 
-// Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
-internal class LogListNetworkDataSourceV2(
-    private val logService: LogListService,
-    private val publicKey: PublicKey = GoogleLogListPublicKey
-) : DataSource<LogListResult> {
+internal class LogListJsonParserV2 : LogListJsonParser {
 
-    override val coroutineContext = GlobalScope.coroutineContext
-
-    @Suppress("ReturnCount")
-    override suspend fun get(): LogListResult {
-        val logListJob = async { logService.getLogList().string() }
-        val signatureJob = async { logService.getLogListSignature().bytes() }
-
-        val logListJson = try {
-            logListJob.await() ?: return LogListJsonFailedLoading
-        } catch (expected: Exception) {
-            return LogListJsonFailedLoadingWithException(expected)
-        }
-
-        val signature = try {
-            signatureJob.await() ?: return LogListSigFailedLoading
-        } catch (expected: Exception) {
-            return LogListSigFailedLoadingWithException(expected)
-        }
-
-        return when (val signatureResult = verify(logListJson, signature, publicKey)) {
-            is LogServerSignatureResult.Valid -> parseJson(logListJson)
-            is LogServerSignatureResult.Invalid -> SignatureVerificationFailed(signatureResult)
-        }
-    }
-
-    override suspend fun isValid(value: LogListResult?) = value is LogListResult.Valid
-
-    override suspend fun set(value: LogListResult) = Unit
-
-    private fun verify(message: String, signature: ByteArray, publicKey: PublicKey): LogServerSignatureResult {
-        return try {
-            if (Signature.getInstance("SHA256WithRSA").apply {
-                    initVerify(publicKey)
-                    update(message.toByteArray())
-                }.verify(signature)) {
-                LogServerSignatureResult.Valid
-            } else {
-                LogServerSignatureResult.Invalid.SignatureFailed
-            }
-        } catch (e: SignatureException) {
-            LogServerSignatureResult.Invalid.SignatureNotValid(e)
-        } catch (e: InvalidKeyException) {
-            LogServerSignatureResult.Invalid.PublicKeyNotValid(e)
-        } catch (e: NoSuchAlgorithmException) {
-            LogServerSignatureResult.Invalid.NoSuchAlgorithm(e)
-        }
-    }
-
-    private fun parseJson(logListJson: String): LogListResult {
+    override fun parseJson(logListJson: String): LogListResult {
         val logList = try {
             GsonBuilder().setLenient().create().fromJson(logListJson, LogListV2Beta::class.java)
         } catch (e: JsonParseException) {
-            return JsonFormat(e)
+            return LogListJsonBadFormat(e)
         }
 
         return buildLogServerList(logList)

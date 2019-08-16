@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency
+package com.babylon.certificatetransparency.cache
 
-import android.util.Log
+import java.util.Date
 
-class BasicAndroidCTLogger(private val isDebugMode: Boolean) : CTLogger {
-    override fun log(host: String, result: VerificationResult) {
-        if (isDebugMode) {
-            Log.i("CertificateTransparency", "$host $result")
-        }
-    }
+/**
+ * Disk cache expiry policy
+ */
+interface DiskCachePolicy {
+    fun isExpired(lastWriteDate: Date, currentDate: Date): Boolean
 }

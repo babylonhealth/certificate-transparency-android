@@ -21,6 +21,7 @@ package com.babylon.certificatetransparency.internal.verifier
 import com.babylon.certificatetransparency.CTPolicy
 import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
+import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.loglist.LogListDataSourceFactory
@@ -43,7 +44,8 @@ internal open class CertificateTransparencyBase(
     private val excludeHosts: Set<Host> = emptySet(),
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<LogListResult>? = null,
-    policy: CTPolicy? = null
+    policy: CTPolicy? = null,
+    diskCache: DiskCache? = null
 ) {
     init {
         require(includeHosts.isNotEmpty()) { "Please provide at least one host to enable certificate transparency verification" }
@@ -61,7 +63,7 @@ internal open class CertificateTransparencyBase(
         CertificateChainCleaner.get(localTrustManager)
     }
 
-    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create())
+    private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create(diskCache))
 
     private val policy = (policy ?: DefaultPolicy())
 

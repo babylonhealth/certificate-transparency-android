@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency
+package com.babylon.certificatetransparency.internal.loglist.parser
 
-import android.util.Log
+import com.babylon.certificatetransparency.loglist.LogListResult
 
-class BasicAndroidCTLogger(private val isDebugMode: Boolean) : CTLogger {
-    override fun log(host: String, result: VerificationResult) {
-        if (isDebugMode) {
-            Log.i("CertificateTransparency", "$host $result")
-        }
-    }
+internal interface LogListJsonParser {
+    fun parseJson(logListJson: String): LogListResult
 }
