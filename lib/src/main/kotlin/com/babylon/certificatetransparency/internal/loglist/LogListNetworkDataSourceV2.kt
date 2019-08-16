@@ -49,14 +49,14 @@ internal class LogListNetworkDataSourceV2(
 
         val logListJson = try {
             logListJob.await() ?: return LogListJsonFailedLoading
-        } catch (e: Exception) {
-            return LogListJsonFailedLoadingWithException(e)
+        } catch (expected: Exception) {
+            return LogListJsonFailedLoadingWithException(expected)
         }
 
         val signature = try {
             signatureJob.await() ?: return LogListSigFailedLoading
-        } catch (e: Exception) {
-            return LogListSigFailedLoadingWithException(e)
+        } catch (expected: Exception) {
+            return LogListSigFailedLoadingWithException(expected)
         }
 
         return when (val signatureResult = verify(logListJson, signature, publicKey)) {

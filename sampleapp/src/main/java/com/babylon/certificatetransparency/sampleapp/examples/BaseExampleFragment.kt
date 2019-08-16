@@ -82,10 +82,7 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
 
     private var snackbar: Snackbar? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.example_fragment, container, false)
     }
 

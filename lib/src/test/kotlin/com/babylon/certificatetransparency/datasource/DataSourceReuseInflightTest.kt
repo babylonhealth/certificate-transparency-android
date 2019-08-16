@@ -110,7 +110,6 @@ class DataSourceReuseInflightTest {
 
         // then get is only called once
         assertEquals(2, count.get())
-
     }
 
     @Test(expected = TestException::class)
@@ -135,7 +134,6 @@ class DataSourceReuseInflightTest {
         reuseInflightCache.set("value")
 
         // then we return the value
-        //Assert.assertEquals("value", result)
         verify(cache).set("value")
     }
 

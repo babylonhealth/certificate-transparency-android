@@ -57,10 +57,12 @@ internal open class CertificateRevocationBase(
     private fun hasRevokedCertificate(certificates: List<X509Certificate>): RevocationResult {
         return try {
             certificates.forEach { certificate ->
-                crlSet.forEach { pin ->
-                    if (pin.issuerDistinguishedName == certificate.issuerX500Principal && pin.serialNumbers.contains(certificate.serialNumber)) {
-                        return RevocationResult.Failure.CertificateRevoked(certificate)
-                    }
+                val isRevoked = crlSet.any { pin ->
+                    pin.issuerDistinguishedName == certificate.issuerX500Principal && pin.serialNumbers.contains(certificate.serialNumber)
+                }
+
+                if (isRevoked) {
+                    return RevocationResult.Failure.CertificateRevoked(certificate)
                 }
             }
 

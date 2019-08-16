@@ -282,7 +282,6 @@ class LogListNetworkDataSourceV2Test {
 
     companion object {
         private val json = TestData.file(TestData.TEST_LOG_LIST_JSON_V2_BETA).readText()
-        //private val sig = TestData.file(TestData.TEST_LOG_LIST_SIG).readBytes()
 
         private val jsonIncomplete = TestData.file(TestData.TEST_LOG_LIST_JSON_INCOMPLETE).readText()
     }

@@ -106,7 +106,6 @@ class CertificateTransparencyInterceptorIntegrationTest {
         client.newCall(request).execute()
     }
 
-
     @Test
     fun invalidAllowedWhenSctNotChecked() {
         val client =
@@ -116,7 +115,6 @@ class CertificateTransparencyInterceptorIntegrationTest {
                 logListDataSource {
                     LogListDataSourceTestFactory.logListDataSource
                 }
-
             }).build()
 
         val request = Request.Builder()

@@ -2,7 +2,7 @@
 
 formatting:
   MaximumLineLength:
-    maxLineLength: 145 # increased from 120
+    active: false
 
 style:
   MaxLineLength:

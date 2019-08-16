@@ -122,7 +122,6 @@ class DataSourceComposeTest {
         verify(cache2, Times(0)).set(any())
     }
 
-
     @Test
     fun testComposeThrowsExceptionWhenFirstErrors() = runBlocking {
         // expect an exception

@@ -56,8 +56,8 @@ internal class DefaultPolicy : CTPolicy {
 
         @Suppress("MagicNumber")
         return MonthDifference(
-            roundedMonthDifference = (expiry.year - start.year) * 12 + (expiry.month - start.month)
-                    - if (expiry.dayOfMonth < start.dayOfMonth) 1 else 0,
+            roundedMonthDifference = (expiry.year - start.year) * 12 + (expiry.month - start.month) -
+                    if (expiry.dayOfMonth < start.dayOfMonth) 1 else 0,
             hasPartialMonth = expiry.dayOfMonth != start.dayOfMonth
         )
     }

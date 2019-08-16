@@ -18,19 +18,20 @@
 
 package com.babylon.certificatetransparency.internal.utils
 
-import java.util.*
-
+import java.util.Calendar
+import java.util.GregorianCalendar
+import java.util.TimeZone
 
 private val GMT = TimeZone.getTimeZone("GMT")
 
 /** Regular expression for parsing RFC3339 date/times.  */
 private val Rfc3339Pattern = Regex(
     // yyyy-MM-dd
-    "^(\\d{4})-(\\d{2})-(\\d{2})"
+    "^(\\d{4})-(\\d{2})-(\\d{2})" +
             // 'T'HH:mm:ss.milliseconds
-            + "([Tt](\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?)?"
+            "([Tt](\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?)?" +
             // 'Z' or time zone shift HH:mm following '+' or '-'
-            + "([Zz]|([+-])(\\d{2}):(\\d{2}))?"
+            "([Zz]|([+-])(\\d{2}):(\\d{2}))?"
 )
 
 /**
@@ -86,8 +87,8 @@ internal fun String.toRfc3339Long(): Long {
 
     if (isTimeGiven && isTzShiftGiven) {
         if (tzShiftRegexGroup[0].toUpperCase() != 'Z') {
-            var tzShift = (results.groupValues[11].toInt() * 60 // time zone shift HH
-                    + results.groupValues[12].toInt()) // time zone shift mm
+            var tzShift = (results.groupValues[11].toInt() * 60 + // time zone shift HH
+                    results.groupValues[12].toInt()) // time zone shift mm
             if (results.groupValues[10][0] == '-') { // time zone shift + or -
                 tzShift = -tzShift
             }
