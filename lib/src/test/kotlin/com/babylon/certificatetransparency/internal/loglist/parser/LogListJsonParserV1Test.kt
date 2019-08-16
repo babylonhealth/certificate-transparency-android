@@ -94,7 +94,6 @@ class LogListJsonParserV1Test {
         assertEquals(1475637842000, logServer.validUntil)
     }
 
-
     companion object {
         private val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
         private val jsonIncomplete = TestData.file(TestData.TEST_LOG_LIST_JSON_INCOMPLETE).readText()

@@ -238,7 +238,6 @@ class RawLogListToLogListResultTransformerTest {
         }.generateKeyPair()
     }
 
-
     companion object {
         private val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
         private val sig = TestData.file(TestData.TEST_LOG_LIST_SIG).readBytes()
