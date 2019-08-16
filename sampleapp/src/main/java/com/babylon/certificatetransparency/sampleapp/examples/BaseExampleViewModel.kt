@@ -16,9 +16,11 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.babylon.certificatetransparency.CTLogger
 import com.babylon.certificatetransparency.VerificationResult
 import com.github.mustachejava.DefaultMustacheFactory
@@ -26,7 +28,7 @@ import okhttp3.HttpUrl
 import java.io.StringWriter
 import javax.net.ssl.SSLPeerUnverifiedException
 
-abstract class BaseExampleViewModel : ViewModel() {
+abstract class BaseExampleViewModel(context: Context) : AndroidViewModel(context.applicationContext as Application) {
 
     abstract val sampleCodeTemplate: String
 

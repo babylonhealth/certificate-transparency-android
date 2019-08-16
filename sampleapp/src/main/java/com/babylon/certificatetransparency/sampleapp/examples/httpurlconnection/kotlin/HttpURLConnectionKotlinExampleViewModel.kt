@@ -16,7 +16,9 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.httpurlconnection.kotlin
 
+import android.content.Context
 import com.babylon.certificatetransparency.CTLogger
+import com.babylon.certificatetransparency.cache.AndroidDiskCache
 import com.babylon.certificatetransparency.certificateTransparencyHostnameVerifier
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import java.io.IOException
@@ -24,7 +26,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class HttpURLConnectionKotlinExampleViewModel : BaseExampleViewModel() {
+class HttpURLConnectionKotlinExampleViewModel(val context: Context) : BaseExampleViewModel(context) {
 
     override val sampleCodeTemplate
         get() = "httpurlconnection-kotlin.txt"
@@ -42,6 +44,7 @@ class HttpURLConnectionKotlinExampleViewModel : BaseExampleViewModel() {
                 }
                 failOnError = isFailOnError
                 logger = defaultLogger
+                diskCache = AndroidDiskCache(getApplication())
             }
         }
     }

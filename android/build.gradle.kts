@@ -33,6 +33,8 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
+
     api(project(":lib"))
 
     testImplementation("junit:junit:4.12")

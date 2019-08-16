@@ -17,6 +17,7 @@
 package com.babylon.certificatetransparency.sampleapp.examples.volley.java;
 
 import android.content.Context;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
@@ -24,21 +25,23 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.babylon.certificatetransparency.CTHostnameVerifierBuilder;
 import com.babylon.certificatetransparency.CTLogger;
+import com.babylon.certificatetransparency.cache.AndroidDiskCache;
+import com.babylon.certificatetransparency.sampleapp.Application;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Set;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
 
-    private final Context applicationContext;
-
-    public VolleyJavaExampleViewModel(Context applicationContext) {
-        this.applicationContext = applicationContext;
+    public VolleyJavaExampleViewModel(@NotNull Context context) {
+        super(context);
     }
 
     @NotNull
@@ -59,7 +62,8 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
             // Create a hostname verifier wrapping the original
             CTHostnameVerifierBuilder builder = new CTHostnameVerifierBuilder(httpsConnection.getHostnameVerifier())
                     .setFailOnError(isFailOnError)
-                    .setLogger(defaultLogger);
+                    .setLogger(defaultLogger)
+                    .setDiskCache(new AndroidDiskCache(getApplication()));
 
             for (String host : hosts) {
                 builder.includeHost(host);
@@ -72,7 +76,7 @@ public class VolleyJavaExampleViewModel extends BaseExampleViewModel {
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private RequestQueue createRequestQueue(Set<String> hosts, boolean isFailOnError, CTLogger defaultLogger) {
-        return Volley.newRequestQueue(applicationContext,
+        return Volley.newRequestQueue(getApplication(),
                 new HurlStack() {
                     @Override
                     protected HttpURLConnection createConnection(URL url) throws IOException {

@@ -16,6 +16,7 @@
 
 package com.babylon.certificatetransparency
 
+import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyHostnameVerifier
 import com.babylon.certificatetransparency.internal.verifier.model.Host
@@ -67,6 +68,16 @@ class CTHostnameVerifierBuilder(
     // public for access in DSL
     @Suppress("MemberVisibilityCanBePrivate")
     var policy: CTPolicy? = null
+        @JvmSynthetic get
+        @JvmSynthetic set
+
+    /**
+     * [DiskCache] which will cache the log list
+     * Default: none
+     */
+    // public for access in DSL
+    @Suppress("MemberVisibilityCanBePrivate")
+    var diskCache: DiskCache? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -129,6 +140,13 @@ class CTHostnameVerifierBuilder(
      */
     @Suppress("unused")
     fun setPolicy(policy: CTPolicy) = apply { this.policy = policy }
+
+    /**
+     * [DiskCache] which will cache the log list
+     * Default: none
+     */
+    @Suppress("unused")
+    fun setDiskCache(diskCache: DiskCache) = apply { this.diskCache = diskCache }
 
     /**
      * Verify certificate transparency for hosts that match [pattern].
@@ -200,6 +218,7 @@ class CTHostnameVerifierBuilder(
         trustManager,
         logListDataSource,
         policy,
+        diskCache,
         failOnError,
         logger
     )

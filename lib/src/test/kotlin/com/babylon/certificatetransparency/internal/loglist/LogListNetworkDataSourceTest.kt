@@ -16,8 +16,7 @@
 
 package com.babylon.certificatetransparency.internal.loglist
 
-import com.babylon.certificatetransparency.internal.utils.Base64
-import com.babylon.certificatetransparency.loglist.LogListResult
+import com.babylon.certificatetransparency.loglist.RawLogListResult
 import com.babylon.certificatetransparency.utils.TestData
 import com.babylon.certificatetransparency.utils.assertIsA
 import com.nhaarman.mockitokotlin2.argThat
@@ -30,15 +29,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Test
 import retrofit2.Retrofit
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.PrivateKey
-import java.security.Signature
 import javax.net.ssl.SSLPeerUnverifiedException
 
 class LogListNetworkDataSourceTest {
@@ -110,50 +102,7 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then 32 items are returned
-        require(result is LogListResult.Valid)
-        assertEquals(32, result.servers.size)
-        assertEquals("pFASaQVaFVReYhGrN7wQP2KuVXakXksXFEU+GyIQaiU=", Base64.toBase64String(result.servers[0].id))
-    }
-
-    @Test
-    fun `returns Invalid if json incomplete`() = runBlocking {
-        // given we have an invalid json file and valid signature
-        expectInterceptor("http://ctlog/log_list.json", jsonIncomplete)
-        val keyPair = generateKeyPair()
-        val signature = calculateSignature(keyPair.private, jsonIncomplete.toByteArray())
-        expectInterceptor("http://ctlog/log_list.sig", signature)
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService, keyPair.public).get()
-
-        // then invalid is returned
-        assertIsA<JsonFormat>(result)
-    }
-
-    @Test
-    fun `returns Invalid if signature invalid`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", json)
-        expectInterceptor("http://ctlog/log_list.sig", ByteArray(512))
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
-
-        // then invalid is returned
-        assertIsA<SignatureVerificationFailed>(result)
-    }
-
-    @Test
-    fun `returns Invalid if signature corrupt`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", json)
-        expectInterceptor("http://ctlog/log_list.sig", ByteArray(32))
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
-
-        // then invalid is returned
-        assertIsA<SignatureVerificationFailed>(result)
+        require(result is RawLogListResult.Success)
     }
 
     @Test
@@ -166,7 +115,7 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<LogListJsonFailedLoadingWithException>(result)
+        assertIsA<RawLogListJsonFailedLoadingWithException>(result)
     }
 
     @Test
@@ -179,7 +128,7 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<LogListSigFailedLoadingWithException>(result)
+        assertIsA<RawLogListSigFailedLoadingWithException>(result)
     }
 
     @Test
@@ -192,7 +141,7 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<LogListJsonFailedLoadingWithException>(result)
+        assertIsA<RawLogListJsonFailedLoadingWithException>(result)
     }
 
     @Test
@@ -205,80 +154,11 @@ class LogListNetworkDataSourceTest {
         val result = LogListNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<LogListSigFailedLoadingWithException>(result)
-    }
-
-    @Test
-    fun `validUntil null when not disqualified or no FinalTreeHead`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", jsonValidUntil)
-        val keyPair = generateKeyPair()
-        val signature = calculateSignature(keyPair.private, jsonValidUntil.toByteArray())
-        expectInterceptor("http://ctlog/log_list.sig", signature)
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService, keyPair.public).get()
-
-        // then validUntil is set to the the STH timestamp
-        require(result is LogListResult.Valid)
-        val logServer = result.servers[0]
-        assertNull(logServer.validUntil)
-    }
-
-    @Test
-    fun `validUntil set from Sth`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", jsonValidUntil)
-        val keyPair = generateKeyPair()
-        val signature = calculateSignature(keyPair.private, jsonValidUntil.toByteArray())
-        expectInterceptor("http://ctlog/log_list.sig", signature)
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService, keyPair.public).get()
-
-        // then validUntil is set to the the STH timestamp
-        require(result is LogListResult.Valid)
-        val logServer = result.servers[2]
-        assertNotNull(logServer.validUntil)
-        assertEquals(1480512258330, logServer.validUntil)
-    }
-
-    @Test
-    fun `validUntil set from disqualified`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", jsonValidUntil)
-        val keyPair = generateKeyPair()
-        val signature = calculateSignature(keyPair.private, jsonValidUntil.toByteArray())
-        expectInterceptor("http://ctlog/log_list.sig", signature)
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService, keyPair.public).get()
-
-        // then validUntil is set to the the STH timestamp
-        require(result is LogListResult.Valid)
-        val logServer = result.servers[1]
-        assertNotNull(logServer.validUntil)
-        assertEquals(1475637842000, logServer.validUntil)
-    }
-
-    private fun calculateSignature(privateKey: PrivateKey, data: ByteArray): ByteArray {
-        return Signature.getInstance("SHA256WithRSA").apply {
-            initSign(privateKey)
-            update(data)
-        }.sign()
-    }
-
-    private fun generateKeyPair(): KeyPair {
-        return KeyPairGenerator.getInstance("RSA").apply {
-            initialize(1024)
-        }.generateKeyPair()
+        assertIsA<RawLogListSigFailedLoadingWithException>(result)
     }
 
     companion object {
         private val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
         private val sig = TestData.file(TestData.TEST_LOG_LIST_SIG).readBytes()
-
-        private val jsonIncomplete = TestData.file(TestData.TEST_LOG_LIST_JSON_INCOMPLETE).readText()
-        private val jsonValidUntil = TestData.file(TestData.TEST_LOG_LIST_JSON_VALID_UNTIL).readText()
     }
 }

@@ -16,8 +16,11 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.kotlin
 
+import android.content.Context
 import com.babylon.certificatetransparency.CTLogger
+import com.babylon.certificatetransparency.cache.AndroidDiskCache
 import com.babylon.certificatetransparency.certificateTransparencyInterceptor
+import com.babylon.certificatetransparency.sampleapp.Application
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel
 import okhttp3.Call
 import okhttp3.Callback
@@ -26,7 +29,7 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 
-class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
+class OkHttpKotlinExampleViewModel(val context: Context) : BaseExampleViewModel(context) {
 
     override val sampleCodeTemplate
         get() = "okhttp-kotlin.txt"
@@ -41,6 +44,7 @@ class OkHttpKotlinExampleViewModel : BaseExampleViewModel() {
             }
             failOnError = isFailOnError
             logger = defaultLogger
+            diskCache = AndroidDiskCache(getApplication())
         }
 
         // Set the interceptor when creating the OkHttp client

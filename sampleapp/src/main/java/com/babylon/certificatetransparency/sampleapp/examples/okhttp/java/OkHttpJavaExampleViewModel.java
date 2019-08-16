@@ -16,21 +16,30 @@
 
 package com.babylon.certificatetransparency.sampleapp.examples.okhttp.java;
 
+import android.content.Context;
+
 import com.babylon.certificatetransparency.CTInterceptorBuilder;
 import com.babylon.certificatetransparency.CTLogger;
+import com.babylon.certificatetransparency.cache.AndroidDiskCache;
 import com.babylon.certificatetransparency.sampleapp.examples.BaseExampleViewModel;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Set;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.Set;
 
 public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
+
+    public OkHttpJavaExampleViewModel(@NotNull Context context) {
+        super(context);
+    }
 
     @NotNull
     @Override
@@ -38,8 +47,6 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
         return "okhttp-java.txt";
     }
 
-    public OkHttpJavaExampleViewModel() {
-    }
 
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
@@ -47,7 +54,8 @@ public class OkHttpJavaExampleViewModel extends BaseExampleViewModel {
         // Create a network interceptor
         CTInterceptorBuilder builder = new CTInterceptorBuilder()
                 .setFailOnError(isFailOnError)
-                .setLogger(defaultLogger);
+                .setLogger(defaultLogger)
+                .setDiskCache(new AndroidDiskCache(getApplication()));
 
         for (String host : hosts) {
             builder.includeHost(host);

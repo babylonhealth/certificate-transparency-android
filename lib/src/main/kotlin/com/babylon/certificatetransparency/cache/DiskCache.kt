@@ -12,16 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Derived from https://github.com/appmattus/layercache/
  */
 
-package com.babylon.certificatetransparency
+package com.babylon.certificatetransparency.cache
 
-import android.util.Log
+import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.loglist.RawLogListResult
 
-class BasicAndroidCTLogger(private val isDebugMode: Boolean) : CTLogger {
-    override fun log(host: String, result: VerificationResult) {
-        if (isDebugMode) {
-            Log.i("CertificateTransparency", "$host $result")
-        }
-    }
-}
+/**
+ * A disk cache which stores and retrieves raw log list data
+ */
+interface DiskCache : DataSource<RawLogListResult>
