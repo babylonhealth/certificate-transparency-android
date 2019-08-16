@@ -18,6 +18,7 @@
 
 package com.babylon.certificatetransparency.internal.verifier
 
+import com.babylon.certificatetransparency.CTPolicy
 import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
 import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
@@ -42,7 +43,7 @@ internal open class CertificateTransparencyBase(
     private val excludeHosts: Set<Host> = emptySet(),
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<LogListResult>? = null,
-    private val minimumValidSignedCertificateTimestamps: Int = 2
+    policy: CTPolicy? = null
 ) {
     init {
         require(includeHosts.isNotEmpty()) { "Please provide at least one host to enable certificate transparency verification" }
@@ -61,6 +62,8 @@ internal open class CertificateTransparencyBase(
     }
 
     private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create())
+
+    private val policy = (policy ?: DefaultPolicy())
 
     fun verifyCertificateTransparency(host: String, certificates: List<Certificate>): VerificationResult {
         return if (!enabledForCertificateTransparency(host)) {
@@ -106,17 +109,9 @@ internal open class CertificateTransparencyBase(
                     verifiers[logId]?.verifySignature(sct, certificates) ?: SctVerificationResult.Invalid.NoTrustedLogServerFound
                 }
 
-            policyVerificationResult(sctResults)
+            policy.policyVerificationResult(leafCertificate, sctResults)
         } catch (e: IOException) {
             VerificationResult.Failure.UnknownIoException(e)
-        }
-    }
-
-    private fun policyVerificationResult(sctResults: Map<String, SctVerificationResult>): VerificationResult {
-        return if (sctResults.count { it.value is SctVerificationResult.Valid } < minimumValidSignedCertificateTimestamps) {
-            VerificationResult.Failure.TooFewSctsTrusted(sctResults, minimumValidSignedCertificateTimestamps)
-        } else {
-            VerificationResult.Success.Trusted(sctResults)
         }
     }
 
