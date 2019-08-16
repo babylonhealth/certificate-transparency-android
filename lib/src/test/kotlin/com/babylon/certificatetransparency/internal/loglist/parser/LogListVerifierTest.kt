@@ -28,7 +28,6 @@ import java.security.Signature
 
 class LogListVerifierTest {
 
-
     @Test
     fun `verifies signature`() = runBlocking {
         // given we have a valid json file and signature
@@ -44,10 +43,11 @@ class LogListVerifierTest {
 
     @Test
     fun `returns Invalid if signature invalid`() = runBlocking {
-        // given we have a valid json file and invalid signature
+        // given we have an invalid signature
+        val signature = ByteArray(512) { it.toByte() }
 
         // when we ask for data
-        val result = LogListVerifier().verify(json, ByteArray(512) { it.toByte() })
+        val result = LogListVerifier().verify(json, signature)
 
         // then invalid is returned
         assertIsA<LogServerSignatureResult.Invalid.SignatureFailed>(result)
@@ -55,10 +55,11 @@ class LogListVerifierTest {
 
     @Test
     fun `returns Invalid if signature corrupt`() = runBlocking {
-        // given we have a valid json file and invalid signature
+        // given we have an invalid signature
+        val signature = ByteArray(32) { it.toByte() }
 
         // when we ask for data
-        val result = LogListVerifier().verify(json, ByteArray(32) { it.toByte() })
+        val result = LogListVerifier().verify(json, signature)
 
         // then invalid is returned
         assertIsA<LogServerSignatureResult.Invalid.SignatureNotValid>(result)
@@ -79,6 +80,5 @@ class LogListVerifierTest {
 
     companion object {
         private val json = TestData.file(TestData.TEST_LOG_LIST_JSON_V2_BETA).readText()
-        private val sig = TestData.file(TestData.TEST_LOG_LIST_SIG).readBytes()
     }
 }

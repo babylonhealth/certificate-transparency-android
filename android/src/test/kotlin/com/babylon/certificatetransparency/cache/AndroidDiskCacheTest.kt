@@ -29,7 +29,7 @@ import java.util.Date
 class AndroidDiskCacheTest {
 
     @Test
-    fun cachedLogListRetrievedWithinExpiryDate() {
+    fun cachedLogListRetrievedWithinExpiryDate() = runBlocking {
         val result = RawLogListResult.Success("bogo", ByteArray(10) {
             it.toByte()
         })
@@ -41,21 +41,17 @@ class AndroidDiskCacheTest {
         )
 
         // when I write the result
-        runBlocking {
-            diskCache.set(result)
-        }
+        diskCache.set(result)
 
         // and I read the result back
-        val actual = runBlocking {
-            diskCache.get()
-        }
+        val actual = diskCache.get()
 
         // then the retrieved result matches the original
         assertEquals(result, actual)
     }
 
     @Test
-    fun cachedLogListNotRetrievedOverExpiryDate() {
+    fun cachedLogListNotRetrievedOverExpiryDate() = runBlocking {
         val result = RawLogListResult.Success("bogo", ByteArray(10) {
             it.toByte()
         })
@@ -67,14 +63,10 @@ class AndroidDiskCacheTest {
         )
 
         // when I write the result
-        runBlocking {
-            diskCache.set(result)
-        }
+        diskCache.set(result)
 
         // and I read the result back
-        val actual = runBlocking {
-            diskCache.get()
-        }
+        val actual = diskCache.get()
 
         // then the retrieved result is null
         assertEquals(null, actual)

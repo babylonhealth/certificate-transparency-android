@@ -24,17 +24,19 @@ import com.babylon.certificatetransparency.loglist.RawLogListResult
 import retrofit2.Retrofit
 
 internal object LogListDataSourceFactory {
-    fun create(diskCache: DiskCache?): DataSource<LogListResult> {
+
+    fun create(diskCache: DiskCache? = null): DataSource<LogListResult> {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.gstatic.com/ct/log_list/")
             .build()
 
         val logService = retrofit.create(LogListService::class.java)
         val transformer = RawLogListToLogListResultTransformer()
-        val diskCacheOrNoOp = diskCache ?: object : DiskCache {}
 
         return InMemoryCache()
-            .compose(diskCacheOrNoOp)
+            .run {
+                diskCache?.let(::compose) ?: this
+            }
             .compose(LogListNetworkDataSource(logService))
             .oneWayTransform { transformer.transform(it) }
             .reuseInflight()

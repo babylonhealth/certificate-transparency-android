@@ -32,11 +32,11 @@ import kotlin.coroutines.CoroutineContext
  * The last write date is stored alongside in shared preferences in order to track cache expiry.
  */
 class AndroidDiskCache @JvmOverloads constructor(
-        context: Context,
-        private val diskCachePolicy: DiskCachePolicy = DefaultDiskCachePolicy()
+    context: Context,
+    private val diskCachePolicy: DiskCachePolicy = DefaultDiskCachePolicy()
 ) : DiskCache {
-    private val cacheDirPath = "${context.filesDir.path}/cache/certificate-transparency-android"
-    private val prefs = context.getSharedPreferences("certificate-transparency", MODE_PRIVATE)
+    private val cacheDirPath = "${context.cacheDir.path}/certificate-transparency-android"
+    private val prefs = context.applicationContext.getSharedPreferences("certificate-transparency", MODE_PRIVATE)
 
     override suspend fun get(): RawLogListResult? {
         return try {
@@ -51,12 +51,11 @@ class AndroidDiskCache @JvmOverloads constructor(
             if (isValid(result)) {
                 result
             } else {
+                prefs.edit().clear().apply()
+
                 jsonFile.delete()
                 sigFile.delete()
 
-                prefs.edit()
-                        .clear()
-                        .apply()
                 null
             }
         } catch (e: IOException) {
@@ -69,14 +68,12 @@ class AndroidDiskCache @JvmOverloads constructor(
             try {
                 File(cacheDirPath).mkdirs()
 
-                val jsonFile = File(cacheDirPath, LOG_LIST_FILE)
-                jsonFile.writeText(value.logList)
-                val sigFile = File(cacheDirPath, SIG_FILE)
-                sigFile.writeBytes(value.signature)
+                File(cacheDirPath, LOG_LIST_FILE).writeText(value.logList)
+                File(cacheDirPath, SIG_FILE).writeBytes(value.signature)
 
                 prefs.edit()
-                        .putLong(LAST_WRITE, System.currentTimeMillis())
-                        .apply()
+                    .putLong(PREF_KEY_LAST_WRITE, System.currentTimeMillis())
+                    .apply()
             } catch (e: IOException) {
                 // non fatal
             }
@@ -86,8 +83,8 @@ class AndroidDiskCache @JvmOverloads constructor(
     override suspend fun isValid(value: RawLogListResult?): Boolean {
         return value is RawLogListResult.Success &&
                 !diskCachePolicy.isExpired(
-                        lastWriteDate = Date(prefs.getLong(LAST_WRITE, System.currentTimeMillis())),
-                        currentDate = Date()
+                    lastWriteDate = Date(prefs.getLong(PREF_KEY_LAST_WRITE, System.currentTimeMillis())),
+                    currentDate = Date()
                 )
     }
 
@@ -97,6 +94,6 @@ class AndroidDiskCache @JvmOverloads constructor(
     companion object {
         const val LOG_LIST_FILE = "loglist.json"
         const val SIG_FILE = "loglist.sig"
-        const val LAST_WRITE = "last_write"
+        const val PREF_KEY_LAST_WRITE = "last_write"
     }
 }

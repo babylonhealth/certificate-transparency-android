@@ -28,6 +28,7 @@ sealed class RawLogListResult {
         val logList: String,
         val signature: ByteArray
     ) : RawLogListResult() {
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false

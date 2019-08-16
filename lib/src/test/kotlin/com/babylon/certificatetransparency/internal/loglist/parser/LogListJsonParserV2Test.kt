@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.internal.loglist.JsonFormat
+import com.babylon.certificatetransparency.internal.loglist.LogListJsonBadFormat
 import com.babylon.certificatetransparency.internal.utils.Base64
 import com.babylon.certificatetransparency.loglist.LogListResult
 import com.babylon.certificatetransparency.utils.TestData
@@ -30,10 +30,10 @@ import org.junit.Test
 class LogListJsonParserV2Test {
 
     @Test
-    fun `verifies signature`() = runBlocking {
-        // given we have a valid json file and signature
+    fun `parses the json`() = runBlocking {
+        // given we have a valid json file
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV2().parseJson(json)
 
         // then 3 items are returned (many ignored as invalid states)
@@ -44,20 +44,20 @@ class LogListJsonParserV2Test {
 
     @Test
     fun `returns Invalid if json incomplete`() = runBlocking {
-        // given we have a valid json file and signature
+        // given we have an incomplete json file
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV2().parseJson(jsonIncomplete)
 
         // then invalid is returned
-        assertIsA<JsonFormat>(result)
+        assertIsA<LogListJsonBadFormat>(result)
     }
 
     @Test
     fun `validUntil null when not frozen or retired`() = runBlocking {
         // given we have a valid json file and signature
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV2().parseJson(json)
 
         // then validUntil is set to the the STH timestamp
@@ -70,7 +70,7 @@ class LogListJsonParserV2Test {
     fun `validUntil set from Frozen`() = runBlocking {
         // given we have a valid json file and signature
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV2().parseJson(json)
 
         // then validUntil is set to the the STH timestamp
@@ -84,7 +84,7 @@ class LogListJsonParserV2Test {
     fun `validUntil set from Retired`() = runBlocking {
         // given we have a valid json file and signature
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV2().parseJson(json)
 
         // then validUntil is set to the the STH timestamp

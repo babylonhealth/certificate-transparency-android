@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.internal.loglist.JsonFormat
+import com.babylon.certificatetransparency.internal.loglist.LogListJsonBadFormat
 import com.babylon.certificatetransparency.internal.utils.Base64
 import com.babylon.certificatetransparency.loglist.LogListResult
 import com.babylon.certificatetransparency.utils.TestData
@@ -29,15 +29,14 @@ import org.junit.Test
 
 class LogListJsonParserV1Test {
 
-
     @Test
-    fun `verifies signature`() = runBlocking {
-        // given we have a valid json file and signature
+    fun `parses the json`() = runBlocking {
+        // given we have a valid json file
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV1().parseJson(json)
 
-        // then 3 items are returned (many ignored as invalid states)
+        // then 32 items are returned
         require(result is LogListResult.Valid)
         assertEquals(32, result.servers.size)
         assertEquals("pFASaQVaFVReYhGrN7wQP2KuVXakXksXFEU+GyIQaiU=", Base64.toBase64String(result.servers[0].id))
@@ -45,18 +44,18 @@ class LogListJsonParserV1Test {
 
     @Test
     fun `returns Invalid if json incomplete`() = runBlocking {
-        // given we have a valid json file and signature
+        // given we have an incomplete json file
 
-        // when we ask for data
+        // when we parse the data
         val result = LogListJsonParserV1().parseJson(jsonIncomplete)
 
         // then invalid is returned
-        assertIsA<JsonFormat>(result)
+        assertIsA<LogListJsonBadFormat>(result)
     }
 
     @Test
     fun `validUntil null when not disqualified or no FinalTreeHead`() = runBlocking {
-        // given we have a valid json file and signature
+        // given we have a valid json file
 
         // when we ask for data
         val result = LogListJsonParserV1().parseJson(jsonValidUntil)
@@ -69,7 +68,7 @@ class LogListJsonParserV1Test {
 
     @Test
     fun `validUntil set from Sth`() = runBlocking {
-        // given we have a valid json file and signature
+        // given we have a valid json file
 
         // when we ask for data
         val result = LogListJsonParserV1().parseJson(jsonValidUntil)
@@ -83,7 +82,7 @@ class LogListJsonParserV1Test {
 
     @Test
     fun `validUntil set from disqualified`() = runBlocking {
-        // given we have a valid json file and signature
+        // given we have a valid json file
 
         // when we ask for data
         val result = LogListJsonParserV1().parseJson(jsonValidUntil)

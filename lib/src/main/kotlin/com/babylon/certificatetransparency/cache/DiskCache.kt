@@ -20,26 +20,8 @@ package com.babylon.certificatetransparency.cache
 
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.loglist.RawLogListResult
-import kotlinx.coroutines.GlobalScope
-import kotlin.coroutines.CoroutineContext
 
 /**
  * A disk cache which stores and retrieves raw log list data
  */
-interface DiskCache : DataSource<RawLogListResult> {
-
-    /**
-     * Return the value associated with this data source or null if not present
-     */
-    override suspend fun get(): RawLogListResult? = null
-
-    /**
-     * Save the [RawLogListResult] to this data source
-     */
-    override suspend fun set(value: RawLogListResult) = Unit
-
-    override suspend fun isValid(value: RawLogListResult?): Boolean = value != null
-
-    override val coroutineContext: CoroutineContext
-        get() = GlobalScope.coroutineContext
-}
+interface DiskCache : DataSource<RawLogListResult>

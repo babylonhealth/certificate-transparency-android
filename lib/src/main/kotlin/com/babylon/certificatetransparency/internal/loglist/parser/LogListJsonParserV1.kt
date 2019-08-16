@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.internal.loglist.JsonFormat
+import com.babylon.certificatetransparency.internal.loglist.LogListJsonBadFormat
 import com.babylon.certificatetransparency.internal.loglist.LogServerInvalidKey
 import com.babylon.certificatetransparency.internal.loglist.model.LogList
 import com.babylon.certificatetransparency.internal.utils.Base64
@@ -34,7 +34,7 @@ internal class LogListJsonParserV1 : LogListJsonParser {
         val logList = try {
             GsonBuilder().setLenient().create().fromJson(logListJson, LogList::class.java)
         } catch (e: JsonParseException) {
-            return JsonFormat(e)
+            return LogListJsonBadFormat(e)
         }
 
         return buildLogServerList(logList)

@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.internal.loglist.parser
 
-import com.babylon.certificatetransparency.internal.loglist.JsonFormat
+import com.babylon.certificatetransparency.internal.loglist.LogListJsonBadFormat
 import com.babylon.certificatetransparency.internal.loglist.LogListJsonFailedLoadingWithException
 import com.babylon.certificatetransparency.internal.loglist.LogListSigFailedLoadingWithException
 import com.babylon.certificatetransparency.internal.loglist.RawLogListJsonFailedLoadingWithException
@@ -75,7 +75,7 @@ class RawLogListToLogListResultTransformerTest {
         )
 
         // then invalid is returned
-        assertIsA<JsonFormat>(result)
+        assertIsA<LogListJsonBadFormat>(result)
     }
 
     @Test
