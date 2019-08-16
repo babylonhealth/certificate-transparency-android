@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist.model.v2beta
+package com.babylon.certificatetransparency.internal.loglist.model.v2
 
 import com.google.gson.annotations.SerializedName
 
-internal enum class LogType {
-    @SerializedName("prod")
-    PROD,
-
-    @SerializedName("test")
-    TEST
+/**
+ * @property name Name of this log operator
+ * @property email CT log operator email addresses. The log operator can be contacted using any of these email addresses. (format: email)
+ * @property logs Details of Certificate Transparency logs run by this operator.
+ */
+internal data class Operator(
+    @SerializedName("name") val name: String,
+    @SerializedName("email") val email: List<String>,
+    @SerializedName("logs") val logs: List<Log>
+) {
+    init {
+        require(name.isNotEmpty())
+        require(email.isNotEmpty())
+        require(logs.isNotEmpty())
+    }
 }

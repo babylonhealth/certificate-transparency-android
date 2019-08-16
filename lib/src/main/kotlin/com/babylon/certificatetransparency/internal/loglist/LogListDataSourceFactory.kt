@@ -27,7 +27,7 @@ internal object LogListDataSourceFactory {
 
     fun create(diskCache: DiskCache? = null): DataSource<LogListResult> {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.gstatic.com/ct/log_list/")
+            .baseUrl("https://www.gstatic.com/ct/log_list/v2/")
             .build()
 
         val logService = retrofit.create(LogListService::class.java)

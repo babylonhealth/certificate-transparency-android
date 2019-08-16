@@ -36,10 +36,10 @@ class LogListJsonParserV2Test {
         // when we parse the data
         val result = LogListJsonParserV2().parseJson(json)
 
-        // then 3 items are returned (many ignored as invalid states)
+        // then 41 items are returned
         require(result is LogListResult.Valid)
-        assertEquals(3, result.servers.size)
-        assertEquals("aPaY+B9kgr46jO65KB1M/HFRXWeT1ETRCmesu09P+8Q=", Base64.toBase64String(result.servers[0].id))
+        assertEquals(41, result.servers.size)
+        assertEquals("Y/Lbzeg7zCzPC3KEJ1drM6SNYXePvXWmOLHHaFRL2I0=", Base64.toBase64String(result.servers[0].id))
     }
 
     @Test
@@ -67,20 +67,6 @@ class LogListJsonParserV2Test {
     }
 
     @Test
-    fun `validUntil set from Frozen`() = runBlocking {
-        // given we have a valid json file and signature
-
-        // when we parse the data
-        val result = LogListJsonParserV2().parseJson(json)
-
-        // then validUntil is set to the the STH timestamp
-        require(result is LogListResult.Valid)
-        val logServer = result.servers[0]
-        assertNotNull(logServer.validUntil)
-        assertEquals(1480424940000, logServer.validUntil)
-    }
-
-    @Test
     fun `validUntil set from Retired`() = runBlocking {
         // given we have a valid json file and signature
 
@@ -89,13 +75,16 @@ class LogListJsonParserV2Test {
 
         // then validUntil is set to the the STH timestamp
         require(result is LogListResult.Valid)
-        val logServer = result.servers[2]
+
+        val symantecId = Base64.decode("3esdK3oNT6Ygi4GtgWhwfi6OnQHVXIiNPRHEzbbsvsw=")
+
+        val logServer = result.servers.first { it.id.contentEquals(symantecId) }
         assertNotNull(logServer.validUntil)
-        assertEquals(1460678400000, logServer.validUntil)
+        assertEquals(1550275200000, logServer.validUntil)
     }
 
     companion object {
-        private val json = TestData.file(TestData.TEST_LOG_LIST_JSON_V2_BETA).readText()
+        private val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
         private val jsonIncomplete = TestData.file(TestData.TEST_LOG_LIST_JSON_INCOMPLETE).readText()
     }
 }

@@ -79,6 +79,6 @@ class LogListVerifierTest {
     }
 
     companion object {
-        private val json = TestData.file(TestData.TEST_LOG_LIST_JSON_V2_BETA).readText()
+        private val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
     }
 }

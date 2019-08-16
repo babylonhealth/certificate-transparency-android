@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist.model.v2beta
+package com.babylon.certificatetransparency.internal.loglist.model.v2
 
 import com.babylon.certificatetransparency.utils.TestData
 import com.google.gson.GsonBuilder
@@ -22,36 +22,35 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class LogListV2BetaTest {
+class LogListV2Test {
 
     @Test
     fun verifyGsonParser() {
-        val json = TestData.file(TestData.TEST_LOG_LIST_JSON_V2_BETA).readText()
+        val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
 
-        val logList = GsonBuilder().setLenient().create().fromJson(json, LogListV2Beta::class.java)
+        val logList = GsonBuilder().setLenient().create().fromJson(json, LogListV2::class.java)
 
         val google = logList.operators.first { it.name == "Google" }
         val cloudflare = logList.operators.first { it.name == "Cloudflare" }
         val certly = logList.operators.first { it.name == "Certly" }
 
-        assertEquals(3, google.logs.size)
-        assertEquals(1, cloudflare.logs.size)
+        assertEquals(12, google.logs.size)
+        assertEquals(5, cloudflare.logs.size)
         assertEquals(1, certly.logs.size)
 
-        val xenonLog = google.logs.first { it.description == "Google 'Xenon2018' log" }
+        val argon2021 = google.logs.first { it.description == "Google 'Argon2021' log" }
         assertEquals(
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1syJvwQdrv0a8dM2VAnK/SmHJNw/+FxC+CncFcnXMX2jNH9Xs7Q56FiV3taG5G2CokMsizhpcm7xXzuR3IHmag==",
-            xenonLog.key
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETeBmZOrzZKo4xYktx9gI2chEce3cw/tbr5xkoQlmhB18aKfsxD+MnILgGNl0FOm0eYGilFVi85wLRIOhK8lxKw==",
+            argon2021.key
         )
-        assertTrue(xenonLog.state is State.Pending)
+        assertTrue(argon2021.state is State.Usable)
 
         val aviatorLog = google.logs.first { it.description == "Google 'Aviator' log" }
         assertTrue(aviatorLog.state is State.ReadOnly)
         assertEquals(46466472, (aviatorLog.state as State.ReadOnly).finalTreeHead.treeSize)
 
-        val nimbusLog = cloudflare.logs.first { it.description == "Cloudflare 'Nimbus2018' Log" }
-        assertEquals(LogType.PROD, nimbusLog.logType)
+        val nimbusLog = cloudflare.logs.first { it.description == "Cloudflare 'Nimbus2022' Log" }
         assertEquals(86400, nimbusLog.maximumMergeDelay)
-        assertEquals(1534095762000, nimbusLog.state?.timestamp)
+        assertEquals(1559606400000, nimbusLog.state?.timestamp)
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist.model.v2beta
+package com.babylon.certificatetransparency.internal.loglist.model.v2
 
 import com.babylon.certificatetransparency.internal.loglist.deserializer.Rfc3339Deserializer
 import com.google.gson.annotations.JsonAdapter

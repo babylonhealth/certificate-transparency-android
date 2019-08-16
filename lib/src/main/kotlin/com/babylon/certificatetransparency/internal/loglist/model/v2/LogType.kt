@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist.model.v2beta
+package com.babylon.certificatetransparency.internal.loglist.model.v2
 
 import com.google.gson.annotations.SerializedName
 
-internal data class FinalTreeHead(
-    @SerializedName("tree_size") val treeSize: Int,
-    @SerializedName("sha256_root_hash") val sha256RootHash: String
-) {
-    init {
-        require(treeSize >= 0)
-        @Suppress("MagicNumber")
-        require(sha256RootHash.length == 44)
-    }
+internal enum class LogType {
+    @SerializedName("prod")
+    PROD,
+
+    @SerializedName("test")
+    TEST
 }

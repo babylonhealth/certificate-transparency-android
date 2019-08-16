@@ -1,40 +1,294 @@
 {
-  "logs": [
-    {
-      "description": "Google 'Argon2018' log",
-      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0gBVBa3VR7QZu82V+ynXWD14JM3ORp37MtRxTmACJV5ZPtfUA7htQ2hofuigZQs+bnFZkje+qejxoyvk2Q1VaA==",
-      "url": "ct.googleapis.com/logs/argon2018/",
-      "maximum_merge_delay": 86400,
-      "operated_by": [
-        0
-      ],
-      "dns_api_endpoint": "argon2018.ct.googleapis.com"
-    },
-    {
-      "description": "Google 'Argon2019' log",
-      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI3MQm+HzXvaYa2mVlhB4zknbtAT8cSxakmBoJcBKGqGwYS0bhxSpuvABM1kdBTDpQhXnVdcq+LSiukXJRpGHVg==",
-      "url": "ct.googleapis.com/logs/argon2019/",
-      "maximum_merge_delay": 86400,
-      "operated_by": [
-        0
-      ],
-      "dns_api_endpoint": "argon2019.ct.googleapis.com"
-    },
-    {
-      "description": "Google 'Argon2020' log",
-      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6Tx2p1yKY4015NyIYvdrk36es0uAc1zA4PQ+TGRY+3ZjUTIYY9Wyu+3q/147JG4vNVKLtDWarZwVqGkg6lAYzA==",
-      "url": "ct.googleapis.com/logs/argon2020/",
-      "maximum_merge_delay": 86400,
-      "operated_by": [
-        0
-      ],
-      "dns_api_endpoint": "argon2020.ct.googleapis.com"
-    }
-  ],
   "operators": [
     {
       "name": "Google",
-      "id": 0
-    }
-  ]
-
+      "email": [
+        "google-ct-logs@googlegroups.com"
+      ],
+      "logs": [
+        {
+          "description": "Google 'Argon2019' log",
+          "log_id": "Y/Lbzeg7zCzPC3KEJ1drM6SNYXePvXWmOLHHaFRL2I0=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI3MQm+HzXvaYa2mVlhB4zknbtAT8cSxakmBoJcBKGqGwYS0bhxSpuvABM1kdBTDpQhXnVdcq+LSiukXJRpGHVg==",
+          "url": "https://ct.googleapis.com/logs/argon2019/",
+          "dns": "argon2019.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2019-01-01T00:00:00Z",
+            "end_exclusive": "2020-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Argon2020' log",
+          "log_id": "sh4FzIuizYogTodm+Su5iiUgZ2va+nDnsklTLe+LkF4=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6Tx2p1yKY4015NyIYvdrk36es0uAc1zA4PQ+TGRY+3ZjUTIYY9Wyu+3q/147JG4vNVKLtDWarZwVqGkg6lAYzA==",
+          "url": "https://ct.googleapis.com/logs/argon2020/",
+          "dns": "argon2020.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2020-01-01T00:00:00Z",
+            "end_exclusive": "2021-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Argon2021' log",
+          "log_id": "9lyUL9F3MCIUVBgIMJRWjuNNExkzv98MLyALzE7xZOM=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETeBmZOrzZKo4xYktx9gI2chEce3cw/tbr5xkoQlmhB18aKfsxD+MnILgGNl0FOm0eYGilFVi85wLRIOhK8lxKw==",
+          "url": "https://ct.googleapis.com/logs/argon2021/",
+          "dns": "argon2021.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2021-01-01T00:00:00Z",
+            "end_exclusive": "2022-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Xenon2019' log",
+          "log_id": "CEEUmABxUywWGQRgvPxH/cJlOvopLHKzf/hjrinMyfA=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/XyDwqzXL9i2GTjMYkqaEyiRL0Dy9sHq/BTebFdshbvCaXXEh6mjUK0Yy+AsDcI4MpzF1l7Kded2MD5zi420gA==",
+          "url": "https://ct.googleapis.com/logs/xenon2019/",
+          "dns": "xenon2019.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2019-06-17T21:23:01Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2019-01-01T00:00:00Z",
+            "end_exclusive": "2020-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Xenon2020' log",
+          "log_id": "B7dcG+V9aP/xsMYdIxXHuuZXfFeUt2ruvGE6GmnTohw=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEZU75VqjyzSTgFZKAnWg1QeYfFFIRZTMK7q3kWWZsmHhQdrBYnHRZ3OA4kUeUx0JN+xX+dSgt1ruqUhhl7jOvmw==",
+          "url": "https://ct.googleapis.com/logs/xenon2020/",
+          "dns": "xenon2020.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2019-06-17T21:23:01Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2020-01-01T00:00:00Z",
+            "end_exclusive": "2021-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Xenon2021' log",
+          "log_id": "fT7y+I//iFVoJMLAyp5SiXkrxQ54CX8uapdomX4i8Nc=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAER+1MInu8Q39BwDZ5Rp9TwXhwm3ktvgJzpk/r7dDgGk7ZacMm3ljfcoIvP1E72T8jvyLT1bvdapylajZcTH6W5g==",
+          "url": "https://ct.googleapis.com/logs/xenon2021/",
+          "dns": "xenon2021.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2019-06-17T21:23:01Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2021-01-01T00:00:00Z",
+            "end_exclusive": "2022-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Xenon2022' log",
+          "log_id": "RqVV63X6kSAwtaKJafTzfREsQXS+/Um4havy/HD+bUc=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE+WS9FSxAYlCVEzg8xyGwOrmPonoV14nWjjETAIdZvLvukPzIWBMKv6tDNlQjpIHNrUcUt1igRPpqoKDXw2MeKw==",
+          "url": "https://ct.googleapis.com/logs/xenon2022/",
+          "dns": "xenon2022.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2019-06-17T21:23:01Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2022-01-01T00:00:00Z",
+            "end_exclusive": "2023-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Google 'Aviator' log",
+          "log_id": "aPaY+B9kgr46jO65KB1M/HFRXWeT1ETRCmesu09P+8Q=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1/TMabLkDpCjiupacAlP7xNi0I1JYP8bQFAHDG1xhtolSY1l4QgNRzRrvSe8liE+NPWHdjGxfx3JhTsN9x8/6Q==",
+          "url": "https://ct.googleapis.com/aviator/",
+          "dns": "aviator.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "readonly": {
+              "timestamp": "2016-11-30T13:24:18Z",
+              "final_tree_head": {
+                "sha256_root_hash": "LcGcZRsm+LGYmrlyC5LXhV1T6OD8iH5dNlb0sEJl9bA=",
+                "tree_size": 46466472
+              }
+            }
+          }
+        },
+        {
+          "description": "Google 'Icarus' log",
+          "log_id": "KTxRllTIOWW6qlD8WAfUt2+/WHopctykwwz05UVH9Hg=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETtK8v7MICve56qTHHDhhBOuV4IlUaESxZryCfk9QbG9co/CqPvTsgPDbCpp6oFtyAHwlDhnvr7JijXRD9Cb2FA==",
+          "url": "https://ct.googleapis.com/icarus/",
+          "dns": "icarus.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2017-03-06T19:35:01Z"
+            }
+          }
+        },
+        {
+          "description": "Google 'Pilot' log",
+          "log_id": "pLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BA=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfahLEimAoz2t01p3uMziiLOl/fHTDM0YDOhBRuiBARsV4UvxG2LdNgoIGLrtCzWE0J5APC2em4JlvR8EEEFMoA==",
+          "url": "https://ct.googleapis.com/pilot/",
+          "dns": "pilot.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2014-09-02T20:41:44Z"
+            }
+          }
+        },
+        {
+          "description": "Google 'Rocketeer' log",
+          "log_id": "7ku9t3XOYLrhQmkfq+GeZqMPfl+wctiDAMR7iXqo/cs=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIFsYyDzBi7MxCAC/oJBXK7dHjG+1aLCOkHjpoHPqTyghLpzA9BYbqvnV16mAw04vUjyYASVGJCUoI3ctBcJAeg==",
+          "url": "https://ct.googleapis.com/rocketeer/",
+          "dns": "rocketeer.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2015-08-04T19:00:05Z"
+            }
+          }
+        },
+        {
+          "description": "Google 'Skydiver' log",
+          "log_id": "u9nfvB+KcbWTlCOXqpJ7RzhXlQqrUugakJZkNo4e0YU=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEmyGDvYXsRJsNyXSrYc9DjHsIa2xzb4UR7ZxVoV6mrc9iZB7xjI6+NrOiwH+P/xxkRmOFG6Jel20q37hTh58rA==",
+          "url": "https://ct.googleapis.com/skydiver/",
+          "dns": "skydiver.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2017-03-06T19:35:01Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cloudflare",
+      "email": [
+        "ct-logs@cloudflare.com",
+        "brendan@cloudflare.com",
+        "nick@cloudflare.com",
+        "pat@cloudflare.com",
+        "zi@cloudflare.com",
+        "ivan@cloudflare.com"
+      ],
+      "logs": [
+        {
+          "description": "Cloudflare 'Nimbus2019' Log",
+          "log_id": "dH7agzGtMxCRIZzOJU9CcMK//V5CIAjGNzV55hB7zFY=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkZHz1v5r8a9LmXSMegYZAg4UW+Ug56GtNfJTDNFZuubEJYgWf4FcC5D+ZkYwttXTDSo4OkanG9b3AI4swIQ28g==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2019/",
+          "dns": "cloudflare-nimbus2019.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2019-01-01T00:00:00Z",
+            "end_exclusive": "2020-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Cloudflare 'Nimbus2020' Log",
+          "log_id": "Xqdz+d9WwOe1Nkh90EngMnqRmgyEoRIShBh1loFxRVg=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01EAhx4o0zPQrXTcYjgCt4MVFsT0Pwjzb1RwrM0lhWDlxAYPP6/gyMCXNkOn/7KFsjL7rwk78tHMpY8rXn8AYg==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2020/",
+          "dns": "cloudflare-nimbus2020.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2020-01-01T00:00:00Z",
+            "end_exclusive": "2021-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Cloudflare 'Nimbus2021' Log",
+          "log_id": "RJRlLrDuzq/EQAfYqP4owNrmgr7YyzG1P9MzlrW2gag=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExpon7ipsqehIeU1bmpog9TFo4Pk8+9oN8OYHl1Q2JGVXnkVFnuuvPgSo2Ep+6vLffNLcmEbxOucz03sFiematg==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2021/",
+          "dns": "cloudflare-nimbus2021.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2021-01-01T00:00:00Z",
+            "end_exclusive": "2022-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Cloudflare 'Nimbus2022' Log",
+          "log_id": "QcjKsd8iRkoQxqE6CUKHXk4xixsD6+tLx2jwkGKWBvY=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESLJHTlAycmJKDQxIv60pZG8g33lSYxYpCi5gteI6HLevWbFVCdtZx+m9b+0LrwWWl/87mkNN6xE0M4rnrIPA/w==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2022/",
+          "dns": "cloudflare-nimbus2022.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "qualified": {
+              "timestamp": "2019-06-04T00:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2022-01-01T00:00:00Z",
+            "end_exclusive": "2023-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Cloudflare 'Nimbus2023' Log",
+          "log_id": "ejKMVNi3LbYg6jjgUh7phBZwMhOFTTvSK8E6V6NS61I=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEi/8tkhjLRp0SXrlZdTzNkTd6HqmcmXiDJz3fAdWLgOhjmv4mohvRhwXul9bgW0ODgRwC9UGAgH/vpGHPvIS1qA==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2023/",
+          "dns": "cloudflare-nimbus2023.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "qualified": {
+              "timestamp": "2019-06-04T00:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2023-01-01T00:00:00Z",
+            "end_exclusive": "2024-01-01T00:00:00Z"
+          }
+        

@@ -67,8 +67,6 @@ object TestData {
     const val TEST_LOG_LIST_JSON_INCOMPLETE = DATA_ROOT + "loglist/log_list_incomplete.json"
     const val TEST_LOG_LIST_SIG = DATA_ROOT + "loglist/log_list.sig"
 
-    const val TEST_LOG_LIST_JSON_V2_BETA = DATA_ROOT + "loglist_v2_beta/log_list_example.json"
-
     const val TEST_MITMPROXY_ROOT_CERT = DATA_ROOT + "mitmproxy-ca-cert.pem"
     const val TEST_MITMPROXY_ATTACK_CHAIN = DATA_ROOT + "mitmproxy-attack-chain.pem"
     const val TEST_MITMPROXY_ORIGINAL_CHAIN = DATA_ROOT + "mitmproxy-original-chain.pem"

@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist.model
+package com.babylon.certificatetransparency.internal.loglist.model.v2
 
-import com.google.gson.annotations.SerializedName
+import com.babylon.certificatetransparency.internal.loglist.deserializer.HostnameDeserializer
+import com.google.gson.annotations.JsonAdapter
+import okhttp3.HttpUrl
 
-internal data class LogList(
-    @SerializedName("logs") val logs: List<Log>,
-    @SerializedName("operators") val operators: List<Operator>
-)
+@JsonAdapter(HostnameDeserializer::class)
+internal data class Hostname(
+    val value: String
+) {
+    init {
+        HttpUrl.parse("http://$value")?.host() ?: throw IllegalArgumentException("$value is not a well-formed hostname")
+    }
+}

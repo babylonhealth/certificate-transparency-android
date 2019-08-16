@@ -17,7 +17,7 @@
 package com.babylon.certificatetransparency.utils
 
 import com.babylon.certificatetransparency.datasource.DataSource
-import com.babylon.certificatetransparency.internal.loglist.model.LogList
+import com.babylon.certificatetransparency.internal.loglist.model.v2.LogListV2
 import com.babylon.certificatetransparency.internal.utils.Base64
 import com.babylon.certificatetransparency.internal.utils.PublicKeyFactory
 import com.babylon.certificatetransparency.loglist.LogListResult
@@ -30,7 +30,7 @@ object LogListDataSourceTestFactory {
     val logListDataSource: DataSource<LogListResult> by lazy {
         // Collection of CT logs that are trusted from https://www.gstatic.com/ct/log_list/log_list.json
         val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
-        val trustedLogKeys = GsonBuilder().create().fromJson(json, LogList::class.java).logs.map { it.key }
+        val trustedLogKeys = GsonBuilder().create().fromJson(json, LogListV2::class.java).operators.flatMap { it.logs.map { it.key } }
 
         val list = LogListResult.Valid(trustedLogKeys.map { Base64.decode(it) }.map {
             LogServer(PublicKeyFactory.fromByteArray(it))

@@ -16,7 +16,7 @@
 
 package com.babylon.certificatetransparency.internal.loglist.deserializer
 
-import com.babylon.certificatetransparency.internal.loglist.model.v2beta.State
+import com.babylon.certificatetransparency.internal.loglist.model.v2.State
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

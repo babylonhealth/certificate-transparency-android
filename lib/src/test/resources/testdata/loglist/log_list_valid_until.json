@@ -1,47 +1,76 @@
 {
-  "logs": [
-    {
-      "description": "Google 'Argon2018' log",
-      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0gBVBa3VR7QZu82V+ynXWD14JM3ORp37MtRxTmACJV5ZPtfUA7htQ2hofuigZQs+bnFZkje+qejxoyvk2Q1VaA==",
-      "url": "ct.googleapis.com/logs/argon2018/",
-      "maximum_merge_delay": 86400,
-      "operated_by": [
-        0
-      ],
-      "dns_api_endpoint": "argon2018.ct.googleapis.com"
-    },
-    {
-      "description": "Google 'Argon2021' log",
-      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETeBmZOrzZKo4xYktx9gI2chEce3cw/tbr5xkoQlmhB18aKfsxD+MnILgGNl0FOm0eYGilFVi85wLRIOhK8lxKw==",
-      "url": "ct.googleapis.com/logs/argon2021/",
-      "maximum_merge_delay": 86400,
-      "operated_by": [
-        0
-      ],
-      "dns_api_endpoint": "argon2021.ct.googleapis.com",
-      "disqualified_at": 1475637842000
-    },
-    {
-      "description": "Google 'Aviator' log",
-      "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1/TMabLkDpCjiupacAlP7xNi0I1JYP8bQFAHDG1xhtolSY1l4QgNRzRrvSe8liE+NPWHdjGxfx3JhTsN9x8/6Q==",
-      "url": "ct.googleapis.com/aviator/",
-      "maximum_merge_delay": 86400,
-      "operated_by": [
-        0
-      ],
-      "final_sth": {
-        "tree_size": 46466472,
-        "timestamp": 1480512258330,
-        "sha256_root_hash": "LcGcZRsm+LGYmrlyC5LXhV1T6OD8iH5dNlb0sEJl9bA=",
-        "tree_head_signature": "BAMASDBGAiEA/M0Nvt77aNe+9eYbKsv6rRpTzFTKa5CGqb56ea4hnt8CIQCJDE7pL6xgAewMd5i3G1lrBWgFooT2kd3+zliEz5Rw8w=="
-      },
-      "dns_api_endpoint": "aviator.ct.googleapis.com"
-    }
-  ],
   "operators": [
     {
       "name": "Google",
-      "id": 0
+      "email": [
+        "google-ct-logs@googlegroups.com"
+      ],
+      "logs": [
+        {
+          "description": "Google 'Argon2019' log",
+          "log_id": "Y/Lbzeg7zCzPC3KEJ1drM6SNYXePvXWmOLHHaFRL2I0=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI3MQm+HzXvaYa2mVlhB4zknbtAT8cSxakmBoJcBKGqGwYS0bhxSpuvABM1kdBTDpQhXnVdcq+LSiukXJRpGHVg==",
+          "url": "https://ct.googleapis.com/logs/argon2019/",
+          "dns": "argon2019.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2019-01-01T00:00:00Z",
+            "end_exclusive": "2020-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Cloudflare 'Nimbus2019' Log",
+          "log_id": "dH7agzGtMxCRIZzOJU9CcMK//V5CIAjGNzV55hB7zFY=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkZHz1v5r8a9LmXSMegYZAg4UW+Ug56GtNfJTDNFZuubEJYgWf4FcC5D+ZkYwttXTDSo4OkanG9b3AI4swIQ28g==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2019/",
+          "dns": "cloudflare-nimbus2019.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "usable": {
+              "timestamp": "2018-06-15T02:30:13Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2019-01-01T00:00:00Z",
+            "end_exclusive": "2020-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Cloudflare 'Nimbus2022' Log",
+          "log_id": "QcjKsd8iRkoQxqE6CUKHXk4xixsD6+tLx2jwkGKWBvY=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESLJHTlAycmJKDQxIv60pZG8g33lSYxYpCi5gteI6HLevWbFVCdtZx+m9b+0LrwWWl/87mkNN6xE0M4rnrIPA/w==",
+          "url": "https://ct.cloudflare.com/logs/nimbus2022/",
+          "dns": "cloudflare-nimbus2022.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "qualified": {
+              "timestamp": "2019-06-04T00:00:00Z"
+            }
+          },
+          "temporal_interval": {
+            "start_inclusive": "2022-01-01T00:00:00Z",
+            "end_exclusive": "2023-01-01T00:00:00Z"
+          }
+        },
+        {
+          "description": "Symantec log",
+          "log_id": "3esdK3oNT6Ygi4GtgWhwfi6OnQHVXIiNPRHEzbbsvsw=",
+          "key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEluqsHEYMG1XcDfy1lCdGV0JwOmkY4r87xNuroPS2bMBTP01CEDPwWJePa75y9CrsHEKqAy8afig1dpkIPSEUhg==",
+          "url": "https://ct.ws.symantec.com/",
+          "dns": "symantec.ct.googleapis.com",
+          "mmd": 86400,
+          "state": {
+            "retired": {
+              "timestamp": "2019-02-16T00:00:00Z"
+            }
+          }
+        }
+      ]
     }
   ]
 }
