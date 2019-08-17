@@ -123,4 +123,15 @@ class CertificateTransparencyInterceptorIntegrationTest {
 
         client.newCall(request).execute()
     }
+
+    @Test(expected = IllegalStateException::class)
+    fun interceptorThrowsException() {
+        val client = OkHttpClient.Builder().addInterceptor(networkInterceptor).build()
+
+        val request = Request.Builder()
+            .url("https://www.babylonhealth.com")
+            .build()
+
+        client.newCall(request).execute()
+    }
 }
