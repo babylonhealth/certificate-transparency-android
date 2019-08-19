@@ -37,7 +37,7 @@ class LogListVerifierTest {
         // when we ask for data
         val result = LogListVerifier(keyPair.public).verify(json, signature)
 
-        // then 3 items are returned (many ignored as invalid states)
+        // then the signature verifies
         require(result is LogServerSignatureResult.Valid)
     }
 

@@ -48,7 +48,7 @@ class RawLogListToLogListResultTransformerTest {
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(RawLogListResult.Success(json, sig))
 
-        // then 32 items are returned
+        // then 41 items are returned
         require(result is LogListResult.Valid)
         assertEquals(41, result.servers.size)
         assertEquals("Y/Lbzeg7zCzPC3KEJ1drM6SNYXePvXWmOLHHaFRL2I0=", Base64.toBase64String(result.servers[0].id))
