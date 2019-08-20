@@ -46,17 +46,12 @@ class RawLogListToLogListResultTransformerTest {
         // given we have a valid json file and signature
 
         // when we ask for data
-        val result = RawLogListToLogListResultTransformer().transform(
-            RawLogListResult.Success(
-                json,
-                sig
-            )
-        )
+        val result = RawLogListToLogListResultTransformer().transform(RawLogListResult.Success(json, sig))
 
-        // then 32 items are returned
+        // then 41 items are returned
         require(result is LogListResult.Valid)
-        assertEquals(32, result.servers.size)
-        assertEquals("pFASaQVaFVReYhGrN7wQP2KuVXakXksXFEU+GyIQaiU=", Base64.toBase64String(result.servers[0].id))
+        assertEquals(41, result.servers.size)
+        assertEquals("Y/Lbzeg7zCzPC3KEJ1drM6SNYXePvXWmOLHHaFRL2I0=", Base64.toBase64String(result.servers[0].id))
     }
 
     @Test
@@ -182,28 +177,6 @@ class RawLogListToLogListResultTransformerTest {
     }
 
     @Test
-    fun `validUntil set from Sth`() = runBlocking {
-        // given we have a valid json file and signature
-        val keyPair = generateKeyPair()
-        val signature = calculateSignature(keyPair.private, jsonValidUntil.toByteArray())
-
-        // when we ask for data
-        val result = RawLogListToLogListResultTransformer(
-            logListVerifier = LogListVerifier(keyPair.public)
-        ).transform(
-            RawLogListResult.Success(
-                jsonValidUntil, signature
-            )
-        )
-
-        // then validUntil is set to the the STH timestamp
-        require(result is LogListResult.Valid)
-        val logServer = result.servers[2]
-        assertNotNull(logServer.validUntil)
-        assertEquals(1480512258330, logServer.validUntil)
-    }
-
-    @Test
     fun `validUntil set from disqualified`() = runBlocking {
         // given we have a valid json file and signature
         val keyPair = generateKeyPair()
@@ -218,11 +191,11 @@ class RawLogListToLogListResultTransformerTest {
             )
         )
 
-        // then validUntil is set to the the STH timestamp
+        // then validUntil is set to the timestamp
         require(result is LogListResult.Valid)
-        val logServer = result.servers[1]
+        val logServer = result.servers[3]
         assertNotNull(logServer.validUntil)
-        assertEquals(1475637842000, logServer.validUntil)
+        assertEquals(1550275200000, logServer.validUntil)
     }
 
     private fun calculateSignature(privateKey: PrivateKey, data: ByteArray): ByteArray {

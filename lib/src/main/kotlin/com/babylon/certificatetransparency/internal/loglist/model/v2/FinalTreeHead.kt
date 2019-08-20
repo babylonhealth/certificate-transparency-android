@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist.model.v2beta
+package com.babylon.certificatetransparency.internal.loglist.model.v2
 
-import com.babylon.certificatetransparency.internal.loglist.deserializer.HostnameDeserializer
-import com.google.gson.annotations.JsonAdapter
-import okhttp3.HttpUrl
+import com.google.gson.annotations.SerializedName
 
-@JsonAdapter(HostnameDeserializer::class)
-internal data class Hostname(
-    val value: String
+internal data class FinalTreeHead(
+    @SerializedName("tree_size") val treeSize: Int,
+    @SerializedName("sha256_root_hash") val sha256RootHash: String
 ) {
     init {
-        HttpUrl.parse("http://$value")?.host() ?: throw IllegalArgumentException("$value is not a well-formed hostname")
+        require(treeSize >= 0)
+        @Suppress("MagicNumber")
+        require(sha256RootHash.length == 44)
     }
 }

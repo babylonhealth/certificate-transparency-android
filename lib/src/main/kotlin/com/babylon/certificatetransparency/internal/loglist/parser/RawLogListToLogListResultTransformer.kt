@@ -31,7 +31,7 @@ import com.babylon.certificatetransparency.loglist.RawLogListResult
 
 internal class RawLogListToLogListResultTransformer(
     private val logListVerifier: LogListVerifier = LogListVerifier(),
-    private val logListJsonParser: LogListJsonParser = LogListJsonParserV1()
+    private val logListJsonParser: LogListJsonParser = LogListJsonParserV2()
 ) {
     fun transform(rawLogListResult: RawLogListResult) =
         when (rawLogListResult) {

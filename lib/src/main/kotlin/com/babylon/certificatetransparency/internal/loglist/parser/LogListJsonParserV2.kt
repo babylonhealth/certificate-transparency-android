@@ -18,8 +18,8 @@ package com.babylon.certificatetransparency.internal.loglist.parser
 
 import com.babylon.certificatetransparency.internal.loglist.LogListJsonBadFormat
 import com.babylon.certificatetransparency.internal.loglist.LogServerInvalidKey
-import com.babylon.certificatetransparency.internal.loglist.model.v2beta.LogListV2Beta
-import com.babylon.certificatetransparency.internal.loglist.model.v2beta.State
+import com.babylon.certificatetransparency.internal.loglist.model.v2.LogListV2
+import com.babylon.certificatetransparency.internal.loglist.model.v2.State
 import com.babylon.certificatetransparency.internal.utils.Base64
 import com.babylon.certificatetransparency.internal.utils.PublicKeyFactory
 import com.babylon.certificatetransparency.loglist.LogListResult
@@ -33,7 +33,7 @@ internal class LogListJsonParserV2 : LogListJsonParser {
 
     override fun parseJson(logListJson: String): LogListResult {
         val logList = try {
-            GsonBuilder().setLenient().create().fromJson(logListJson, LogListV2Beta::class.java)
+            GsonBuilder().setLenient().create().fromJson(logListJson, LogListV2::class.java)
         } catch (e: JsonParseException) {
             return LogListJsonBadFormat(e)
         }
@@ -42,7 +42,7 @@ internal class LogListJsonParserV2 : LogListJsonParser {
     }
 
     @Suppress("ReturnCount")
-    private fun buildLogServerList(logList: LogListV2Beta): LogListResult {
+    private fun buildLogServerList(logList: LogListV2): LogListResult {
         return logList.operators
             .flatMap { it.logs }
             // null, PENDING, REJECTED -> An SCT associated with this log server would be treated as untrusted

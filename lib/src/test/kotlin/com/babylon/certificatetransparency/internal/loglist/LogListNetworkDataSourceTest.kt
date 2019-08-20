@@ -101,7 +101,7 @@ class LogListNetworkDataSourceTest {
         // when we ask for data
         val result = LogListNetworkDataSource(logListService).get()
 
-        // then 32 items are returned
+        // then the log list is returned
         require(result is RawLogListResult.Success)
     }
 
