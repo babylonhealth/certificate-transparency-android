@@ -73,7 +73,7 @@ public class HttpURLConnectionJavaExampleViewModel extends BaseExampleViewModel 
         new Thread(() -> {
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL("https://" + connectionHost).openConnection();
-                //noinspection unchecked
+
                 enableCertificateTransparencyChecks(connection, hosts, isFailOnError, defaultLogger);
 
                 connection.connect();

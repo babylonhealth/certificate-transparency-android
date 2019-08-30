@@ -23,6 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Factory to create a [LogClient] for querying a log server
  */
+@Suppress("unused")
 internal object LogClientFactory {
 
     /**

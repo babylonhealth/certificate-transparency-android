@@ -7,8 +7,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.4.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
+        classpath("com.android.tools.build:gradle:3.5.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
         classpath("org.owasp:dependency-check-gradle:5.2.1")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
@@ -17,9 +17,9 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.0.1"
     id("com.github.ben-manes.versions") version "0.22.0"
-    id("com.appmattus.markdown") version "0.4.1"
+    id("com.appmattus.markdown") version "0.5.0"
 }
 
 allprojects {
@@ -37,7 +37,7 @@ task("clean", type = Delete::class) {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.0.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.0.1")
 }
 
 detekt {

@@ -10,11 +10,11 @@ plugins {
 apply(plugin = "com.novoda.bintray-release")
 
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(29)
 
     defaultConfig {
         minSdkVersion(19)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
 
@@ -33,7 +33,7 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
 
     api(project(":lib"))
 

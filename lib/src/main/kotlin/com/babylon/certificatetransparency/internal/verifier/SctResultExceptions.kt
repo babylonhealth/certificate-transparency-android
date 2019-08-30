@@ -57,7 +57,7 @@ internal object NoIssuerWithPreCert : SctVerificationResult.Invalid.Failed() {
     override fun toString() = "Chain with PreCertificate signed by PreCertificate Signing Cert must contain issuer"
 }
 
-internal data class CertificateEncodingFailed(override val exception: kotlin.Exception) : SctVerificationResult.Invalid.FailedWithException() {
+internal data class CertificateEncodingFailed(override val exception: Exception) : SctVerificationResult.Invalid.FailedWithException() {
     override fun toString() = "Certificate could not be encoded with: ${exception.stringStackTrace()}"
 }
 

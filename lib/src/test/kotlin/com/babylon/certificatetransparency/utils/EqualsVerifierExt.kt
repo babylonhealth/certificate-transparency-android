@@ -19,6 +19,6 @@ package com.babylon.certificatetransparency.utils
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.EqualsVerifierApi
 
-inline fun <reified T : kotlin.Any> equalsVerifier(init: EqualsVerifierApi<T>.() -> Unit = {}) {
+inline fun <reified T : Any> equalsVerifier(init: EqualsVerifierApi<T>.() -> Unit = {}) {
     EqualsVerifier.forClass(T::class.java).also(init).verify()
 }

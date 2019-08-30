@@ -17,7 +17,6 @@
 package com.babylon.certificatetransparency.internal.verifier.model
 
 import okhttp3.HttpUrl
-import java.util.Arrays
 
 /**
  * @property pattern A hostname like `example.com` or a pattern like `*.example.com`.
@@ -61,7 +60,7 @@ internal data class Host(
     }
 
     override fun hashCode(): Int {
-        return Arrays.hashCode(arrayOf(canonicalHostname, startsWithWildcard))
+        return arrayOf(canonicalHostname, startsWithWildcard).contentHashCode()
     }
 
     companion object {

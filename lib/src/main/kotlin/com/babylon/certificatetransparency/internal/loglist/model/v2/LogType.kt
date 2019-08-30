@@ -19,9 +19,11 @@ package com.babylon.certificatetransparency.internal.loglist.model.v2
 import com.google.gson.annotations.SerializedName
 
 internal enum class LogType {
+    @Suppress("unused")
     @SerializedName("prod")
     PROD,
 
+    @Suppress("unused")
     @SerializedName("test")
     TEST
 }

@@ -35,6 +35,6 @@ internal enum class LogEntryType(val number: Int) {
     UNKNOWN_ENTRY_TYPE(65536);
 
     companion object {
-        fun forNumber(number: Int) = LogEntryType.values().firstOrNull { it.number == number } ?: UNKNOWN_ENTRY_TYPE
+        fun forNumber(number: Int) = values().firstOrNull { it.number == number } ?: UNKNOWN_ENTRY_TYPE
     }
 }

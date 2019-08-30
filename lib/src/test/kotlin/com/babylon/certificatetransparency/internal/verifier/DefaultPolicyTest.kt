@@ -86,7 +86,7 @@ class DefaultPolicyTest(
 
     companion object {
 
-        @Suppress("LongParameterList")
+        @Suppress("LongParameterList", "SameParameterValue")
         private fun date(year: Int, month: Int, dayOfMonth: Int, hour: Int, minute: Int, second: Int, milliseconds: Int): Date =
             Calendar.getInstance().apply {
                 set(Calendar.YEAR, year)
