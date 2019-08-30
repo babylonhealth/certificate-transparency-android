@@ -16,8 +16,6 @@
  * Code derived from https://github.com/google/certificate-transparency-java
  */
 
-@file:JvmName("CertificateInfo")
-
 package com.babylon.certificatetransparency.internal.utils
 
 import com.babylon.certificatetransparency.internal.serialization.CTConstants.POISON_EXTENSION_OID

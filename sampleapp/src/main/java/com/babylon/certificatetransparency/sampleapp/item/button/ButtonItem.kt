@@ -31,9 +31,7 @@ class ButtonItem(
 ) : Item() {
 
     init {
-        if (!((titleResId != null) xor (title != null))) {
-            throw IllegalStateException("Provide either titleResId or title")
-        }
+        check((titleResId != null) xor (title != null)) { "Provide either titleResId or title" }
     }
 
     override fun getLayout() = R.layout.button_item

@@ -21,6 +21,7 @@ package com.babylon.certificatetransparency.internal.utils
 import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.TimeZone
+import kotlin.math.pow
 
 private val GMT = TimeZone.getTimeZone("GMT")
 
@@ -77,7 +78,7 @@ internal fun String.toRfc3339Long(): Long {
             milliseconds = results.groupValues[8].substring(1).toInt() // milliseconds
             // The number of digits after the dot may not be 3. Need to renormalize.
             val fractionDigits = results.groupValues[8].substring(1).length - 3
-            milliseconds = (milliseconds.toDouble() / Math.pow(10.0, fractionDigits.toDouble())).toInt()
+            milliseconds = (milliseconds.toDouble() / 10.0.pow(fractionDigits.toDouble())).toInt()
         }
     }
     val dateTime = GregorianCalendar(GMT)

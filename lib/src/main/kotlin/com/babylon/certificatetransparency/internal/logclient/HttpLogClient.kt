@@ -81,7 +81,7 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
      * @return SignedCertificateTimestamp if the log added the chain successfully.
      */
     override fun addCertificate(certificatesChain: List<Certificate>): SignedCertificateTimestamp {
-        require(!certificatesChain.isEmpty()) { "Must have at least one certificate to submit." }
+        require(certificatesChain.isNotEmpty()) { "Must have at least one certificate to submit." }
 
         val isPreCertificate = certificatesChain[0].isPreCertificate()
         if (isPreCertificate && certificatesChain[1].isPreCertificateSigningCert()) {

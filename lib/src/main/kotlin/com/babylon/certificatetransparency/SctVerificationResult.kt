@@ -90,7 +90,7 @@ sealed class SctVerificationResult {
             /**
              * The [exception] that occurred
              */
-            abstract val exception: kotlin.Exception?
+            abstract val exception: Exception?
         }
     }
 }

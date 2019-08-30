@@ -54,8 +54,7 @@ internal object PublicKeyFactory {
     private fun determineKeyAlgorithm(keyBytes: ByteArray): String {
         val seq = ASN1Sequence.getInstance(keyBytes)
         val seq1 = seq.objects.nextElement() as DLSequence
-        val oid = seq1.objects.nextElement() as ASN1ObjectIdentifier
-        return when (oid) {
+        return when (val oid = seq1.objects.nextElement() as ASN1ObjectIdentifier) {
             PKCSObjectIdentifiers.rsaEncryption -> "RSA"
             X9ObjectIdentifiers.id_ecPublicKey -> "EC"
             else -> throw IllegalArgumentException("Unsupported key type $oid")

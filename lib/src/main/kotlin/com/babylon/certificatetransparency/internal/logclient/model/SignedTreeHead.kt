@@ -44,7 +44,7 @@ internal data class SignedTreeHead(
         var result = version.hashCode()
         result = 31 * result + timestamp.hashCode()
         result = 31 * result + treeSize.hashCode()
-        result = 31 * result + (sha256RootHash?.let { Arrays.hashCode(it) } ?: 0)
+        result = 31 * result + (sha256RootHash?.contentHashCode() ?: 0)
         result = 31 * result + (signature?.hashCode() ?: 0)
         return result
     }

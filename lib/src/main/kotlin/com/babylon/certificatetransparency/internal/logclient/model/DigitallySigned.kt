@@ -22,7 +22,7 @@ internal data class DigitallySigned(
     val signature: ByteArray
 ) {
     // Numbers part of specification
-    @Suppress("MagicNumber")
+    @Suppress("MagicNumber", "unused")
     enum class HashAlgorithm(val number: Int) {
         NONE(0),
         MD5(1),
@@ -33,12 +33,12 @@ internal data class DigitallySigned(
         SHA512(6);
 
         companion object {
-            fun forNumber(number: Int) = HashAlgorithm.values().firstOrNull { it.number == number }
+            fun forNumber(number: Int) = values().firstOrNull { it.number == number }
         }
     }
 
     // Numbers part of specification
-    @Suppress("MagicNumber")
+    @Suppress("MagicNumber", "unused")
     enum class SignatureAlgorithm(val number: Int) {
         ANONYMOUS(0),
         RSA(1),
@@ -46,7 +46,7 @@ internal data class DigitallySigned(
         ECDSA(3);
 
         companion object {
-            fun forNumber(number: Int) = SignatureAlgorithm.values().firstOrNull { it.number == number }
+            fun forNumber(number: Int) = values().firstOrNull { it.number == number }
         }
     }
 

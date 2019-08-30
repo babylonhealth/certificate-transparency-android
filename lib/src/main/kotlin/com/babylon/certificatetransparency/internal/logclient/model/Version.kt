@@ -26,6 +26,6 @@ internal enum class Version(val number: Int) {
     UNKNOWN_VERSION(256);
 
     companion object {
-        fun forNumber(number: Int) = Version.values().firstOrNull { it.number == number } ?: UNKNOWN_VERSION
+        fun forNumber(number: Int) = values().firstOrNull { it.number == number } ?: UNKNOWN_VERSION
     }
 }
