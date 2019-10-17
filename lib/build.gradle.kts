@@ -1,5 +1,4 @@
 import com.novoda.gradle.release.PublishExtension
-import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -24,20 +23,21 @@ java {
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.62")
-    implementation("org.bouncycastle:bcprov-jdk15on:1.62")
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.64")
+    implementation("org.bouncycastle:bctls-jdk15on:1.64")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
 
-    implementation("com.squareup.retrofit2:retrofit:2.6.1")
-    implementation("com.squareup.retrofit2:converter-gson:2.6.1")
-    testImplementation("com.squareup.retrofit2:retrofit-mock:2.6.1")
+    implementation("com.squareup.retrofit2:retrofit:2.6.2")
+    implementation("com.squareup.retrofit2:converter-gson:2.6.2")
+    testImplementation("com.squareup.retrofit2:retrofit-mock:2.6.2")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:3.0.0")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
+    testImplementation("org.mockito:mockito-core:3.1.0")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.9")
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.10")
 }
 
 tasks.withType(KotlinCompile::class.java).all {
@@ -51,9 +51,11 @@ tasks.getting(DokkaTask::class) {
     outputFormat = "html"
     outputDirectory = "${project.buildDir}/javadoc"
 
-    externalDocumentationLink(delegateClosureOf<DokkaConfiguration.ExternalDocumentationLink.Builder> {
-        url = URL("https://square.github.io/okhttp/3.x/okhttp/")
-    })
+    configuration {
+        externalDocumentationLink {
+            url = URL("https://square.github.io/okhttp/3.x/okhttp/")
+        }
+    }
 }
 
 dependencyCheck {
@@ -107,7 +109,7 @@ configure<PublishExtension> {
     artifactId = "certificatetransparency"
     publishVersion = System.getenv("CIRCLE_TAG") ?: System.getProperty("CIRCLE_TAG") ?: "unknown"
     desc = "Certificate transparency for Android and Java"
-    website = "https://github.com/Babylonpartners/certificate-transparency-android"
+    website = "https://github.com/babylonhealth/certificate-transparency-android"
 
     dryRun = false
 }

@@ -1,5 +1,6 @@
 import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 buildscript {
     repositories {
@@ -7,18 +8,18 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.0")
+        classpath("com.android.tools.build:gradle:3.5.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
-        classpath("org.owasp:dependency-check-gradle:5.2.1")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.0")
+        classpath("org.owasp:dependency-check-gradle:5.2.2")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
         classpath("com.novoda:bintray-release:0.9.1")
     }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.0.1"
-    id("com.github.ben-manes.versions") version "0.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.1.1"
+    id("com.github.ben-manes.versions") version "0.27.0"
     id("com.appmattus.markdown") version "0.5.0"
 }
 
@@ -37,7 +38,22 @@ task("clean", type = Delete::class) {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.0.1")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.1.1")
+}
+
+tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                fun isNonStable(version: String) = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea").any { qualifier ->
+                    version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
+                }
+                if (isNonStable(candidate.version) && !isNonStable(currentVersion)) {
+                    reject("Release candidate")
+                }
+            }
+        }
+    }
 }
 
 detekt {
