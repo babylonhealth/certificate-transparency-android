@@ -20,7 +20,7 @@ import com.babylon.certificatetransparency.sampleapp.R
 import com.pddstudio.highlightjs.models.Language
 import com.pddstudio.highlightjs.models.Theme
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.code_view_item.view.*
 
 class CodeViewItem : Item() {
@@ -32,7 +32,7 @@ class CodeViewItem : Item() {
 
     override fun getLayout() = R.layout.code_view_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.code_view.apply {
             theme = Theme.DARKULA
             highlightLanguage = Language.JAVA

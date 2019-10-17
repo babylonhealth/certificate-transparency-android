@@ -32,7 +32,7 @@ class CertificateRevocationHostnameVerifierIntegrationTest {
             @Suppress("MaxLineLength")
             addCrl(
                 issuerDistinguishedName = "ME0xCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxJzAlBgNVBAMTHkRpZ2lDZXJ0IFNIQTIgU2VjdXJlIFNlcnZlciBDQQ==",
-                serialNumbers = listOf("Aa8e+91erglSMgsk/mtVaA==")
+                serialNumbers = listOf("Aa8e+91erglSMgsk/mtVaA==", "A3G1iob2zpw+y3v0L5II/A==")
             )
         }
     }

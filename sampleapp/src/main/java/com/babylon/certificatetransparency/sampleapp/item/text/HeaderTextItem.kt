@@ -21,8 +21,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.babylon.certificatetransparency.sampleapp.R
 import com.babylon.certificatetransparency.sampleapp.item.getString
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.header_text_item.view.*
 
 class HeaderTextItem(
@@ -37,7 +37,7 @@ class HeaderTextItem(
 
     override fun getLayout() = R.layout.header_text_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.title.text = if (titleResId != null) viewHolder.getString(titleResId) else title
 
         if (iconResId != null) {

@@ -17,8 +17,8 @@
 package com.babylon.certificatetransparency.sampleapp.item
 
 import com.babylon.certificatetransparency.sampleapp.R
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.checkbox_item.view.*
 
 typealias CheckboxCallback = ((Boolean) -> Unit)
@@ -27,7 +27,7 @@ class CheckboxItem(private val title: String, private val isChecked: Boolean, pr
 
     override fun getLayout() = R.layout.checkbox_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.checkbox.text = title
         viewHolder.containerView.checkbox.isChecked = isChecked
 

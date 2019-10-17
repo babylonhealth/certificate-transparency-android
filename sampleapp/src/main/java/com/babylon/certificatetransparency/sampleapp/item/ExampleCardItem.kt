@@ -24,8 +24,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.babylon.certificatetransparency.sampleapp.R
 import com.google.android.material.snackbar.Snackbar
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.example_card_item.view.*
 
 class ExampleCardItem(
@@ -38,7 +38,7 @@ class ExampleCardItem(
 
     override fun getLayout() = R.layout.example_card_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
 
         viewHolder.containerView.title.text = title
 

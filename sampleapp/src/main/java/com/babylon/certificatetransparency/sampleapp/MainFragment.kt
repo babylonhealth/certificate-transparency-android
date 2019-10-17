@@ -30,7 +30,7 @@ import com.babylon.certificatetransparency.sampleapp.item.BabylonLogoItem
 import com.babylon.certificatetransparency.sampleapp.item.ExampleCardItem
 import com.babylon.certificatetransparency.sampleapp.item.text.HeaderTextItem
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
+import com.xwray.groupie.GroupieViewHolder
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
@@ -50,7 +50,7 @@ class MainFragment : Fragment() {
         val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics)
         recyclerView.addItemDecoration(SpaceItemDecoration(px.toInt()))
 
-        recyclerView.adapter = GroupAdapter<ViewHolder>().apply {
+        recyclerView.adapter = GroupAdapter<GroupieViewHolder>().apply {
             val navController = findNavController()
 
             add(HeaderTextItem(R.string.certificate_transparency, iconResId = R.drawable.ic_launcher_foreground))

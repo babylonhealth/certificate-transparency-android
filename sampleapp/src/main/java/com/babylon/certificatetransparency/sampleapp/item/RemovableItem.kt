@@ -17,15 +17,15 @@
 package com.babylon.certificatetransparency.sampleapp.item
 
 import com.babylon.certificatetransparency.sampleapp.R
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.removable_item.view.*
 
 class RemovableItem(val title: CharSequence, private val callback: ItemCallback<RemovableItem>? = null) : Item() {
 
     override fun getLayout() = R.layout.removable_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.title.text = title
 
         viewHolder.containerView.delete.setOnClickListener {
