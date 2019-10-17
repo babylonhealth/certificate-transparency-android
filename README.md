@@ -1,7 +1,7 @@
 # Certificate Transparency for Android
 
-[![CircleCI](https://circleci.com/gh/Babylonpartners/certificate-transparency-android/tree/master.svg?style=svg)](https://circleci.com/gh/Babylonpartners/certificate-transparency-android/tree/master)
-[![Coverage Status](https://coveralls.io/repos/github/Babylonpartners/certificate-transparency-android/badge.svg?branch=master)](https://coveralls.io/github/Babylonpartners/certificate-transparency-android?branch=master)
+[![CircleCI](https://circleci.com/gh/babylonhealth/certificate-transparency-android/tree/master.svg?style=svg)](https://circleci.com/gh/babylonhealth/certificate-transparency-android/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/babylonhealth/certificate-transparency-android/badge.svg?branch=master)](https://coveralls.io/github/babylonhealth/certificate-transparency-android?branch=master)
 [![Download](https://api.bintray.com/packages/babylonpartners/maven/certificatetransparency/images/download.svg)](https://bintray.com/babylonpartners/maven/certificatetransparency/_latestVersion)
 
 To protect our apps from man-in-the-middle attacks one of the first
@@ -239,7 +239,7 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/Babylonpartners/certificate-transparency-android/tags).
+available, see the [tags on this repository](https://github.com/babylonhealth/certificate-transparency-android/tags).
 
 ## License
 

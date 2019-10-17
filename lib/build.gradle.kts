@@ -107,7 +107,7 @@ configure<PublishExtension> {
     artifactId = "certificatetransparency"
     publishVersion = System.getenv("CIRCLE_TAG") ?: System.getProperty("CIRCLE_TAG") ?: "unknown"
     desc = "Certificate transparency for Android and Java"
-    website = "https://github.com/Babylonpartners/certificate-transparency-android"
+    website = "https://github.com/babylonhealth/certificate-transparency-android"
 
     dryRun = false
 }
