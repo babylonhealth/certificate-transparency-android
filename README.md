@@ -239,7 +239,7 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/Babylonpartners/certificate-transparency-android/tags).
+available, see the [tags on this repository](https://github.com/babylonhealth/certificate-transparency-android/tags).
 
 ## License
 

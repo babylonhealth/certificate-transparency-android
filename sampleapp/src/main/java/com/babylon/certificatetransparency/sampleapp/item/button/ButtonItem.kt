@@ -20,8 +20,8 @@ import androidx.annotation.StringRes
 import com.babylon.certificatetransparency.sampleapp.R
 import com.babylon.certificatetransparency.sampleapp.item.ItemCallback
 import com.babylon.certificatetransparency.sampleapp.item.getString
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.button_item.view.*
 
 class ButtonItem(
@@ -36,7 +36,7 @@ class ButtonItem(
 
     override fun getLayout() = R.layout.button_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.button.apply {
             text = if (titleResId != null) viewHolder.getString(titleResId) else title
 

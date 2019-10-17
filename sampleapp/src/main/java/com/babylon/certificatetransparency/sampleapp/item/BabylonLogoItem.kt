@@ -17,12 +17,12 @@
 package com.babylon.certificatetransparency.sampleapp.item
 
 import com.babylon.certificatetransparency.sampleapp.R
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 
 object BabylonLogoItem : Item() {
 
     override fun getLayout() = R.layout.babylon_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) = Unit
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) = Unit
 }

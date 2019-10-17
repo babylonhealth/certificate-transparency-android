@@ -19,8 +19,8 @@ package com.babylon.certificatetransparency.sampleapp.item.text
 import androidx.annotation.StringRes
 import com.babylon.certificatetransparency.sampleapp.R
 import com.babylon.certificatetransparency.sampleapp.item.getString
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.body_text_item.view.*
 
 class BodyTextItem(
@@ -34,7 +34,7 @@ class BodyTextItem(
 
     override fun getLayout() = R.layout.body_text_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.title.text = if (titleResId != null) viewHolder.getString(titleResId) else title
     }
 }

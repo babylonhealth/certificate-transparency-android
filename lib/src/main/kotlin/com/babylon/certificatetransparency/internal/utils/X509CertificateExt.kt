@@ -24,7 +24,7 @@ import com.babylon.certificatetransparency.internal.serialization.Deserializer
 import org.bouncycastle.asn1.ASN1OctetString
 import org.bouncycastle.asn1.ASN1Primitive
 import org.bouncycastle.asn1.DEROctetString
-import org.bouncycastle.crypto.tls.TlsUtils
+import org.bouncycastle.tls.TlsUtils
 import java.io.IOException
 import java.security.cert.X509Certificate
 

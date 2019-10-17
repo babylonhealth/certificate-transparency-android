@@ -43,8 +43,8 @@ import com.babylon.certificatetransparency.sampleapp.item.text.HeaderTextItem
 import com.babylon.certificatetransparency.sampleapp.item.text.SubHeaderTextItem
 import com.google.android.material.snackbar.Snackbar
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
-import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.example_fragment.*
 
 abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
@@ -108,7 +108,7 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
 
         (hostsRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
-        hostsRecyclerView.adapter = GroupAdapter<ViewHolder>().apply {
+        hostsRecyclerView.adapter = GroupAdapter<GroupieViewHolder>().apply {
             add(HeaderTextItem(getTitle()))
             add(SubHeaderTextItem(R.string.configuration))
             add(hostsSection)

@@ -17,6 +17,6 @@
 package com.babylon.certificatetransparency.sampleapp.item
 
 import androidx.annotation.StringRes
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 
-fun ViewHolder.getString(@StringRes resId: Int) = containerView.context.getString(resId)
+fun GroupieViewHolder.getString(@StringRes resId: Int) = containerView.context.getString(resId)

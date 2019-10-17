@@ -22,8 +22,8 @@ import com.babylon.certificatetransparency.sampleapp.R
 import com.babylon.certificatetransparency.sampleapp.item.ItemCallback
 import com.babylon.certificatetransparency.sampleapp.item.getString
 import com.google.android.material.button.MaterialButton
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.outlined_button_item.view.*
 
 class OutlinedButtonItem(
@@ -39,7 +39,7 @@ class OutlinedButtonItem(
 
     override fun getLayout() = R.layout.outlined_button_item
 
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.containerView.button.apply {
             text = if (titleResId != null) viewHolder.getString(titleResId) else title
 
