@@ -8,10 +8,10 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
+        classpath("com.android.tools.build:gradle:3.5.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.60")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.0")
-        classpath("org.owasp:dependency-check-gradle:5.2.2")
+        classpath("org.owasp:dependency-check-gradle:5.2.4")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
         classpath("com.novoda:bintray-release:0.9.1")
     }
@@ -20,7 +20,7 @@ buildscript {
 plugins {
     id("io.gitlab.arturbosch.detekt") version "1.1.1"
     id("com.github.ben-manes.versions") version "0.27.0"
-    id("com.appmattus.markdown") version "0.5.0"
+    id("com.appmattus.markdown") version "0.5.1"
 }
 
 allprojects {
