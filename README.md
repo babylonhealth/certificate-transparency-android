@@ -66,7 +66,7 @@ we have missed please reach out so we can keep this up to date.
 
 [![Download](https://api.bintray.com/packages/babylonpartners/maven/certificatetransparency/images/download.svg)](https://bintray.com/babylonpartners/maven/certificatetransparency/_latestVersion)
 
-For Android modules include the *android* dependency in your
+For Android modules include the `android` dependency in your
 build.gradle file which ensures the necessary ProGuard rules are
 present:
 

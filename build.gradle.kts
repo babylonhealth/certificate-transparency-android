@@ -20,7 +20,7 @@ buildscript {
 plugins {
     id("io.gitlab.arturbosch.detekt") version "1.1.1"
     id("com.github.ben-manes.versions") version "0.27.0"
-    id("com.appmattus.markdown") version "0.5.1"
+    id("com.appmattus.markdown") version "0.6.0"
 }
 
 allprojects {
