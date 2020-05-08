@@ -25,7 +25,7 @@ sealed class RawLogListResult {
      * Class representing raw log list data loading successfully
      */
     data class Success(
-        val logList: String,
+        val logList: ByteArray,
         val signature: ByteArray
     ) : RawLogListResult() {
 
@@ -35,14 +35,14 @@ sealed class RawLogListResult {
 
             other as Success
 
-            if (logList != other.logList) return false
+            if (!logList.contentEquals(other.logList)) return false
             if (!signature.contentEquals(other.signature)) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = logList.hashCode()
+            var result = logList.contentHashCode()
             result = 31 * result + signature.contentHashCode()
             return result
         }

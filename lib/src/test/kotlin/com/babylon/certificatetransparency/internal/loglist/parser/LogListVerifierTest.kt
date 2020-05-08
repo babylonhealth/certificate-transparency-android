@@ -35,7 +35,7 @@ class LogListVerifierTest {
         val signature = calculateSignature(keyPair.private, json.toByteArray())
 
         // when we ask for data
-        val result = LogListVerifier(keyPair.public).verify(json, signature)
+        val result = LogListVerifier(keyPair.public).verify(json.toByteArray(), signature)
 
         // then the signature verifies
         require(result is LogServerSignatureResult.Valid)
@@ -47,7 +47,7 @@ class LogListVerifierTest {
         val signature = ByteArray(512) { it.toByte() }
 
         // when we ask for data
-        val result = LogListVerifier().verify(json, signature)
+        val result = LogListVerifier().verify(json.toByteArray(), signature)
 
         // then invalid is returned
         assertIsA<LogServerSignatureResult.Invalid.SignatureFailed>(result)
@@ -59,7 +59,7 @@ class LogListVerifierTest {
         val signature = ByteArray(32) { it.toByte() }
 
         // when we ask for data
-        val result = LogListVerifier().verify(json, signature)
+        val result = LogListVerifier().verify(json.toByteArray(), signature)
 
         // then invalid is returned
         assertIsA<LogServerSignatureResult.Invalid.SignatureNotValid>(result)
