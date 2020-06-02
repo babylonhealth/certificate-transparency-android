@@ -189,6 +189,31 @@ class CertificateTransparencyBaseTest {
     }
 
     @Test
+    fun includeAllHostsRuleMatchesDomain() {
+        val ctb = CertificateTransparencyBase(
+            includeHosts = setOf(Host("*.*")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
+
+        val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
+
+        assertIsA<VerificationResult.Success.Trusted>(ctb.verifyCertificateTransparency("allowed.random.com", certsToCheck))
+    }
+
+    @Test
+    fun excludeHostFromAllRuleBlocksMatching() {
+        val ctb = CertificateTransparencyBase(
+            includeHosts = setOf(Host("*.*")),
+            excludeHosts = setOf(Host("allowed.random.com")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource
+        )
+
+        val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
+
+        assertIsA<VerificationResult.Success.DisabledForHost>(ctb.verifyCertificateTransparency("allowed.random.com", certsToCheck))
+    }
+
+    @Test
     fun excludeHostsRuleOnlyBlocksSpecifiedSubdomainMatching() {
         val ctb = CertificateTransparencyBase(
             includeHosts = setOf(Host("*.random.com")),
