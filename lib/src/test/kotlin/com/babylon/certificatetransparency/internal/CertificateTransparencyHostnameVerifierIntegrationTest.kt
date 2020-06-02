@@ -27,11 +27,10 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class CertificateTransparencyHostnameVerifierIntegrationTest {
 
     companion object {
-        private const val invalidSctDomain = "www.tauntonstore.com"
+        private const val invalidSctDomain = "no-sct.badssl.com"
 
         val hostnameVerifier = certificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE) {
             +"*.babylonhealth.com"
-            +"letsencrypt.org"
             +invalidSctDomain
 
             logListDataSource {
@@ -46,17 +45,6 @@ class CertificateTransparencyHostnameVerifierIntegrationTest {
 
         val request = Request.Builder()
             .url("https://www.babylonhealth.com")
-            .build()
-
-        client.newCall(request).execute()
-    }
-
-    @Test
-    fun letsEncryptAllowed() {
-        val client = OkHttpClient.Builder().hostnameVerifier(hostnameVerifier).build()
-
-        val request = Request.Builder()
-            .url("https://letsencrypt.org")
             .build()
 
         client.newCall(request).execute()
