@@ -126,4 +126,18 @@ class HostTest {
 
         assertFalse(host.matches("sub.example.com"))
     }
+
+    @Test
+    fun allBaseDomainMatches() {
+        val host = Host("*.*")
+
+        assertTrue(host.matches("example.com"))
+    }
+
+    @Test
+    fun allSubdomainMatches() {
+        val host = Host("*.*")
+
+        assertTrue(host.matches("sub.example.com"))
+    }
 }

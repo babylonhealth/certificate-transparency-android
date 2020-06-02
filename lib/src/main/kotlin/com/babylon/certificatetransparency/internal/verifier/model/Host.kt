@@ -31,6 +31,8 @@ internal data class Host(
 
     val startsWithWildcard = pattern.startsWith(WILDCARD)
 
+    private val matchAll = pattern == "*.*"
+
     init {
         this.canonicalHostname = if (startsWithWildcard) {
             HttpUrl.parse("http://" + pattern.substring(WILDCARD.length))?.host()
@@ -42,7 +44,7 @@ internal data class Host(
     fun matches(hostname: String): Boolean {
         if (startsWithWildcard) {
             val firstDot = hostname.indexOf('.')
-            return hostname.length - firstDot - 1 == canonicalHostname.length && hostname.regionMatches(
+            return matchAll || hostname.length - firstDot - 1 == canonicalHostname.length && hostname.regionMatches(
                 firstDot + 1, canonicalHostname, 0,
                 canonicalHostname.length, ignoreCase = false
             )

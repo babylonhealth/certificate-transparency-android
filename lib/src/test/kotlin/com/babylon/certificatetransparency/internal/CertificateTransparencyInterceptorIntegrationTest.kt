@@ -111,6 +111,43 @@ class CertificateTransparencyInterceptorIntegrationTest {
         client.newCall(request).execute()
     }
 
+    @Test(expected = SSLPeerUnverifiedException::class)
+    fun invalidNotAllowedWhenAllHostsIncluded() {
+        val client =
+            OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
+                +"*.*"
+
+                logListDataSource {
+                    LogListDataSourceTestFactory.logListDataSource
+                }
+            }).build()
+
+        val request = Request.Builder()
+            .url("https://$invalidSctDomain/")
+            .build()
+
+        client.newCall(request).execute()
+    }
+
+    @Test
+    fun invalidAllowedWhenHostExcludedFromAll() {
+        val client =
+            OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
+                +"*.*"
+                -invalidSctDomain
+
+                logListDataSource {
+                    LogListDataSourceTestFactory.logListDataSource
+                }
+            }).build()
+
+        val request = Request.Builder()
+            .url("https://$invalidSctDomain/")
+            .build()
+
+        client.newCall(request).execute()
+    }
+
     @Test(expected = IllegalStateException::class)
     fun interceptorThrowsException() {
         val client = OkHttpClient.Builder().addInterceptor(networkInterceptor).build()

@@ -60,6 +60,7 @@ detekt {
     input = files("$projectDir")
     buildUponDefaultConfig = true
     config = files("detekt-config.yml")
+    autoCorrect = true
 }
 
 markdownlint {
