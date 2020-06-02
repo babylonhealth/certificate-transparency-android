@@ -101,6 +101,18 @@ val client = OkHttpClient.Builder().apply {
 }.build()
 ```
 
+You can also enable certificate transparency for all hosts with `*.*`:
+
+```kotlin
+val interceptor = certificateTransparencyInterceptor {
+    // Enable for all hosts
+    +"*.*"
+
+    // Exclude specific hosts as necessary
+    -"legacy.babylonhealth.com"
+}
+```
+
 In Java, you can create the network interceptor through
 [CTInterceptorBuilder](./lib/src/main/kotlin/com/babylon/certificatetransparency/CTInterceptorBuilder.kt).
 
