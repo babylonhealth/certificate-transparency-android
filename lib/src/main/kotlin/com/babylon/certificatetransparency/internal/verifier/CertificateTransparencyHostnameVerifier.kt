@@ -27,6 +27,7 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
+@Suppress("LongParameterList")
 internal class CertificateTransparencyHostnameVerifier(
     private val delegate: HostnameVerifier,
     includeHosts: Set<Host>,

@@ -39,7 +39,7 @@ private const val X509_AUTHORITY_KEY_IDENTIFIER = "2.5.29.35"
 /**
  * @throws java.security.cert.CertificateParsingException
  */
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal fun Certificate.isPreCertificateSigningCert(): Boolean {
     contract {
         returns(true) implies (this@isPreCertificateSigningCert is X509Certificate)
@@ -47,7 +47,7 @@ internal fun Certificate.isPreCertificateSigningCert(): Boolean {
     return this is X509Certificate && extendedKeyUsage?.contains(PRECERTIFICATE_SIGNING_OID) == true
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal fun Certificate.isPreCertificate(): Boolean {
     contract {
         returns(true) implies (this@isPreCertificate is X509Certificate)
@@ -55,7 +55,7 @@ internal fun Certificate.isPreCertificate(): Boolean {
     return this is X509Certificate && criticalExtensionOIDs?.contains(POISON_EXTENSION_OID) == true
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal fun Certificate.hasEmbeddedSct(): Boolean {
     contract {
         returns(true) implies (this@hasEmbeddedSct is X509Certificate)

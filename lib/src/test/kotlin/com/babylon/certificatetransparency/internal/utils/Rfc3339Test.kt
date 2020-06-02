@@ -17,18 +17,13 @@
 package com.babylon.certificatetransparency.internal.utils
 
 import org.junit.Assert.assertEquals
-import org.junit.Rule
+import org.junit.Assert.assertThrows
 import org.junit.Test
-import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class Rfc3339Test {
-
-    @get:Rule
-    var thrown: ExpectedException = ExpectedException.none()
-
     @Parameterized.Parameter(0)
     lateinit var input: String
 
@@ -38,10 +33,12 @@ class Rfc3339Test {
     @Test
     fun test() {
         if (expected == "fail") {
-            thrown.expect(NumberFormatException::class.java)
+            assertThrows(NumberFormatException::class.java) {
+                input.toRfc3339Long()
+            }
+        } else {
+            assertEquals(expected.toLong(), input.toRfc3339Long())
         }
-
-        assertEquals(expected.toLong(), input.toRfc3339Long())
     }
 
     companion object {

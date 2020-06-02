@@ -29,6 +29,7 @@ import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.X509TrustManager
 
+@Suppress("LongParameterList")
 internal class CertificateTransparencyInterceptor(
     inlcudeHosts: Set<Host>,
     excludeHosts: Set<Host>,

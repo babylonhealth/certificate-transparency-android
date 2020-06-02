@@ -33,7 +33,7 @@ class RemovableItem(val title: CharSequence, private val callback: ItemCallback<
         }
     }
 
-    override fun isSameAs(other: com.xwray.groupie.Item<*>?): Boolean {
+    override fun isSameAs(other: com.xwray.groupie.Item<*>): Boolean {
         return other is RemovableItem && title == other.title
     }
 }
