@@ -65,9 +65,6 @@ dependencyCheck {
 
     analyzers.assemblyEnabled = false
 
-    // "~/.nvd" does not work correctly so we explicitly write out the circleci path
-    data.directory = if (System.getenv("CI")?.isNotEmpty() == true) "/home/circleci/.nvd" else null
-
     skipConfigurations = listOf("lintClassPath", "jacocoAgent", "jacocoAnt", "kotlinCompilerClasspath", "kotlinCompilerPluginClasspath")
 }
 
