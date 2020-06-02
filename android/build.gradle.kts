@@ -33,12 +33,12 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
 
     api(project(":lib"))
 
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:3.1.0")
+    testImplementation("junit:junit:4.13")
+    testImplementation("org.mockito:mockito-core:3.3.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
     testImplementation("androidx.test:core:1.2.0")

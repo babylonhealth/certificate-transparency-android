@@ -26,11 +26,10 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class CertificateTransparencyInterceptorIntegrationTest {
 
     companion object {
-        private const val invalidSctDomain = "www.tauntonstore.com"
+        private const val invalidSctDomain = "no-sct.badssl.com"
 
         val networkInterceptor = certificateTransparencyInterceptor {
             +"*.babylonhealth.com"
-            +"letsencrypt.org"
             +invalidSctDomain
 
             logListDataSource {
@@ -40,7 +39,6 @@ class CertificateTransparencyInterceptorIntegrationTest {
 
         val networkInterceptorAllowFails = certificateTransparencyInterceptor {
             +"*.babylonhealth.com"
-            +"letsencrypt.org"
             +invalidSctDomain
 
             logListDataSource {
@@ -68,17 +66,6 @@ class CertificateTransparencyInterceptorIntegrationTest {
 
         val request = Request.Builder()
             .url("http://www.babylonhealth.com")
-            .build()
-
-        client.newCall(request).execute()
-    }
-
-    @Test
-    fun letsEncryptAllowed() {
-        val client = OkHttpClient.Builder().addNetworkInterceptor(networkInterceptor).build()
-
-        val request = Request.Builder()
-            .url("https://letsencrypt.org")
             .build()
 
         client.newCall(request).execute()

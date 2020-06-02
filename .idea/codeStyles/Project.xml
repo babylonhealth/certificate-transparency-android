@@ -19,6 +19,9 @@
       <option name="WRAP_ON_TYPING" value="0" />
       <option name="RIGHT_MARGIN" value="80" />
     </MarkdownNavigatorCodeStyleSettings>
+    <codeStyleSettings language="Markdown">
+      <option name="RIGHT_MARGIN" value="80" />
+    </codeStyleSettings>
     <codeStyleSettings language="XML">
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
