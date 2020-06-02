@@ -20,17 +20,13 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.JsonAdapter
 import org.junit.Assert.assertEquals
-import org.junit.Rule
+import org.junit.Assert.assertThrows
 import org.junit.Test
-import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class Rfc3339DeserializerTest {
-
-    @get:Rule
-    var thrown: ExpectedException = ExpectedException.none()
 
     @Parameterized.Parameter(0)
     lateinit var input: String
@@ -43,12 +39,14 @@ class Rfc3339DeserializerTest {
     @Test
     fun test() {
         if (expected == "fail") {
-            thrown.expect(NumberFormatException::class.java)
+            assertThrows(NumberFormatException::class.java) {
+                gson.fromJson("{'timestamp':'$input'}", TestObject::class.java).timestamp
+            }
+        } else {
+            val result = gson.fromJson("{'timestamp':'$input'}", TestObject::class.java).timestamp
+
+            assertEquals(expected.toLong(), result)
         }
-
-        val result = gson.fromJson("{'timestamp':'$input'}", TestObject::class.java).timestamp
-
-        assertEquals(expected.toLong(), result)
     }
 
     companion object {

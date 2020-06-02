@@ -26,15 +26,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
 import java.util.concurrent.atomic.AtomicInteger
 
 class DataSourceReuseInflightTest {
-
-    @get:Rule
-    var thrown: ExpectedException = ExpectedException.none()
 
     private val cache = spy(InMemoryDataSource<Any>())
 

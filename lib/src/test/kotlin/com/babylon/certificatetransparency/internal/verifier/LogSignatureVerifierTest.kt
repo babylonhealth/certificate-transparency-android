@@ -55,9 +55,7 @@ import com.babylon.certificatetransparency.utils.assertIsA
 import com.babylon.certificatetransparency.utils.readPemFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
 import java.io.File
 
 /**
@@ -65,9 +63,6 @@ import java.io.File
  * verification is actually effective.
  */
 class LogSignatureVerifierTest {
-
-    @get:Rule
-    var thrown: ExpectedException = ExpectedException.none()
 
     /** Returns a LogSignatureVerifier for the test log with an EC key  */
     private val verifier by lazy {
