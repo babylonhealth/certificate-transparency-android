@@ -23,21 +23,25 @@ java {
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
+    // Issue with jettifier and v1.65
+    @Suppress("GradleDependency")
     implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
+    @Suppress("GradleDependency")
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
+    @Suppress("GradleDependency")
     implementation("org.bouncycastle:bctls-jdk15on:1.64")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
 
-    implementation("com.squareup.retrofit2:retrofit:2.6.2")
-    implementation("com.squareup.retrofit2:converter-gson:2.6.2")
-    testImplementation("com.squareup.retrofit2:retrofit-mock:2.6.2")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:3.1.0")
+    testImplementation("junit:junit:4.13")
+    testImplementation("org.mockito:mockito-core:3.3.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.1.10")
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.3")
 }
 
 tasks.withType(KotlinCompile::class.java).all {

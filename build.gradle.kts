@@ -8,18 +8,18 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.60")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.0")
+        classpath("com.android.tools.build:gradle:3.5.3")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
         classpath("org.owasp:dependency-check-gradle:5.3.2.1")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
-        classpath("com.novoda:bintray-release:0.9.1")
+        classpath("com.novoda:bintray-release:0.9.2")
     }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.1.1"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("io.gitlab.arturbosch.detekt") version "1.9.1"
+    id("com.github.ben-manes.versions") version "0.28.0"
     id("com.appmattus.markdown") version "0.6.0"
 }
 
@@ -38,7 +38,7 @@ task("clean", type = Delete::class) {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.1.1")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.9.1")
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
