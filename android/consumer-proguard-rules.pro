@@ -66,3 +66,9 @@
 
 ## Bouncycastle
 -dontwarn javax.naming.**
+
+
+## Ensure network models are not obfuscated
+# See https://github.com/babylonhealth/certificate-transparency-android/issues/38
+-keep class com.babylon.certificatetransparency.internal.loglist.model.v2.** { *; }
+-keep class com.babylon.certificatetransparency.internal.logclient.model.network.** { *; }
