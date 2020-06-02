@@ -11,7 +11,7 @@ buildscript {
         classpath("com.android.tools.build:gradle:3.5.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.60")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.0")
-        classpath("org.owasp:dependency-check-gradle:5.2.4")
+        classpath("org.owasp:dependency-check-gradle:5.3.2.1")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
         classpath("com.novoda:bintray-release:0.9.1")
     }
