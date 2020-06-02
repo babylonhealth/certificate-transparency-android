@@ -25,7 +25,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -90,9 +90,9 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, ContextViewModelFactory(requireContext())).get(getViewModelClass())
+        viewModel = ViewModelProvider(this, ContextViewModelFactory(requireContext())).get(getViewModelClass())
 
-        viewModel.liveData.observe(this, Observer { state ->
+        viewModel.liveData.observe(viewLifecycleOwner, Observer { state ->
             updateHosts(state)
             updateMessage(state)
             updateCode(state)

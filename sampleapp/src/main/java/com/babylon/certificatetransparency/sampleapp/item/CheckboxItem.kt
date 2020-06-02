@@ -36,7 +36,7 @@ class CheckboxItem(private val title: String, private val isChecked: Boolean, pr
         }
     }
 
-    override fun isSameAs(other: com.xwray.groupie.Item<*>?): Boolean {
+    override fun isSameAs(other: com.xwray.groupie.Item<*>): Boolean {
         return (other is CheckboxItem && title == other.title && isChecked == other.isChecked)
     }
 }
