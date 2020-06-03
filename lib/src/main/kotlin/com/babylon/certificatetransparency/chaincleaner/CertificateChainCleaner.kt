@@ -1,7 +1,6 @@
 package com.babylon.certificatetransparency.chaincleaner
 
 import java.security.cert.X509Certificate
-import java.util.ServiceLoader
 import javax.net.ssl.X509TrustManager
 
 /**
@@ -19,12 +18,17 @@ interface CertificateChainCleaner {
     fun clean(chain: List<X509Certificate>, hostname: String): List<X509Certificate>
 
     companion object {
-        private val factoryLoader: ServiceLoader<CertificateChainCleanerFactory> by lazy {
-            ServiceLoader.load<CertificateChainCleanerFactory>(CertificateChainCleanerFactory::class.java)
+        private val androidCertificateChainCleanerFactory by lazy {
+            try {
+                Class.forName("com.babylon.certificatetransparency.chaincleaner.AndroidCertificateChainCleaner\$Factory")
+                    .newInstance() as CertificateChainCleanerFactory
+            } catch (ignored: Exception) {
+                null
+            }
         }
 
         fun get(trustManager: X509TrustManager): CertificateChainCleaner {
-            return factoryLoader.firstOrNull()?.get(trustManager) ?: BasicCertificateChainCleaner(trustManager)
+            return androidCertificateChainCleanerFactory?.get(trustManager) ?: BasicCertificateChainCleaner(trustManager)
         }
     }
 }

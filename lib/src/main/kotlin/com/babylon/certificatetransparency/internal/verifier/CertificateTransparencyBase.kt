@@ -23,6 +23,7 @@ import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
 import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.loglist.LogListDataSourceFactory
 import com.babylon.certificatetransparency.internal.loglist.NoLogServers
@@ -42,6 +43,7 @@ import javax.net.ssl.X509TrustManager
 internal open class CertificateTransparencyBase(
     private val includeHosts: Set<Host>,
     private val excludeHosts: Set<Host> = emptySet(),
+    private val certificateChainCleanerFactory: CertificateChainCleanerFactory? = null,
     trustManager: X509TrustManager? = null,
     logListDataSource: DataSource<LogListResult>? = null,
     policy: CTPolicy? = null,
@@ -60,7 +62,7 @@ internal open class CertificateTransparencyBase(
             init(null as KeyStore?)
         }.trustManagers.first { it is X509TrustManager } as X509TrustManager)
 
-        CertificateChainCleaner.get(localTrustManager)
+        certificateChainCleanerFactory?.get(localTrustManager) ?: CertificateChainCleaner.get(localTrustManager)
     }
 
     private val logListDataSource = (logListDataSource ?: LogListDataSourceFactory.create(diskCache))

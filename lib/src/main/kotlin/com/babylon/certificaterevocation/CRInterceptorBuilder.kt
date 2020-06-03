@@ -18,6 +18,7 @@ package com.babylon.certificaterevocation
 
 import com.babylon.certificaterevocation.internal.revoker.CertificateRevocationInterceptor
 import com.babylon.certificaterevocation.internal.revoker.CrlItem
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import com.babylon.certificatetransparency.internal.utils.Base64
 import okhttp3.Interceptor
 import java.math.BigInteger
@@ -29,6 +30,7 @@ import javax.security.auth.x500.X500Principal
  * Builder to create an OkHttp network interceptor that will reject cert chains containing revoked certificates
  */
 class CRInterceptorBuilder {
+    private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
     private val crlSet = mutableSetOf<CrlItem>()
 
@@ -52,6 +54,24 @@ class CRInterceptorBuilder {
     var logger: CRLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
+
+    /**
+     * [CertificateChainCleanerFactory] used to provide the cleaner of the certificate chain
+     * Default: null
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+        apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
+
+    /**
+     * [CertificateChainCleanerFactory] used to provide the cleaner of the certificate chain
+     * Default: null
+     */
+    @JvmSynthetic
+    @Suppress("unused")
+    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+        setCertificateChainCleanerFactory(init())
+    }
 
     /**
      * [X509TrustManager] used to clean the certificate chain
@@ -87,9 +107,9 @@ class CRInterceptorBuilder {
     fun setLogger(logger: CRLogger) = apply { this.logger = logger }
 
     /**
-     * Verify certificate revocation for certificates that match [issuerDistinguishedName] and [serialNumber].
+     * Verify certificate revocation for certificates that match [issuerDistinguishedName] and [serialNumbers].
      *
-     * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
+     * @property issuerDistinguishedName lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun addCrl(issuerDistinguishedName: String, serialNumbers: List<String>) = apply {
@@ -102,5 +122,11 @@ class CRInterceptorBuilder {
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateRevocationInterceptor(crlSet.toSet(), trustManager, failOnError, logger)
+    fun build(): Interceptor = CertificateRevocationInterceptor(
+        crlSet = crlSet.toSet(),
+        certificateChainCleanerFactory = certificateChainCleanerFactory,
+        trustManager = trustManager,
+        failOnError = failOnError,
+        logger = logger
+    )
 }

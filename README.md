@@ -236,6 +236,11 @@ which logs with the tag `CertificateTransparency` by setting
 pattern which is a lower-case host name or wildcard pattern such as
 `*.example.com`.
 
+**Certificate Chain Provider Factory** Provide a custom implementation
+of a certificate chain cleaner.
+*Default:* Platform default factory which resolves to [AndroidCertificateChainCleaner](./android/src/main/kotlin/com/babylon/certificatetransparency/chaincleaner/AndroidCertificateChainCleaner.kt)
+or [BasicCertificateChainCleaner](./lib/src/main/kotlin/com/babylon/certificatetransparency/chaincleaner/BasicCertificateChainCleaner.kt).
+
 ### HostnameVerifier
 
 In addition to all of the properties above the hostname verifier ensures

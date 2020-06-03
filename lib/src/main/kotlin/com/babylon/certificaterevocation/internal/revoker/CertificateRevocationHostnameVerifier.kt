@@ -18,6 +18,7 @@ package com.babylon.certificaterevocation.internal.revoker
 
 import com.babylon.certificaterevocation.CRLogger
 import com.babylon.certificaterevocation.RevocationResult
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
@@ -25,10 +26,11 @@ import javax.net.ssl.X509TrustManager
 internal class CertificateRevocationHostnameVerifier(
     private val delegate: HostnameVerifier,
     crlSet: Set<CrlItem>,
+    certificateChainCleanerFactory: CertificateChainCleanerFactory? = null,
     trustManager: X509TrustManager?,
     private val failOnError: Boolean = true,
     private val logger: CRLogger? = null
-) : CertificateRevocationBase(crlSet, trustManager), HostnameVerifier {
+) : CertificateRevocationBase(crlSet, certificateChainCleanerFactory, trustManager), HostnameVerifier {
 
     override fun verify(host: String, sslSession: SSLSession): Boolean {
         if (!delegate.verify(host, sslSession)) {

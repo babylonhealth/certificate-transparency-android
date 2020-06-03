@@ -21,3 +21,9 @@
 #-renamesourcefileattribute SourceFile
 
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
+
+
+# ViewModel constructors considered to be unused by proguard
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}

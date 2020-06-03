@@ -17,6 +17,7 @@
 package com.babylon.certificatetransparency
 
 import com.babylon.certificatetransparency.cache.DiskCache
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyHostnameVerifier
 import com.babylon.certificatetransparency.internal.verifier.model.Host
@@ -35,6 +36,7 @@ import javax.net.ssl.X509TrustManager
 class CTHostnameVerifierBuilder(
     @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
 ) {
+    private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
     private val includeHosts = mutableSetOf<Host>()
@@ -80,6 +82,24 @@ class CTHostnameVerifierBuilder(
     var diskCache: DiskCache? = null
         @JvmSynthetic get
         @JvmSynthetic set
+
+    /**
+     * [CertificateChainCleanerFactory] used to provide the cleaner of the certificate chain
+     * Default: null
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+        apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
+
+    /**
+     * [CertificateChainCleanerFactory] used to provide the cleaner of the certificate chain
+     * Default: null
+     */
+    @JvmSynthetic
+    @Suppress("unused")
+    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+        setCertificateChainCleanerFactory(init())
+    }
 
     /**
      * [X509TrustManager] used to clean the certificate chain
@@ -215,6 +235,7 @@ class CTHostnameVerifierBuilder(
         delegate,
         includeHosts.toSet(),
         excludeHosts.toSet(),
+        certificateChainCleanerFactory,
         trustManager,
         logListDataSource,
         policy,
