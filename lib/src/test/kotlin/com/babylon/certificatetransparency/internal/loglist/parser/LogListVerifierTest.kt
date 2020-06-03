@@ -66,7 +66,7 @@ class LogListVerifierTest {
     }
 
     private fun calculateSignature(privateKey: PrivateKey, data: ByteArray): ByteArray {
-        return Signature.getInstance("SHA256WithRSA").apply {
+        return Signature.getInstance("SHA256withRSA").apply {
             initSign(privateKey)
             update(data)
         }.sign()
