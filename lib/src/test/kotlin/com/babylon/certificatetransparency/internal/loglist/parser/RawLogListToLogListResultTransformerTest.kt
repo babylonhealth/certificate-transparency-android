@@ -46,7 +46,7 @@ class RawLogListToLogListResultTransformerTest {
         // given we have a valid json file and signature
 
         // when we ask for data
-        val result = RawLogListToLogListResultTransformer().transform(RawLogListResult.Success(json, sig))
+        val result = RawLogListToLogListResultTransformer().transform(RawLogListResult.Success(json.toByteArray(), sig))
 
         // then 41 items are returned
         require(result is LogListResult.Valid)
@@ -65,7 +65,7 @@ class RawLogListToLogListResultTransformerTest {
             logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
             RawLogListResult.Success(
-                jsonIncomplete, signature
+                jsonIncomplete.toByteArray(), signature
             )
         )
 
@@ -80,7 +80,7 @@ class RawLogListToLogListResultTransformerTest {
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
             RawLogListResult.Success(
-                json, ByteArray(512)
+                json.toByteArray(), ByteArray(512)
             )
         )
 
@@ -95,7 +95,7 @@ class RawLogListToLogListResultTransformerTest {
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
             RawLogListResult.Success(
-                json, ByteArray(32)
+                json.toByteArray(), ByteArray(32)
             )
         )
 
@@ -166,7 +166,7 @@ class RawLogListToLogListResultTransformerTest {
             logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
             RawLogListResult.Success(
-                jsonValidUntil, signature
+                jsonValidUntil.toByteArray(), signature
             )
         )
 
@@ -187,7 +187,7 @@ class RawLogListToLogListResultTransformerTest {
             logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
             RawLogListResult.Success(
-                jsonValidUntil, signature
+                jsonValidUntil.toByteArray(), signature
             )
         )
 

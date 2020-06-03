@@ -43,7 +43,7 @@ class AndroidDiskCache @JvmOverloads constructor(
 
             val jsonFile = File(cacheDirPath, LOG_LIST_FILE)
             val sigFile = File(cacheDirPath, SIG_FILE)
-            val logList = jsonFile.readText()
+            val logList = jsonFile.readBytes()
             val signature = sigFile.readBytes()
 
             val result = RawLogListResult.Success(logList, signature)
@@ -68,7 +68,7 @@ class AndroidDiskCache @JvmOverloads constructor(
             try {
                 File(cacheDirPath).mkdirs()
 
-                File(cacheDirPath, LOG_LIST_FILE).writeText(value.logList)
+                File(cacheDirPath, LOG_LIST_FILE).writeBytes(value.logList)
                 File(cacheDirPath, SIG_FILE).writeBytes(value.signature)
 
                 prefs.edit()
