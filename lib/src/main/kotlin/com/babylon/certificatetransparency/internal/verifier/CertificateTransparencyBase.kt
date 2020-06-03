@@ -40,6 +40,7 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
+@Suppress("LongParameterList")
 internal open class CertificateTransparencyBase(
     private val includeHosts: Set<Host>,
     private val excludeHosts: Set<Host> = emptySet(),

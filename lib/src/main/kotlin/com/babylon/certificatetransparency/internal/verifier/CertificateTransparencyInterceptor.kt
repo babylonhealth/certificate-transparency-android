@@ -32,7 +32,7 @@ import javax.net.ssl.X509TrustManager
 
 @Suppress("LongParameterList")
 internal class CertificateTransparencyInterceptor(
-    inlcudeHosts: Set<Host>,
+    includeHosts: Set<Host>,
     excludeHosts: Set<Host>,
     certificateChainCleanerFactory: CertificateChainCleanerFactory?,
     trustManager: X509TrustManager?,
@@ -41,7 +41,8 @@ internal class CertificateTransparencyInterceptor(
     diskCache: DiskCache? = null,
     private val failOnError: Boolean = true,
     private val logger: CTLogger? = null
-) : CertificateTransparencyBase(inlcudeHosts, excludeHosts, certificateChainCleanerFactory, trustManager, logListDataSource, policy, diskCache), Interceptor {
+) : CertificateTransparencyBase(includeHosts, excludeHosts, certificateChainCleanerFactory, trustManager, logListDataSource, policy, diskCache),
+    Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()
