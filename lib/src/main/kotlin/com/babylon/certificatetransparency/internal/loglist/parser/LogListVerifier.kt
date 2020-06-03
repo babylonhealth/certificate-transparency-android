@@ -28,11 +28,11 @@ internal class LogListVerifier(
     private val publicKey: PublicKey = GoogleLogListPublicKey
 ) {
 
-    fun verify(message: String, signature: ByteArray): LogServerSignatureResult {
+    fun verify(message: ByteArray, signature: ByteArray): LogServerSignatureResult {
         return try {
             if (Signature.getInstance("SHA256withRSA").apply {
                     initVerify(publicKey)
-                    update(message.toByteArray())
+                    update(message)
                 }.verify(signature)) {
                 LogServerSignatureResult.Valid
             } else {

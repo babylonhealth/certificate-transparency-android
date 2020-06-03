@@ -53,7 +53,7 @@ internal class RawLogListToLogListResultTransformer(
     private fun transformSuccess(rawLogListResult: RawLogListResult.Success): LogListResult {
         val (logListJson, signature) = rawLogListResult
         return when (val signatureResult = logListVerifier.verify(logListJson, signature)) {
-            is LogServerSignatureResult.Valid -> logListJsonParser.parseJson(logListJson)
+            is LogServerSignatureResult.Valid -> logListJsonParser.parseJson(logListJson.toString(Charsets.UTF_8))
             is LogServerSignatureResult.Invalid -> SignatureVerificationFailed(signatureResult)
         }
     }

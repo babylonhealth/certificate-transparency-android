@@ -30,7 +30,7 @@ internal class LogListNetworkDataSource(
 
     @Suppress("ReturnCount")
     override suspend fun get(): RawLogListResult {
-        val logListJob = async { logService.getLogList().string() }
+        val logListJob = async { logService.getLogList().bytes() }
         val signatureJob = async { logService.getLogListSignature().bytes() }
 
         val logListJson = try {

@@ -30,7 +30,7 @@ class AndroidDiskCacheTest {
 
     @Test
     fun cachedLogListRetrievedWithinExpiryDate() = runBlocking {
-        val result = RawLogListResult.Success("bogo", ByteArray(10) {
+        val result = RawLogListResult.Success("bogo".toByteArray(), ByteArray(10) {
             it.toByte()
         })
 
@@ -52,7 +52,7 @@ class AndroidDiskCacheTest {
 
     @Test
     fun cachedLogListNotRetrievedOverExpiryDate() = runBlocking {
-        val result = RawLogListResult.Success("bogo", ByteArray(10) {
+        val result = RawLogListResult.Success("bogo".toByteArray(), ByteArray(10) {
             it.toByte()
         })
 
