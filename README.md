@@ -1,6 +1,6 @@
 # Certificate Transparency for Android
 
-[![CircleCI](https://circleci.com/gh/babylonhealth/certificate-transparency-android/tree/master.svg?style=svg)](https://circleci.com/gh/babylonhealth/certificate-transparency-android/tree/master)
+[![CI status](https://github.com/babylonhealth/certificate-transparency-android/workflows/CI/badge.svg)](https://github.com/babylonhealth/certificate-transparency-android/actions)
 [![Coverage Status](https://coveralls.io/repos/github/babylonhealth/certificate-transparency-android/badge.svg?branch=master)](https://coveralls.io/github/babylonhealth/certificate-transparency-android?branch=master)
 [![Download](https://api.bintray.com/packages/babylonpartners/maven/certificatetransparency/images/download.svg)](https://bintray.com/babylonpartners/maven/certificatetransparency/_latestVersion)
 
