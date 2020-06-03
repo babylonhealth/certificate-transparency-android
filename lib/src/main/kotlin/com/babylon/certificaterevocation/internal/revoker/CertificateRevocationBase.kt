@@ -18,6 +18,7 @@ package com.babylon.certificaterevocation.internal.revoker
 
 import com.babylon.certificaterevocation.RevocationResult
 import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.Certificate
@@ -27,6 +28,7 @@ import javax.net.ssl.X509TrustManager
 
 internal open class CertificateRevocationBase(
     private val crlSet: Set<CrlItem> = emptySet(),
+    private val certificateChainCleanerFactory: CertificateChainCleanerFactory? = null,
     trustManager: X509TrustManager? = null
 ) {
     private val cleaner: CertificateChainCleaner by lazy {
@@ -34,7 +36,7 @@ internal open class CertificateRevocationBase(
             init(null as KeyStore?)
         }.trustManagers.first { it is X509TrustManager } as X509TrustManager)
 
-        CertificateChainCleaner.get(localTrustManager)
+        certificateChainCleanerFactory?.get(localTrustManager) ?: CertificateChainCleaner.get(localTrustManager)
     }
 
     fun verifyCertificateRevocation(host: String, certificates: List<Certificate>): RevocationResult {
@@ -42,8 +44,11 @@ internal open class CertificateRevocationBase(
             RevocationResult.Failure.NoCertificates
         } else {
             val cleanedCerts = cleaner.clean(certificates.filterIsInstance<X509Certificate>(), host)
-
-            hasRevokedCertificate(cleanedCerts)
+            if (cleanedCerts.isEmpty()) {
+                RevocationResult.Failure.NoCertificates
+            } else {
+                hasRevokedCertificate(cleanedCerts)
+            }
         }
     }
 

@@ -18,6 +18,7 @@ package com.babylon.certificaterevocation.internal.revoker
 
 import com.babylon.certificaterevocation.CRLogger
 import com.babylon.certificaterevocation.RevocationResult
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -26,10 +27,11 @@ import javax.net.ssl.X509TrustManager
 
 internal class CertificateRevocationInterceptor(
     crlSet: Set<CrlItem>,
+    certificateChainCleanerFactory: CertificateChainCleanerFactory? = null,
     trustManager: X509TrustManager?,
     private val failOnError: Boolean = true,
     private val logger: CRLogger? = null
-) : CertificateRevocationBase(crlSet, trustManager), Interceptor {
+) : CertificateRevocationBase(crlSet, certificateChainCleanerFactory, trustManager), Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val host = chain.request().url().host()

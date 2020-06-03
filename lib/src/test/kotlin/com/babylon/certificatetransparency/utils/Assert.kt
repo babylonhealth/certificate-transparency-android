@@ -16,12 +16,12 @@
 
 package com.babylon.certificatetransparency.utils
 
-import org.junit.Assert
+import org.junit.Assert.assertTrue
 
 inline fun <reified T> assertIsA(result: Any?) {
-    Assert.assertTrue(result is T)
+    assertTrue("Expected ${T::class} but actual ${if (result != null) result::class.toString() else "null"}", result is T)
 }
 
 inline fun <reified T> assertIsA(message: String, result: Any?) {
-    Assert.assertTrue(message, result is T)
+    assertTrue(message, result is T)
 }

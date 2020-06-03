@@ -20,6 +20,7 @@ import com.babylon.certificatetransparency.utils.TestData
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLPeerUnverifiedException
@@ -27,15 +28,16 @@ import javax.net.ssl.X509TrustManager
 
 class BasicCertificateChainCleanerTest {
 
-    @Test(expected = SSLPeerUnverifiedException::class)
+    @Test
     fun noLeafCertificateInChainThrowsException() {
         // given a basic chain cleaner
         val chainCleaner = certificateChainCleanerWithRootCert()
 
         // when we clean an empty certificate chain
-        chainCleaner.clean(emptyList(), "127.0.0.1")
-
         // then an exception is thrown
+        assertThrows(SSLPeerUnverifiedException::class.java) {
+            chainCleaner.clean(emptyList(), "127.0.0.1")
+        }
     }
 
     private fun certificateChainCleanerWithRootCert(rootCert: X509Certificate? = null): CertificateChainCleaner {

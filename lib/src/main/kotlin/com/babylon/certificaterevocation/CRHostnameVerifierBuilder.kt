@@ -18,6 +18,7 @@ package com.babylon.certificaterevocation
 
 import com.babylon.certificaterevocation.internal.revoker.CertificateRevocationHostnameVerifier
 import com.babylon.certificaterevocation.internal.revoker.CrlItem
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import com.babylon.certificatetransparency.internal.utils.Base64
 import java.math.BigInteger
 import javax.net.ssl.HostnameVerifier
@@ -32,6 +33,7 @@ import javax.security.auth.x500.X500Principal
 class CRHostnameVerifierBuilder(
     @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
 ) {
+    private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
     private val crlSet = mutableSetOf<CrlItem>()
 
@@ -55,6 +57,24 @@ class CRHostnameVerifierBuilder(
     var logger: CRLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
+
+    /**
+     * [CertificateChainCleanerFactory] used to provide the cleaner of the certificate chain
+     * Default: null
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+        apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
+
+    /**
+     * [CertificateChainCleanerFactory] used to provide the cleaner of the certificate chain
+     * Default: null
+     */
+    @JvmSynthetic
+    @Suppress("unused")
+    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+        setCertificateChainCleanerFactory(init())
+    }
 
     /**
      * [X509TrustManager] used to clean the certificate chain
@@ -90,9 +110,9 @@ class CRHostnameVerifierBuilder(
     fun setLogger(logger: CRLogger) = apply { this.logger = logger }
 
     /**
-     * Verify certificate revocation for certificates that match [issuerDistinguishedName] and [serialNumber].
+     * Verify certificate revocation for certificates that match [issuerDistinguishedName] and [serialNumbers].
      *
-     * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
+     * @property issuerDistinguishedName lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun addCrl(issuerDistinguishedName: String, serialNumbers: List<String>) = apply {
@@ -106,10 +126,11 @@ class CRHostnameVerifierBuilder(
      * Build the [HostnameVerifier]
      */
     fun build(): HostnameVerifier = CertificateRevocationHostnameVerifier(
-        delegate,
-        crlSet.toSet(),
-        trustManager,
-        failOnError,
-        logger
+        delegate = delegate,
+        crlSet = crlSet.toSet(),
+        certificateChainCleanerFactory = certificateChainCleanerFactory,
+        trustManager = trustManager,
+        failOnError = failOnError,
+        logger = logger
     )
 }
