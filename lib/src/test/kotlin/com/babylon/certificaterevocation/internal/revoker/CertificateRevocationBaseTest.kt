@@ -17,9 +17,13 @@
 package com.babylon.certificaterevocation.internal.revoker
 
 import com.babylon.certificaterevocation.RevocationResult
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import com.babylon.certificatetransparency.utils.TestData
 import com.babylon.certificatetransparency.utils.assertIsA
 import org.junit.Test
+import java.security.cert.X509Certificate
+import javax.net.ssl.X509TrustManager
 
 class CertificateRevocationBaseTest {
 
@@ -56,6 +60,13 @@ class CertificateRevocationBaseTest {
     }
 
     @Test
+    fun noCertificatesDisallowed() {
+        val ctb = CertificateRevocationBase()
+
+        assertIsA<RevocationResult.Failure.NoCertificates>(ctb.verifyCertificateRevocation("www.github.com", emptyList()))
+    }
+
+    @Test
     fun chainRejectedWhenLastCertMatches() {
         val certsToCheck = TestData.loadCertificates(TestData.TEST_GITHUB_CHAIN)
 
@@ -64,5 +75,25 @@ class CertificateRevocationBaseTest {
         )
 
         assertIsA<RevocationResult.Failure.CertificateRevoked>(ctb.verifyCertificateRevocation("www.github.com", certsToCheck))
+    }
+
+    @Test
+    fun emptyCleanedCertificateChainFailsWithNoCertificates() {
+        val certsToCheck = TestData.loadCertificates(TestData.TEST_GITHUB_CHAIN)
+
+        val ctb = CertificateRevocationBase(
+            crlSet = setOf(CrlItem(certsToCheck[0].issuerX500Principal, listOf(certsToCheck[0].serialNumber))),
+            certificateChainCleanerFactory = EmptyCertificateChainCleanerFactory()
+        )
+
+        assertIsA<RevocationResult.Failure.NoCertificates>(ctb.verifyCertificateRevocation("www.github.com", certsToCheck))
+    }
+
+    class EmptyCertificateChainCleanerFactory : CertificateChainCleanerFactory {
+        override fun get(trustManager: X509TrustManager): CertificateChainCleaner {
+            return object : CertificateChainCleaner {
+                override fun clean(chain: List<X509Certificate>, hostname: String) = emptyList<X509Certificate>()
+            }
+        }
     }
 }

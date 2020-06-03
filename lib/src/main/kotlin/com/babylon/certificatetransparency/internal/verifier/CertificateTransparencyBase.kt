@@ -76,7 +76,12 @@ internal open class CertificateTransparencyBase(
             VerificationResult.Failure.NoCertificates
         } else {
             val cleanedCerts = cleaner.clean(certificates.filterIsInstance<X509Certificate>(), host)
-            hasValidSignedCertificateTimestamp(cleanedCerts)
+
+            if (cleanedCerts.isEmpty()) {
+                VerificationResult.Failure.NoCertificates
+            } else {
+                hasValidSignedCertificateTimestamp(cleanedCerts)
+            }
         }
     }
 

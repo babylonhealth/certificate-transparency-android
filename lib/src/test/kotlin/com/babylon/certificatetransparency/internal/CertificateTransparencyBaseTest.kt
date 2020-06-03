@@ -18,6 +18,8 @@ package com.babylon.certificatetransparency.internal
 
 import com.babylon.certificatetransparency.SctVerificationResult
 import com.babylon.certificatetransparency.VerificationResult
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleaner
+import com.babylon.certificatetransparency.chaincleaner.CertificateChainCleanerFactory
 import com.babylon.certificatetransparency.internal.serialization.CTConstants
 import com.babylon.certificatetransparency.internal.utils.Base64
 import com.babylon.certificatetransparency.internal.verifier.CertificateTransparencyBase
@@ -224,6 +226,27 @@ class CertificateTransparencyBaseTest {
         val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
 
         assertIsA<VerificationResult.Success.Trusted>(ctb.verifyCertificateTransparency("allowed.random.com", certsToCheck))
+    }
+
+    @Test
+    fun emptyCleanedCertificateChainFailsWithNoCertificates() {
+        val ctb = CertificateTransparencyBase(
+            includeHosts = setOf(Host("*.*")),
+            logListDataSource = LogListDataSourceTestFactory.logListDataSource,
+            certificateChainCleanerFactory = EmptyCertificateChainCleanerFactory()
+        )
+
+        val certsToCheck = TestData.loadCertificates(TEST_MITMPROXY_ORIGINAL_CHAIN)
+
+        assertIsA<VerificationResult.Failure.NoCertificates>(ctb.verifyCertificateTransparency("allowed.random.com", certsToCheck))
+    }
+
+    class EmptyCertificateChainCleanerFactory : CertificateChainCleanerFactory {
+        override fun get(trustManager: X509TrustManager): CertificateChainCleaner {
+            return object : CertificateChainCleaner {
+                override fun clean(chain: List<X509Certificate>, hostname: String) = emptyList<X509Certificate>()
+            }
+        }
     }
 
     @Test(expected = IllegalArgumentException::class)

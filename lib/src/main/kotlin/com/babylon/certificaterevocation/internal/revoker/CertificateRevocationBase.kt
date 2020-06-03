@@ -44,8 +44,11 @@ internal open class CertificateRevocationBase(
             RevocationResult.Failure.NoCertificates
         } else {
             val cleanedCerts = cleaner.clean(certificates.filterIsInstance<X509Certificate>(), host)
-
-            hasRevokedCertificate(cleanedCerts)
+            if (cleanedCerts.isEmpty()) {
+                RevocationResult.Failure.NoCertificates
+            } else {
+                hasRevokedCertificate(cleanedCerts)
+            }
         }
     }
 
