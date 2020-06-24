@@ -3,6 +3,7 @@
 [![CI status](https://github.com/babylonhealth/certificate-transparency-android/workflows/CI/badge.svg)](https://github.com/babylonhealth/certificate-transparency-android/actions)
 [![Coverage Status](https://coveralls.io/repos/github/babylonhealth/certificate-transparency-android/badge.svg?branch=master)](https://coveralls.io/github/babylonhealth/certificate-transparency-android?branch=master)
 [![Download](https://api.bintray.com/packages/babylonpartners/maven/certificatetransparency/images/download.svg)](https://bintray.com/babylonpartners/maven/certificatetransparency/_latestVersion)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbabylonhealth%2Fcertificate-transparency-android.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbabylonhealth%2Fcertificate-transparency-android?ref=badge_shield)
 
 To protect our apps from man-in-the-middle attacks one of the first
 things that usually springs to mind is certificate pinning. However, the
@@ -264,3 +265,6 @@ available, see the [tags on this repository](https://github.com/babylonhealth/ce
 
 This project is licensed under the Apache License, Version 2.0 - see the
 [LICENSE.md](LICENSE.md) file for details
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbabylonhealth%2Fcertificate-transparency-android.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbabylonhealth%2Fcertificate-transparency-android?ref=badge_large)
