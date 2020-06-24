@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.babylon.certificatetransparency.utils
 import org.junit.Assert.assertTrue
 
 inline fun <reified T> assertIsA(result: Any?) {
-    assertTrue("Expected ${T::class} but actual ${if (result != null) result::class.toString() else "null"}", result is T)
+    assertTrue("Expected ${T::class.java.name} but actual ${if (result != null) result::class.java.name else "null"}", result is T)
 }
 
 inline fun <reified T> assertIsA(message: String, result: Any?) {

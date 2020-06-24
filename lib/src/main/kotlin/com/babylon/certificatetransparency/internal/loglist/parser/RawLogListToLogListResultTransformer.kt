@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,9 @@ package com.babylon.certificatetransparency.internal.loglist.parser
 
 import com.babylon.certificatetransparency.internal.loglist.LogListJsonFailedLoading
 import com.babylon.certificatetransparency.internal.loglist.LogListJsonFailedLoadingWithException
-import com.babylon.certificatetransparency.internal.loglist.LogListSigFailedLoading
 import com.babylon.certificatetransparency.internal.loglist.LogListSigFailedLoadingWithException
 import com.babylon.certificatetransparency.internal.loglist.LogServerSignatureResult
-import com.babylon.certificatetransparency.internal.loglist.RawLogListJsonFailedLoading
 import com.babylon.certificatetransparency.internal.loglist.RawLogListJsonFailedLoadingWithException
-import com.babylon.certificatetransparency.internal.loglist.RawLogListSigFailedLoading
 import com.babylon.certificatetransparency.internal.loglist.RawLogListSigFailedLoadingWithException
 import com.babylon.certificatetransparency.internal.loglist.SignatureVerificationFailed
 import com.babylon.certificatetransparency.loglist.LogListResult
@@ -41,10 +38,8 @@ internal class RawLogListToLogListResultTransformer(
 
     private fun transformFailure(rawLogListResult: RawLogListResult.Failure) =
         when (rawLogListResult) {
-            is RawLogListJsonFailedLoading -> LogListJsonFailedLoading
             is RawLogListJsonFailedLoadingWithException ->
                 LogListJsonFailedLoadingWithException(rawLogListResult.exception)
-            is RawLogListSigFailedLoading -> LogListSigFailedLoading
             is RawLogListSigFailedLoadingWithException ->
                 LogListSigFailedLoadingWithException(rawLogListResult.exception)
             else -> LogListJsonFailedLoading

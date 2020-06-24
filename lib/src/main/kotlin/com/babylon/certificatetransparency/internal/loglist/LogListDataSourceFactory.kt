@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,22 @@ package com.babylon.certificatetransparency.internal.loglist
 import com.babylon.certificatetransparency.cache.DiskCache
 import com.babylon.certificatetransparency.datasource.DataSource
 import com.babylon.certificatetransparency.internal.loglist.parser.RawLogListToLogListResultTransformer
+import com.babylon.certificatetransparency.internal.utils.ByteArrayConverterFactory
+import com.babylon.certificatetransparency.internal.utils.MaxSizeInterceptor
 import com.babylon.certificatetransparency.loglist.LogListResult
 import com.babylon.certificatetransparency.loglist.RawLogListResult
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 internal object LogListDataSourceFactory {
 
     fun create(diskCache: DiskCache? = null): DataSource<LogListResult> {
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(MaxSizeInterceptor()).cache(null).build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.gstatic.com/ct/log_list/v2/")
+            .addConverterFactory(ByteArrayConverterFactory())
+            .client(okHttpClient)
             .build()
 
         val logService = retrofit.create(LogListService::class.java)
@@ -37,6 +44,7 @@ internal object LogListDataSourceFactory {
             .run {
                 diskCache?.let(::compose) ?: this
             }
+            .compose(LogListZipNetworkDataSource(logService))
             .compose(LogListNetworkDataSource(logService))
             .oneWayTransform { transformer.transform(it) }
             .reuseInflight()

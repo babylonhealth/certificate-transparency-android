@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,23 +32,30 @@ object TestData {
     const val TEST_LOG_KEY_PILOT = DATA_ROOT + "google-ct-pilot-server-key-public.pem"
     const val TEST_LOG_KEY_SKYDIVER = DATA_ROOT + "google-ct-skydiver-server-key-public.pem"
     const val TEST_LOG_KEY_DIGICERT = DATA_ROOT + "digicert-ct-server-key-public.pem"
+
     // Root CA cert.
     const val ROOT_CA_CERT = DATA_ROOT + "ca-cert.pem"
+
     // Ordinary cert signed by ca-cert, with SCT served separately.
     const val TEST_CERT = DATA_ROOT + "test-cert.pem"
     const val TEST_CERT_SCT = DATA_ROOT + "test-cert.proof"
     const val TEST_CERT_SCT_RSA = DATA_ROOT + "rsa/test-cert-rsa.proof"
+
     // PreCertificate signed by ca-cert.
     const val TEST_PRE_CERT = DATA_ROOT + "test-embedded-pre-cert.pem"
     const val TEST_PRE_SCT = DATA_ROOT + "test-embedded-pre-cert.proof"
     const val TEST_PRE_SCT_RSA = DATA_ROOT + "rsa/test-embedded-pre-cert-rsa.proof"
+
     // PreCertificate Signing cert, signed by ca-cert.pem
     const val PRE_CERT_SIGNING_CERT = DATA_ROOT + "ca-pre-cert.pem"
+
     // PreCertificate signed by the PreCertificate Signing Cert above.
     const val TEST_PRE_CERT_SIGNED_BY_PRECA_CERT = DATA_ROOT + "test-embedded-with-preca-pre-cert.pem"
     const val TEST_PRE_CERT_PRECA_SCT = DATA_ROOT + "test-embedded-with-preca-pre-cert.proof"
+
     // intermediate CA cert signed by ca-cert
     const val INTERMEDIATE_CA_CERT = DATA_ROOT + "intermediate-cert.pem"
+
     // Certificate signed by intermediate CA.
     const val TEST_INTERMEDIATE_CERT = DATA_ROOT + "test-intermediate-cert.pem"
     const val TEST_INTERMEDIATE_CERT_SCT = DATA_ROOT + "test-intermediate-cert.proof"
@@ -63,9 +70,19 @@ object TestData {
     const val TEST_GITHUB_CHAIN = DATA_ROOT + "github-chain.pem"
 
     const val TEST_LOG_LIST_JSON = DATA_ROOT + "loglist/log_list.json"
+    const val TEST_LOG_LIST_JSON_TOO_BIG = DATA_ROOT + "loglist/log_list_too_big.json"
     const val TEST_LOG_LIST_JSON_VALID_UNTIL = DATA_ROOT + "loglist/log_list_valid_until.json"
     const val TEST_LOG_LIST_JSON_INCOMPLETE = DATA_ROOT + "loglist/log_list_incomplete.json"
     const val TEST_LOG_LIST_SIG = DATA_ROOT + "loglist/log_list.sig"
+    const val TEST_LOG_LIST_SIG_TOO_BIG = DATA_ROOT + "loglist/log_list_too_big.sig"
+
+    const val TEST_LOG_LIST_ZIP = DATA_ROOT + "loglist/log_list.zip"
+    const val TEST_LOG_LIST_ZIP_TOO_BIG = DATA_ROOT + "loglist/log_list_too_big.zip"
+
+    const val TEST_LOG_LIST_ZIP_JSON_MISSING = DATA_ROOT + "loglist/log_list_json_missing.zip"
+    const val TEST_LOG_LIST_ZIP_SIG_MISSING = DATA_ROOT + "loglist/log_list_sig_missing.zip"
+    const val TEST_LOG_LIST_ZIP_JSON_TOO_BIG = DATA_ROOT + "loglist/log_list_json_too_big.zip"
+    const val TEST_LOG_LIST_ZIP_SIG_TOO_BIG = DATA_ROOT + "loglist/log_list_sig_too_big.zip"
 
     const val TEST_MITMPROXY_ROOT_CERT = DATA_ROOT + "mitmproxy-ca-cert.pem"
     const val TEST_MITMPROXY_ATTACK_CHAIN = DATA_ROOT + "mitmproxy-attack-chain.pem"

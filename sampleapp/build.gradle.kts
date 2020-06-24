@@ -45,7 +45,7 @@ dependencies {
     implementation(project(":android"))
     implementation(kotlin("stdlib-jdk7"))
     implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta6")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta7")
     implementation("com.google.android.material:material:1.1.0")
     implementation("com.google.android.gms:play-services-base:17.3.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

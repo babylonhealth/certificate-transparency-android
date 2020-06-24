@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.babylon.certificatetransparency.internal.loglist
+package com.babylon.certificatetransparency.internal.utils
 
-import retrofit2.http.GET
-import retrofit2.http.Headers
+import okhttp3.ResponseBody
+import retrofit2.Converter
+import retrofit2.Retrofit
+import java.lang.reflect.Type
 
-internal interface LogListService {
-    @GET("log_list.json")
-    @Headers("Cache-Control: no-cache", "Max-Size: 1048576")
-    suspend fun getLogList(): ByteArray
-
-    @GET("log_list.sig")
-    @Headers("Cache-Control: no-cache", "Max-Size: 512")
-    suspend fun getLogListSignature(): ByteArray
-
-    @GET("log_list.zip")
-    @Headers("Cache-Control: no-cache", "Max-Size: 2097152")
-    suspend fun getLogListZip(): ByteArray
+/**
+ * Retrofit [Converter] to convert response data to [ByteArray]
+ */
+internal class ByteArrayConverterFactory : Converter.Factory() {
+    override fun responseBodyConverter(type: Type, annotations: Array<Annotation>, retrofit: Retrofit) =
+        Converter<ResponseBody, ByteArray> { value -> value.use { it.bytes() } }
 }
