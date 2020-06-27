@@ -694,6 +694,14 @@
                   "title": "log-list.json and log-list.sig out of sync",
                   "description": "Json and signature loaded out of sync results in signature failure - can be caused by server or client caching issues.",
                   "mitigation": "Ensure json and signature are loaded in one network call by migrating to log-list.zip"
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "title": "Out of memory caused by large loglist.json/loglist.sig",
+                  "description": "As the loglist.json and loglist.sig are loaded into memory for processing, if they are large they can cause an out of memory error.",
+                  "mitigation": "- Limit size of loglist.json and loglist.sig loaded into memory.",
+                  "type": "Denial of service"
                 }
               ],
               "attrs": {
@@ -965,6 +973,22 @@
                   "title": "Block loglist.zip from loading",
                   "type": "Denial of service",
                   "description": "Blocking the loading of loglist.zip will mean validation of SCTs cannot be completed resulting in a DoS."
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "Out of memory caused by large entries in loglist.zip",
+                  "description": "loglist.zip can contain large entries that will be loaded into memory when the loglist.json and loglist.sig entries are read.",
+                  "mitigation": "- Limit size of loglist.json and loglist.sig loaded into memory"
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "Out of memory caused by large loglist.zip file",
+                  "description": "As the loglist.zip file is loaded into memory to unzip it a large file can cause an out of memory error",
+                  "mitigation": "- Limit the size of loglist.zip loaded into memory"
                 }
               ],
               "attrs": {
