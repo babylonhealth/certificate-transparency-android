@@ -1,9 +1,0 @@
-# Overrides for detekt
-
-formatting:
-  MaximumLineLength:
-    active: false
-
-style:
-  MaxLineLength:
-    maxLineLength: 145 # increased from 120
