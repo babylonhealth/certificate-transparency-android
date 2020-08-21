@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package com.babylon.certificatetransparency.internal.loglist
 
 import com.babylon.certificatetransparency.datasource.DataSource
+import com.babylon.certificatetransparency.internal.utils.isTooBigException
 import com.babylon.certificatetransparency.loglist.RawLogListResult
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
-// Collection of CT logs that are trusted for the purposes of this test from https://www.gstatic.com/ct/log_list/log_list.json
 internal class LogListNetworkDataSource(
     private val logService: LogListService
 ) : DataSource<RawLogListResult> {
@@ -30,19 +30,19 @@ internal class LogListNetworkDataSource(
 
     @Suppress("ReturnCount")
     override suspend fun get(): RawLogListResult {
-        val logListJob = async { logService.getLogList().bytes() }
-        val signatureJob = async { logService.getLogListSignature().bytes() }
+        val logListJob = async { logService.getLogList() }
+        val signatureJob = async { logService.getLogListSignature() }
 
         val logListJson = try {
-            logListJob.await() ?: return RawLogListJsonFailedLoading
+            logListJob.await()
         } catch (expected: Exception) {
-            return RawLogListJsonFailedLoadingWithException(expected)
+            return if (expected.isTooBigException()) RawLogListJsonFailedTooBig else RawLogListJsonFailedLoadingWithException(expected)
         }
 
         val signature = try {
-            signatureJob.await() ?: return RawLogListSigFailedLoading
+            signatureJob.await()
         } catch (expected: Exception) {
-            return RawLogListSigFailedLoadingWithException(expected)
+            return if (expected.isTooBigException()) RawLogListSigFailedTooBig else RawLogListSigFailedLoadingWithException(expected)
         }
 
         return RawLogListResult.Success(logListJson, signature)

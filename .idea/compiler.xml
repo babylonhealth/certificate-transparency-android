@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="android" target="1.7" />
-      <module name="certificate-transparency-android.android" target="1.7" />
-      <module name="certificate-transparency-android.lib" target="1.8" />
-      <module name="certificate-transparency-android.sampleapp" target="1.8" />
       <module name="lib" target="1.8" />
       <module name="sampleapp" target="1.8" />
     </bytecodeTargetLevel>

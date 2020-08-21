@@ -35,7 +35,7 @@ import org.junit.Test
 import retrofit2.Retrofit
 import javax.net.ssl.SSLPeerUnverifiedException
 
-class LogListNetworkDataSourceTest {
+class LogListZipNetworkDataSourceTest {
 
     private val mockInterceptor = mock<Interceptor>()
 
@@ -43,21 +43,6 @@ class LogListNetworkDataSourceTest {
         OkHttpClient.Builder().addInterceptor(MaxSizeInterceptor()).addInterceptor(mockInterceptor).build()
     private val retrofit = Retrofit.Builder().client(client).baseUrl("http://ctlog/").addConverterFactory(ByteArrayConverterFactory()).build()
     private val logListService: LogListService = retrofit.create(LogListService::class.java)
-
-    private fun expectInterceptor(@Suppress("SameParameterValue") url: String, @Suppress("SameParameterValue") jsonResponse: String) {
-        whenever(mockInterceptor.intercept(argThat { request().url().toString() == url })).then {
-
-            val chain = it.arguments[0] as Interceptor.Chain
-
-            Response.Builder()
-                .body(ResponseBody.create(MediaType.parse("application/json"), jsonResponse))
-                .request(chain.request())
-                .protocol(Protocol.HTTP_2)
-                .code(200)
-                .message("")
-                .build()
-        }
-    }
 
     private fun expectInterceptorHttpNotFound(url: String) {
         whenever(mockInterceptor.intercept(argThat { request().url().toString() == url })).then {
@@ -98,98 +83,105 @@ class LogListNetworkDataSourceTest {
     @Test
     fun `verifies signature`() = runBlocking {
         // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", json)
-        expectInterceptor("http://ctlog/log_list.sig", sig)
+        expectInterceptor("http://ctlog/log_list.zip", zipValid)
 
         // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
+        val result = LogListZipNetworkDataSource(logListService).get()
 
         // then the log list is returned
         assertIsA<RawLogListResult.Success>(result)
     }
 
     @Test
-    fun `returns Invalid when log_list json not found`() = runBlocking {
+    fun `returns Invalid when log_list zip too big`() = runBlocking {
         // given we have a valid json file and signature
-        expectInterceptorHttpNotFound("http://ctlog/log_list.json")
-        expectInterceptor("http://ctlog/log_list.sig", sig)
+        expectInterceptor("http://ctlog/log_list.zip", zipTooBig)
 
         // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
+        val result = LogListZipNetworkDataSource(logListService).get()
 
-        // then invalid is returned
-        assertIsA<RawLogListJsonFailedLoadingWithException>(result)
+        // then the log list is returned
+        assertIsA<RawLogListZipFailedTooBig>(result)
     }
 
     @Test
-    fun `returns Invalid when log_list sig not found`() = runBlocking {
+    fun `returns Invalid when log_list zip not found`() = runBlocking {
         // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", json)
-        expectInterceptorHttpNotFound("http://ctlog/log_list.sig")
+        expectInterceptorHttpNotFound("http://ctlog/log_list.zip")
 
         // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
+        val result = LogListZipNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<RawLogListSigFailedLoadingWithException>(result)
+        assertIsA<RawLogListZipFailedLoadingWithException>(result)
     }
 
     @Test
-    fun `returns Invalid when log_list json has SslException`() = runBlocking {
+    fun `returns Invalid when log_list zip sig missing`() = runBlocking {
+        // given we have a valid json file and signature
+        expectInterceptor("http://ctlog/log_list.zip", zipSigMissing)
+
+        // when we ask for data
+        val result = LogListZipNetworkDataSource(logListService).get()
+
+        // then invalid is returned
+        assertIsA<RawLogListZipFailedSigMissing>(result)
+    }
+
+    @Test
+    fun `returns Invalid when log_list zip json missing`() = runBlocking {
+        // given we have a valid json file and signature
+        expectInterceptor("http://ctlog/log_list.zip", zipJsonMissing)
+
+        // when we ask for data
+        val result = LogListZipNetworkDataSource(logListService).get()
+
+        // then invalid is returned
+        assertIsA<RawLogListZipFailedJsonMissing>(result)
+    }
+
+    @Test
+    fun `returns Invalid when log_list zip sig too big`() = runBlocking {
+        // given we have a valid json file and signature
+        expectInterceptor("http://ctlog/log_list.zip", zipSigTooBig)
+
+        // when we ask for data
+        val result = LogListZipNetworkDataSource(logListService).get()
+
+        // then invalid is returned
+        assertIsA<RawLogListZipFailedSigTooBig>(result)
+    }
+
+    @Test
+    fun `returns Invalid when log_list zip json too big`() = runBlocking {
+        // given we have a valid json file and signature
+        expectInterceptor("http://ctlog/log_list.zip", zipJsonTooBig)
+
+        // when we ask for data
+        val result = LogListZipNetworkDataSource(logListService).get()
+
+        // then invalid is returned
+        assertIsA<RawLogListZipFailedJsonTooBig>(result)
+    }
+
+    @Test
+    fun `returns Invalid when log_list zip has SslException`() = runBlocking {
         // given we have a valid signature and an exception when accessing the log list
-        expectInterceptorSSLException("http://ctlog/log_list.json")
-        expectInterceptor("http://ctlog/log_list.sig", sig)
+        expectInterceptorSSLException("http://ctlog/log_list.zip")
 
         // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
+        val result = LogListZipNetworkDataSource(logListService).get()
 
         // then invalid is returned
-        assertIsA<RawLogListJsonFailedLoadingWithException>(result)
-    }
-
-    @Test
-    fun `returns Invalid when log_list sig has SslException`() = runBlocking {
-        // given we have a valid json file and an exception when accessing the signature
-        expectInterceptor("http://ctlog/log_list.json", json)
-        expectInterceptorSSLException("http://ctlog/log_list.sig")
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
-
-        // then invalid is returned
-        assertIsA<RawLogListSigFailedLoadingWithException>(result)
-    }
-
-    @Test
-    fun `returns Invalid when log_list json too big`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", jsonTooBig)
-        expectInterceptor("http://ctlog/log_list.sig", sig)
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
-
-        // then the log list is returned
-        assertIsA<RawLogListJsonFailedTooBig>(result)
-    }
-
-    @Test
-    fun `returns Invalid when log_list sig too big`() = runBlocking {
-        // given we have a valid json file and signature
-        expectInterceptor("http://ctlog/log_list.json", json)
-        expectInterceptor("http://ctlog/log_list.sig", sigTooBig)
-
-        // when we ask for data
-        val result = LogListNetworkDataSource(logListService).get()
-
-        // then the log list is returned
-        assertIsA<RawLogListSigFailedTooBig>(result)
+        assertIsA<RawLogListZipFailedLoadingWithException>(result)
     }
 
     companion object {
-        private val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
-        private val jsonTooBig = TestData.file(TestData.TEST_LOG_LIST_JSON_TOO_BIG).readText()
-        private val sig = TestData.file(TestData.TEST_LOG_LIST_SIG).readBytes()
-        private val sigTooBig = TestData.file(TestData.TEST_LOG_LIST_SIG_TOO_BIG).readBytes()
+        private val zipValid = TestData.file(TestData.TEST_LOG_LIST_ZIP).readBytes()
+        private val zipTooBig = TestData.file(TestData.TEST_LOG_LIST_ZIP_TOO_BIG).readBytes()
+        private val zipJsonMissing = TestData.file(TestData.TEST_LOG_LIST_ZIP_JSON_MISSING).readBytes()
+        private val zipSigMissing = TestData.file(TestData.TEST_LOG_LIST_ZIP_SIG_MISSING).readBytes()
+        private val zipJsonTooBig = TestData.file(TestData.TEST_LOG_LIST_ZIP_JSON_TOO_BIG).readBytes()
+        private val zipSigTooBig = TestData.file(TestData.TEST_LOG_LIST_ZIP_SIG_TOO_BIG).readBytes()
     }
 }

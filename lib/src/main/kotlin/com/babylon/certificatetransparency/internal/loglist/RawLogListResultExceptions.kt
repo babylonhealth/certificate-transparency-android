@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,42 @@ package com.babylon.certificatetransparency.internal.loglist
 import com.babylon.certificatetransparency.internal.utils.stringStackTrace
 import com.babylon.certificatetransparency.loglist.RawLogListResult
 
-internal object RawLogListJsonFailedLoading : RawLogListResult.Failure() {
-    override fun toString() = "log-list.json failed to load"
-}
-
-internal object RawLogListSigFailedLoading : RawLogListResult.Failure() {
-    override fun toString() = "log-list.sig failed to load"
-}
-
 internal data class RawLogListJsonFailedLoadingWithException(val exception: Exception) : RawLogListResult.Failure() {
     override fun toString() = "log-list.json failed to load with ${exception.stringStackTrace()}"
 }
 
 internal data class RawLogListSigFailedLoadingWithException(val exception: Exception) : RawLogListResult.Failure() {
     override fun toString() = "log-list.sig failed to load with ${exception.stringStackTrace()}"
+}
+
+internal data class RawLogListZipFailedLoadingWithException(val exception: Exception) : RawLogListResult.Failure() {
+    override fun toString() = "log-list.zip failed to load with ${exception.stringStackTrace()}"
+}
+
+internal object RawLogListJsonFailedTooBig : RawLogListResult.Failure() {
+    override fun toString() = "log-list.json is too large"
+}
+
+internal object RawLogListSigFailedTooBig : RawLogListResult.Failure() {
+    override fun toString() = "log-list.sig is too large"
+}
+
+internal object RawLogListZipFailedTooBig : RawLogListResult.Failure() {
+    override fun toString() = "log-list.zip is too large"
+}
+
+internal object RawLogListZipFailedJsonMissing : RawLogListResult.Failure() {
+    override fun toString() = "log-list.zip missing log-list.json file"
+}
+
+internal object RawLogListZipFailedSigMissing : RawLogListResult.Failure() {
+    override fun toString() = "log-list.zip missing log-list.sig file"
+}
+
+internal object RawLogListZipFailedJsonTooBig : RawLogListResult.Failure() {
+    override fun toString() = "log-list.zip contains too large log-list.json file"
+}
+
+internal object RawLogListZipFailedSigTooBig : RawLogListResult.Failure() {
+    override fun toString() = "log-list.zip contains too large log-list.sig file"
 }

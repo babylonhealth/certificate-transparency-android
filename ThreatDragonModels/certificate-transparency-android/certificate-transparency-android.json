@@ -156,8 +156,8 @@
                 "height": 80
               },
               "position": {
-                "x": 854,
-                "y": 298
+                "x": 859,
+                "y": 404
               },
               "angle": 0,
               "id": "19c1b93e-94f0-47d1-b74d-f471ec339b3e",
@@ -184,8 +184,8 @@
                 "height": 80
               },
               "position": {
-                "x": 855,
-                "y": 169
+                "x": 859,
+                "y": 74
               },
               "angle": 0,
               "id": "2544b035-3ef5-4aa6-8d83-adab274b7cfa",
@@ -429,8 +429,8 @@
               },
               "vertices": [
                 {
-                  "x": 776,
-                  "y": 221
+                  "x": 770,
+                  "y": 171
                 }
               ],
               "id": "45a20b11-0cde-47ca-be67-50097e52f91f",
@@ -468,8 +468,8 @@
               },
               "vertices": [
                 {
-                  "x": 786,
-                  "y": 242
+                  "x": 779,
+                  "y": 202
                 }
               ],
               "id": "5f8f77b2-d896-44ac-acfc-4bfcb8582e0b",
@@ -518,7 +518,7 @@
               "vertices": [
                 {
                   "x": 789,
-                  "y": 322
+                  "y": 381
                 }
               ],
               "id": "1e25bfa4-1c81-4a06-b3a5-6e6ac4acfdde",
@@ -556,8 +556,8 @@
               },
               "vertices": [
                 {
-                  "x": 781,
-                  "y": 363
+                  "x": 783,
+                  "y": 423
                 }
               ],
               "id": "5bf40224-f4ee-42bb-afe2-e5b54a5e7554",
@@ -637,8 +637,8 @@
               },
               "vertices": [
                 {
-                  "x": 490,
-                  "y": 286
+                  "x": 506,
+                  "y": 313
                 }
               ],
               "id": "fa0ac542-2a7e-4efd-9588-ae3d734cd05a",
@@ -686,6 +686,22 @@
                   "title": "Block loglist.json/loglist.sig from loading",
                   "mitigation": "- Store local copy of the loglist so clients can continue to work without relying on loading from the network.",
                   "description": "Blocking the loading of either loglist.json or loglist.sig will mean validation of SCTs cannot be completed resulting in a DoS."
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "log-list.json and log-list.sig out of sync",
+                  "description": "Json and signature loaded out of sync results in signature failure - can be caused by server or client caching issues.",
+                  "mitigation": "Ensure json and signature are loaded in one network call by migrating to log-list.zip"
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "title": "Out of memory caused by large loglist.json/loglist.sig",
+                  "description": "As the loglist.json and loglist.sig are loaded into memory for processing, if they are large they can cause an out of memory error.",
+                  "mitigation": "- Limit size of loglist.json and loglist.sig loaded into memory.",
+                  "type": "Denial of service"
                 }
               ],
               "attrs": {
@@ -790,6 +806,197 @@
                 },
                 ".connection": {
                   "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Store",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 857,
+                "y": 243
+              },
+              "angle": 0,
+              "id": "95e82117-dcc5-4c3f-b0c3-944eaac29882",
+              "z": 21,
+              "hasOpenThreats": false,
+              "outOfScope": true,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isOutOfScope"
+                },
+                "text": {
+                  "text": "loglist.zip"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "target": {
+                "id": "95e82117-dcc5-4c3f-b0c3-944eaac29882"
+              },
+              "vertices": [
+                {
+                  "x": 783,
+                  "y": 265
+                }
+              ],
+              "id": "d0a4c4c9-fd12-4837-95c5-493ae846f84b",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.5382207240504857,
+                    "offset": -2.424485393416351
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "private key",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 22,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "95e82117-dcc5-4c3f-b0c3-944eaac29882"
+              },
+              "target": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "vertices": [
+                {
+                  "x": 805,
+                  "y": 300
+                },
+                {
+                  "x": 785,
+                  "y": 303
+                }
+              ],
+              "id": "0218f04b-9c58-41fe-8e93-cd4e0444d1be",
+              "labels": [
+                {
+                  "position": {
+                    "distance": 0.547378419645268,
+                    "offset": 1.0922526295179646
+                  },
+                  "attrs": {
+                    "text": {
+                      "text": "loglist.zip",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 23,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasNoOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Flow",
+              "smooth": true,
+              "source": {
+                "id": "9686da38-8db5-40e7-8869-3a0838494063"
+              },
+              "target": {
+                "id": "19b083c3-ac40-4b2c-96ff-f1e6e9856117"
+              },
+              "vertices": [],
+              "id": "73773593-6f22-4f14-800e-b8b798221b66",
+              "labels": [
+                {
+                  "position": 0.5,
+                  "attrs": {
+                    "text": {
+                      "text": "loglist.zip",
+                      "font-weight": "400",
+                      "font-size": "small"
+                    }
+                  }
+                }
+              ],
+              "z": 24,
+              "hasOpenThreats": true,
+              "isEncrypted": false,
+              "threats": [
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "An attacker could present an old snapshot of loglist.zip which will pass validation resulting in the CT library not being aware of a new log server causing a DoS",
+                  "mitigation": "- Detect age of loglist.json and reject if older than a certain age.\n- Can be mitigated by ensuring certificates are logged in more than the minimum required number of log servers.",
+                  "title": "Stale snapshot of loglist.zip can hide availability of new log servers"
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "title": "Stale snapshot of loglist.zip can accept rejected log servers",
+                  "type": "Tampering",
+                  "description": "An attacker could present an old snapshot of loglist.json along with its loglist.sig which will pass validation resulting in the CT library accepting a log server that has since been rejected.\n\nThis is only an issue if the certificate presented was generated after the date/time the server was rejected.",
+                  "mitigation": "- Mitigated by CT checks requiring more than one SCT to validate."
+                },
+                {
+                  "status": "Open",
+                  "severity": "Medium",
+                  "title": "Block loglist.zip from loading",
+                  "type": "Denial of service",
+                  "description": "Blocking the loading of loglist.zip will mean validation of SCTs cannot be completed resulting in a DoS."
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "Out of memory caused by large entries in loglist.zip",
+                  "description": "loglist.zip can contain large entries that will be loaded into memory when the loglist.json and loglist.sig entries are read.",
+                  "mitigation": "- Limit size of loglist.json and loglist.sig loaded into memory"
+                },
+                {
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "title": "Out of memory caused by large loglist.zip file",
+                  "description": "As the loglist.zip file is loaded into memory to unzip it a large file can cause an out of memory error",
+                  "mitigation": "- Limit the size of loglist.zip loaded into memory"
+                }
+              ],
+              "attrs": {
+                ".marker-target": {
+                  "class": "marker-target hasOpenThreats isInScope"
+                },
+                ".connection": {
+                  "class": "connection hasOpenThreats isInScope"
                 }
               }
             }
