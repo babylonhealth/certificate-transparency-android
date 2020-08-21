@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
 
 plugins {
     id("java-library")
@@ -21,14 +20,11 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     // Issue with jettifier and v1.65
-    @Suppress("GradleDependency")
     implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
-    @Suppress("GradleDependency")
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
-    @Suppress("GradleDependency")
     implementation("org.bouncycastle:bctls-jdk15on:1.64")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
