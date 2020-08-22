@@ -1,0 +1,20 @@
+build:
+  maxIssues: 0
+
+formatting:
+  MaximumLineLength:
+    active: false
+
+style:
+  MaxLineLength:
+    maxLineLength: 145 # increased from 120
+  MagicNumber:
+    excludes: "**/test/**,**/androidTest/**,**Test.kt,**Spec.kt,**Spek.kt,**.kts"
+
+complexity:
+  LongMethod:
+    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+
+exceptions:
+  TooGenericExceptionThrown:
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']

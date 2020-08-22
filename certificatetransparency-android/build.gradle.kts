@@ -1,13 +1,13 @@
 @file:Suppress("MagicNumber")
 
-import com.novoda.gradle.release.PublishExtension
-
 plugins {
     id("com.android.library")
     kotlin("android")
 }
 
-apply(plugin = "com.novoda.bintray-release")
+apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/dokka-javadoc.gradle.kts")
 
 android {
     compileSdkVersion(29)
@@ -23,6 +23,11 @@ android {
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("test").java.srcDirs("src/test/kotlin")
@@ -31,14 +36,14 @@ android {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk7"))
+    implementation(kotlin("stdlib-jdk8"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
-    api(project(":lib"))
+    api(project(":certificatetransparency"))
 
     testImplementation("junit:junit:4.13")
-    testImplementation("org.mockito:mockito-core:3.3.3")
+    testImplementation("org.mockito:mockito-core:3.5.2")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
     testImplementation("androidx.test:core:1.2.0")
@@ -47,16 +52,7 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.3.1")
 }
 
-configure<PublishExtension> {
-    bintrayUser = System.getenv("BINTRAY_USER") ?: System.getProperty("BINTRAY_USER") ?: "unknown"
-    bintrayKey = System.getenv("BINTRAY_KEY") ?: System.getProperty("BINTRAY_KEY") ?: "unknown"
-
-    userOrg = "babylonpartners"
-    groupId = "com.babylon.certificatetransparency"
-    artifactId = "certificatetransparency-android"
-    publishVersion = System.getenv("CIRCLE_TAG") ?: System.getProperty("CIRCLE_TAG") ?: "unknown"
-    desc = "Certificate transparency for Android and Java"
-    website = "https://github.com/babylonhealth/certificate-transparency-android"
-
-    dryRun = false
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
 }

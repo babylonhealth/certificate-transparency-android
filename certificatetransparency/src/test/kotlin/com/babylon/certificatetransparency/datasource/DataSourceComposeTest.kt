@@ -163,7 +163,7 @@ class DataSourceComposeTest {
     fun testComposeThrowsExceptionWhenSecondCacheIsNull() {
         // when second cache is null
         // expect exception
-        val throwable = assertThrows(IllegalArgumentException::class.java) {
+        val throwable = assertThrows(NullPointerException::class.java) {
             InMemoryDataSource<Int>() + uninitialized()
         }
         assertTrue(throwable.message!!.startsWith("Parameter specified as non-null is null"))

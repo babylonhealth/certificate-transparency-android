@@ -1,6 +1,5 @@
 import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 buildscript {
     repositories {
@@ -8,18 +7,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
+        classpath("com.android.tools.build:gradle:4.0.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.10.1")
         classpath("org.owasp:dependency-check-gradle:5.3.2.1")
-        classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3")
-        classpath("com.novoda:bintray-release:0.9.2")
     }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.9.1"
-    id("com.github.ben-manes.versions") version "0.28.0"
     id("com.appmattus.markdown") version "0.6.0"
 }
 
@@ -33,35 +28,12 @@ allprojects {
     }
 }
 
-task("clean", type = Delete::class) {
+tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
 }
 
-dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.9.1")
-}
-
-tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
-    resolutionStrategy {
-        componentSelection {
-            all {
-                fun isNonStable(version: String) = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea").any { qualifier ->
-                    version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
-                }
-                if (isNonStable(candidate.version) && !isNonStable(currentVersion)) {
-                    reject("Release candidate")
-                }
-            }
-        }
-    }
-}
-
-detekt {
-    input = files("$projectDir")
-    buildUponDefaultConfig = true
-    config = files("detekt-config.yml")
-    autoCorrect = true
-}
+apply(from = "$rootDir/gradle/scripts/detekt.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/dependencyUpdates.gradle.kts")
 
 markdownlint {
     rules {

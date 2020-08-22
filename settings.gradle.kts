@@ -1,5 +1,5 @@
 include(
-    "sampleapp",
-    "lib",
-    "android"
+    "certificatetransparency",
+    "certificatetransparency-android",
+    "sampleapp"
 )
