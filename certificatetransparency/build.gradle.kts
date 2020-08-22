@@ -19,10 +19,9 @@ java {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    // Issue with jettifier and v1.65
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
-    implementation("org.bouncycastle:bcprov-jdk15on:1.64")
-    implementation("org.bouncycastle:bctls-jdk15on:1.64")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.66")
+    implementation("org.bouncycastle:bcprov-jdk15to18:1.66")
+    implementation("org.bouncycastle:bctls-jdk15to18:1.66")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
@@ -31,7 +30,7 @@ dependencies {
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 
     testImplementation("junit:junit:4.13")
-    testImplementation("org.mockito:mockito-core:3.3.3")
+    testImplementation("org.mockito:mockito-core:3.5.2")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.4.1")
