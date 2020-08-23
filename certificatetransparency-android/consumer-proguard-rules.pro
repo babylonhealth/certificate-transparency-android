@@ -80,3 +80,13 @@
 
 # Ensure chain cleaner classes are kept as they're loaded through reflection
 -keep class com.babylon.certificatetransparency.chaincleaner.* { *; }
+
+
+# Specifically for ProGuard (not needed for R8)
+-dontwarn module-info
+-dontnote module-info
+-dontwarn kotlinx.coroutines.debug.AgentPremain
+-dontwarn kotlinx.coroutines.debug.AgentPremain$DebugProbesTransformer
+-dontwarn org.bouncycastle.jce.provider.OcspCache
+-dontwarn org.bouncycastle.jce.provider.ProvOcspRevocationChecker
+-dontwarn org.bouncycastle.jsse.util.CustomSSLSocketFactory
