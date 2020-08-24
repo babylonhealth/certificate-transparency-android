@@ -38,7 +38,7 @@ val dokka = tasks.named<DokkaTask>("dokka") {
 
         sourceLink {
             path = "$rootDir"
-            url = "https://github.com/babylonhealth/certificate-transparency-android/blob/master/"
+            url = "https://github.com/babylonhealth/certificate-transparency-android/blob/main/"
             lineSuffix = "#L"
         }
 
