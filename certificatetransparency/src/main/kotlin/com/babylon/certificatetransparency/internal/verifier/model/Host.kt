@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,11 @@ internal data class Host(
         if (startsWithWildcard) {
             val firstDot = hostname.indexOf('.')
             return matchAll || hostname.length - firstDot - 1 == canonicalHostname.length && hostname.regionMatches(
-                firstDot + 1, canonicalHostname, 0,
-                canonicalHostname.length, ignoreCase = false
+                firstDot + 1,
+                canonicalHostname,
+                0,
+                canonicalHostname.length,
+                ignoreCase = false
             )
         }
 

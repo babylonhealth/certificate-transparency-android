@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,8 @@ class RawLogListToLogListResultTransformerTest {
             logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
             RawLogListResult.Success(
-                jsonIncomplete.toByteArray(), signature
+                jsonIncomplete.toByteArray(),
+                signature
             )
         )
 
@@ -80,7 +81,8 @@ class RawLogListToLogListResultTransformerTest {
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
             RawLogListResult.Success(
-                json.toByteArray(), ByteArray(512)
+                json.toByteArray(),
+                ByteArray(512)
             )
         )
 
@@ -95,7 +97,8 @@ class RawLogListToLogListResultTransformerTest {
         // when we ask for data
         val result = RawLogListToLogListResultTransformer().transform(
             RawLogListResult.Success(
-                json.toByteArray(), ByteArray(32)
+                json.toByteArray(),
+                ByteArray(32)
             )
         )
 
@@ -166,7 +169,8 @@ class RawLogListToLogListResultTransformerTest {
             logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
             RawLogListResult.Success(
-                jsonValidUntil.toByteArray(), signature
+                jsonValidUntil.toByteArray(),
+                signature
             )
         )
 
@@ -187,7 +191,8 @@ class RawLogListToLogListResultTransformerTest {
             logListVerifier = LogListVerifier(keyPair.public)
         ).transform(
             RawLogListResult.Success(
-                jsonValidUntil.toByteArray(), signature
+                jsonValidUntil.toByteArray(),
+                signature
             )
         )
 

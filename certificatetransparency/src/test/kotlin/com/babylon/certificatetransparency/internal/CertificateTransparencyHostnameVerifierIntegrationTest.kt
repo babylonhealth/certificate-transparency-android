@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,13 +63,15 @@ class CertificateTransparencyHostnameVerifierIntegrationTest {
 
     @Test
     fun invalidAllowedWhenSctNotChecked() {
-        val client = OkHttpClient.Builder().hostnameVerifier(certificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE) {
-            +"*.babylonhealth.com"
+        val client = OkHttpClient.Builder().hostnameVerifier(
+            certificateTransparencyHostnameVerifier(OkHostnameVerifier.INSTANCE) {
+                +"*.babylonhealth.com"
 
-            logListDataSource {
-                LogListDataSourceTestFactory.logListDataSource
+logListDataSource {
+                    LogListDataSourceTestFactory.logListDataSource
+                }
             }
-        }).build()
+        ).build()
 
         val request = Request.Builder()
             .url("https://$invalidSctDomain/")

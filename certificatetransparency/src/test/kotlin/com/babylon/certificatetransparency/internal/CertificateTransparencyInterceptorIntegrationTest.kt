@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,13 +96,15 @@ class CertificateTransparencyInterceptorIntegrationTest {
     @Test
     fun invalidAllowedWhenSctNotChecked() {
         val client =
-            OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
-                +"*.babylonhealth.com"
+            OkHttpClient.Builder().addNetworkInterceptor(
+                certificateTransparencyInterceptor {
+                    +"*.babylonhealth.com"
 
-                logListDataSource {
-                    LogListDataSourceTestFactory.logListDataSource
+logListDataSource {
+                        LogListDataSourceTestFactory.logListDataSource
+                    }
                 }
-            }).build()
+            ).build()
 
         val request = Request.Builder()
             .url("https://$invalidSctDomain/")
@@ -114,13 +116,15 @@ class CertificateTransparencyInterceptorIntegrationTest {
     @Test(expected = SSLPeerUnverifiedException::class)
     fun invalidNotAllowedWhenAllHostsIncluded() {
         val client =
-            OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
-                +"*.*"
+            OkHttpClient.Builder().addNetworkInterceptor(
+                certificateTransparencyInterceptor {
+                    +"*.*"
 
-                logListDataSource {
-                    LogListDataSourceTestFactory.logListDataSource
+logListDataSource {
+                        LogListDataSourceTestFactory.logListDataSource
+                    }
                 }
-            }).build()
+            ).build()
 
         val request = Request.Builder()
             .url("https://$invalidSctDomain/")
@@ -132,14 +136,16 @@ class CertificateTransparencyInterceptorIntegrationTest {
     @Test
     fun invalidAllowedWhenHostExcludedFromAll() {
         val client =
-            OkHttpClient.Builder().addNetworkInterceptor(certificateTransparencyInterceptor {
-                +"*.*"
-                -invalidSctDomain
+            OkHttpClient.Builder().addNetworkInterceptor(
+                certificateTransparencyInterceptor {
+                    +"*.*"
+-invalidSctDomain
 
-                logListDataSource {
-                    LogListDataSourceTestFactory.logListDataSource
+logListDataSource {
+                        LogListDataSourceTestFactory.logListDataSource
+                    }
                 }
-            }).build()
+            ).build()
 
         val request = Request.Builder()
             .url("https://$invalidSctDomain/")

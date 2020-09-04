@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,11 @@ object LogListDataSourceTestFactory {
         val json = TestData.file(TestData.TEST_LOG_LIST_JSON).readText()
         val trustedLogKeys = GsonBuilder().create().fromJson(json, LogListV2::class.java).operators.flatMap { it.logs.map(Log::key) }
 
-        val list = LogListResult.Valid(trustedLogKeys.map { Base64.decode(it) }.map {
-            LogServer(PublicKeyFactory.fromByteArray(it))
-        })
+        val list = LogListResult.Valid(
+            trustedLogKeys.map { Base64.decode(it) }.map {
+                LogServer(PublicKeyFactory.fromByteArray(it))
+            }
+        )
 
         object : DataSource<LogListResult> {
             override suspend fun get() = list

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,9 +66,11 @@ internal class HttpLogClient(private val ctService: LogClientService) : LogClien
      */
     internal fun encodeCertificates(certs: List<Certificate>): AddChainRequest {
         try {
-            return AddChainRequest(certs.map {
-                Base64.toBase64String(it.encoded)
-            })
+            return AddChainRequest(
+                certs.map {
+                    Base64.toBase64String(it.encoded)
+                }
+            )
         } catch (e: CertificateEncodingException) {
             throw CertificateTransparencyException("Error encoding certificate", e)
         }
