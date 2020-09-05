@@ -21,7 +21,7 @@ interface CertificateChainCleaner {
         private val androidCertificateChainCleanerFactory by lazy {
             try {
                 Class.forName("com.babylon.certificatetransparency.chaincleaner.AndroidCertificateChainCleaner\$Factory")
-                    .newInstance() as CertificateChainCleanerFactory
+                    .getDeclaredConstructor().newInstance() as CertificateChainCleanerFactory
             } catch (ignored: Exception) {
                 null
             }
