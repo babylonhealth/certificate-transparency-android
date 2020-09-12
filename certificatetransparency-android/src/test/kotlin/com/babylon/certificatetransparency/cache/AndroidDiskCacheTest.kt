@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,12 @@ class AndroidDiskCacheTest {
 
     @Test
     fun cachedLogListRetrievedWithinExpiryDate() = runBlocking {
-        val result = RawLogListResult.Success("bogo".toByteArray(), ByteArray(10) {
-            it.toByte()
-        })
+        val result = RawLogListResult.Success(
+            "bogo".toByteArray(),
+            ByteArray(10) {
+                it.toByte()
+            }
+        )
 
         // given a disk cache with a non-expiring cache policy
         val diskCache = AndroidDiskCache(
@@ -52,9 +55,12 @@ class AndroidDiskCacheTest {
 
     @Test
     fun cachedLogListNotRetrievedOverExpiryDate() = runBlocking {
-        val result = RawLogListResult.Success("bogo".toByteArray(), ByteArray(10) {
-            it.toByte()
-        })
+        val result = RawLogListResult.Success(
+            "bogo".toByteArray(),
+            ByteArray(10) {
+                it.toByte()
+            }
+        )
 
         // given a disk cache with an always-expired cache policy
         val diskCache = AndroidDiskCache(

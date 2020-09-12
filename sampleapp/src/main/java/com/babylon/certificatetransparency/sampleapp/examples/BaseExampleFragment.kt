@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,8 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
                 iconResId = R.drawable.plus
             ) {
                 showIncludeHostDialog()
-            })
+            }
+        )
     }
 
     private val failOnErrorSection = Section().apply {
@@ -92,12 +93,15 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
 
         viewModel = ViewModelProvider(this, ContextViewModelFactory(requireContext())).get(getViewModelClass())
 
-        viewModel.liveData.observe(viewLifecycleOwner, Observer { state ->
-            updateHosts(state)
-            updateMessage(state)
-            updateCode(state)
-            updateFailOnError(state)
-        })
+        viewModel.liveData.observe(
+            viewLifecycleOwner,
+            Observer { state ->
+                updateHosts(state)
+                        updateMessage(state)
+                        updateCode(state)
+                        updateFailOnError(state)
+            }
+        )
 
         hostsRecyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         hostsRecyclerView.setHasFixedSize(false)
@@ -115,9 +119,11 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
             add(failOnErrorSection)
             add(SubHeaderTextItem(R.string.sample_code))
             add(codeViewItem)
-            add(ButtonItem(R.string.test_certificate_transparency) {
+            add(
+                ButtonItem(R.string.test_certificate_transparency) {
                 showConnectionDialog()
-            })
+            }
+            )
         }
     }
 
@@ -132,7 +138,8 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
                     state.failOnError
                 ) {
                     viewModel.setFailOnError(it)
-                })
+                }
+            )
         )
     }
 
@@ -151,14 +158,16 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
 
                 view.setBackgroundColor(ContextCompat.getColor(context, color))
 
-                addCallback(object : Snackbar.Callback() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        super.onDismissed(transientBottomBar, event)
-                        if (snackbar == this@apply) {
-                            viewModel.dismissMessage()
-                        }
-                    }
-                })
+                addCallback(
+                    object : Snackbar.Callback() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                if (snackbar == this@apply) {
+                    viewModel.dismissMessage()
+                }
+            }
+        }
+                )
                 show()
             }
         } else {
@@ -168,11 +177,13 @@ abstract class BaseExampleFragment<T : BaseExampleViewModel> : Fragment() {
     }
 
     private fun updateHosts(state: State) {
-        hostsSection.update(state.hosts.map { host ->
-            RemovableItem(host) {
-                viewModel.removeHost(it.title.toString())
+        hostsSection.update(
+            state.hosts.map { host ->
+                RemovableItem(host) {
+                    viewModel.removeHost(it.title.toString())
+                }
             }
-        })
+        )
     }
 
     private fun showIncludeHostDialog() {

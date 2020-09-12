@@ -25,9 +25,11 @@ internal class MaxSizeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
-        val response = chain.proceed(request.newBuilder().apply {
-            removeHeader(HEADER)
-        }.build())
+        val response = chain.proceed(
+            request.newBuilder().apply {
+                removeHeader(HEADER)
+            }.build()
+        )
 
         val body = response.body()
 

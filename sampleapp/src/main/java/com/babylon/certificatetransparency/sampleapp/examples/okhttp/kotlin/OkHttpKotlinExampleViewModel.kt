@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,16 +57,18 @@ class OkHttpKotlinExampleViewModel(val context: Context) : BaseExampleViewModel(
 
         val request = Request.Builder().url("https://$connectionHost").build()
 
-        client.newCall(request).enqueue(object : Callback {
+        client.newCall(request).enqueue(
+            object : Callback {
 
-            override fun onFailure(call: Call, e: IOException) {
-                // Failure. Send message to the UI as logger won't catch generic network exceptions
-                sendException(e)
-            }
+override fun onFailure(call: Call, e: IOException) {
+// Failure. Send message to the UI as logger won't catch generic network exceptions
+sendException(e)
+}
 
-            override fun onResponse(call: Call, response: Response) {
-                // Success. Reason will have been sent to the logger
-            }
-        })
+override fun onResponse(call: Call, response: Response) {
+// Success. Reason will have been sent to the logger
+}
+}
+        )
     }
 }

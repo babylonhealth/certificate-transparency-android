@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,20 +57,24 @@ class VolleyKotlinExampleViewModel(context: Context) : BaseExampleViewModel(cont
     // A normal client would create this ahead of time and share it between network requests
     // We create it dynamically as we allow the user to set the hosts for certificate transparency
     private fun createRequestQueue(hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger): RequestQueue {
-        return Volley.newRequestQueue(getApplication(),
+        return Volley.newRequestQueue(
+            getApplication(),
             object : HurlStack() {
                 override fun createConnection(url: URL): HttpURLConnection {
                     return super.createConnection(url).apply {
                         enableCertificateTransparencyChecks(hosts, isFailOnError, defaultLogger)
                     }
                 }
-            })
+            }
+        )
     }
 
     override fun openConnection(connectionHost: String, hosts: Set<String>, isFailOnError: Boolean, defaultLogger: CTLogger) {
         val queue = createRequestQueue(hosts, isFailOnError, defaultLogger)
 
-        val request = StringRequest(Request.Method.GET, "https://$connectionHost",
+        val request = StringRequest(
+            Request.Method.GET,
+            "https://$connectionHost",
             Response.Listener<String> { response ->
                 // Success. Reason will have been sent to the logger
                 println(response)
@@ -78,7 +82,8 @@ class VolleyKotlinExampleViewModel(context: Context) : BaseExampleViewModel(cont
             Response.ErrorListener {
                 // Failure. Send message to the UI as logger won't catch generic network exceptions
                 sendException(it)
-            })
+            }
+        )
 
         // Explicitly disable cache so we always call the interceptor and thus see the certificate transparency results
         request.setShouldCache(false)
