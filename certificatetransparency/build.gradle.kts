@@ -5,6 +5,7 @@ plugins {
     id("kotlin")
     id("org.owasp.dependencycheck")
     id("com.android.lint")
+    id("org.jetbrains.dokka")
 }
 
 apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
