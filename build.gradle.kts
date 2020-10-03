@@ -16,8 +16,8 @@ buildscript {
 
 plugins {
     kotlin("jvm") version "1.4.10" apply false
-    id("org.jetbrains.dokka") version "1.4.0"
-    id("org.owasp.dependencycheck") version "6.0.0.1"
+    id("org.jetbrains.dokka") version "1.4.10"
+    id("org.owasp.dependencycheck") version "6.0.2"
     id("com.appmattus.markdown") version "0.6.0"
 }
 
@@ -58,7 +58,6 @@ apply(from = "$rootDir/gradle/scripts/dependencyUpdates.gradle.kts")
 
 val dokka = tasks.named<DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
     outputDirectory.set(buildDir.resolve("dokkaCustomMultiModuleOutput"))
-    documentationFileName.set("module.md")
 }
 
 tasks.register("check").dependsOn(dokka)
