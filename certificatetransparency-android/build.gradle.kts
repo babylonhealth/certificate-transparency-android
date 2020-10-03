@@ -44,7 +44,7 @@ dependencies {
     api(project(":certificatetransparency"))
 
     testImplementation("junit:junit:4.13")
-    testImplementation("org.mockito:mockito-core:3.5.10")
+    testImplementation("org.mockito:mockito-core:3.5.13")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 
     testImplementation("androidx.test:core:1.3.0")
