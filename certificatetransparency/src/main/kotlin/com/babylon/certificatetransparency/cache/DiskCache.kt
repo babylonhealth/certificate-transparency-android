@@ -24,4 +24,4 @@ import com.babylon.certificatetransparency.loglist.RawLogListResult
 /**
  * A disk cache which stores and retrieves raw log list data
  */
-interface DiskCache : DataSource<RawLogListResult>
+public interface DiskCache : DataSource<RawLogListResult>

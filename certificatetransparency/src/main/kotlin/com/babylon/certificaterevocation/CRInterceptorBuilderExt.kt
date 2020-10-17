@@ -23,8 +23,8 @@ import okhttp3.Interceptor
  * @property init Block to execute as a [CRInterceptorBuilder]
  */
 @JvmSynthetic
-fun certificateRevocationInterceptor(
+public fun certificateRevocationInterceptor(
     init: CRInterceptorBuilder.() -> Unit = {}
-) = CRInterceptorBuilder()
+): Interceptor = CRInterceptorBuilder()
     .apply(init)
     .build()

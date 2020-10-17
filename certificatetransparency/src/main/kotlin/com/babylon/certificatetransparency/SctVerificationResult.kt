@@ -19,39 +19,39 @@ package com.babylon.certificatetransparency
 /**
  * Abstract class providing the results of verifying a Signed Certificate Timestamp
  */
-sealed class SctVerificationResult {
+public sealed class SctVerificationResult {
     /**
      * Signed Certificate Timestamp checks passed
      */
-    object Valid : SctVerificationResult() {
+    public object Valid : SctVerificationResult() {
         /**
          * Returns a string representation of the object.
          */
-        override fun toString() = "Valid SCT"
+        override fun toString(): String = "Valid SCT"
     }
 
     /**
      * Abstract class representing Signed Certificate Timestamp checks failed
      */
-    sealed class Invalid : SctVerificationResult() {
+    public sealed class Invalid : SctVerificationResult() {
         /**
          * Signed Certificate Timestamp checks failed as the signature could not be verified
          */
-        object FailedVerification : Invalid() {
+        public object FailedVerification : Invalid() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "SCT signature failed verification"
+            override fun toString(): String = "SCT signature failed verification"
         }
 
         /**
          * Signed Certificate Timestamp checks failed as there was no log server we trust in the log-list.json
          */
-        object NoTrustedLogServerFound : Invalid() {
+        public object NoTrustedLogServerFound : Invalid() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "No trusted log server found for SCT"
+            override fun toString(): String = "No trusted log server found for SCT"
         }
 
         /**
@@ -59,11 +59,11 @@ sealed class SctVerificationResult {
          * @property timestamp The timestamp of the SCT
          * @property now The time now
          */
-        data class FutureTimestamp(val timestamp: Long, val now: Long) : Invalid() {
+        public data class FutureTimestamp(val timestamp: Long, val now: Long) : Invalid() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "SCT timestamp, $timestamp, is in the future, current timestamp is $now."
+            override fun toString(): String = "SCT timestamp, $timestamp, is in the future, current timestamp is $now."
         }
 
         /**
@@ -71,26 +71,26 @@ sealed class SctVerificationResult {
          * @property timestamp The timestamp of the SCT
          * @property logServerValidUntil The time the log server was valid till
          */
-        data class LogServerUntrusted(val timestamp: Long, val logServerValidUntil: Long) : Invalid() {
+        public data class LogServerUntrusted(val timestamp: Long, val logServerValidUntil: Long) : Invalid() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "SCT timestamp, $timestamp, is greater than the log server validity, $logServerValidUntil."
+            override fun toString(): String = "SCT timestamp, $timestamp, is greater than the log server validity, $logServerValidUntil."
         }
 
         /**
          * Signed Certificate Timestamp checks failed for an unspecified reason
          */
-        abstract class Failed : Invalid()
+        public abstract class Failed : Invalid()
 
         /**
          * Signed Certificate Timestamp checks failed as an [exception] was detected
          */
-        abstract class FailedWithException : Invalid() {
+        public abstract class FailedWithException : Invalid() {
             /**
              * The [exception] that occurred
              */
-            abstract val exception: Exception?
+            public abstract val exception: Exception?
         }
     }
 }

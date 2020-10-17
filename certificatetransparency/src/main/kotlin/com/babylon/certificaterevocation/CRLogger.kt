@@ -19,9 +19,9 @@ package com.babylon.certificaterevocation
 /**
  * A [CRLogger] object is used to log the results of performing certificate revocation for a particular host
  */
-interface CRLogger {
+public interface CRLogger {
     /**
      * Log a [host] and its [result] from performing certificate revocation
      */
-    fun log(host: String, result: RevocationResult) = Unit
+    public fun log(host: String, result: RevocationResult): Unit = Unit
 }

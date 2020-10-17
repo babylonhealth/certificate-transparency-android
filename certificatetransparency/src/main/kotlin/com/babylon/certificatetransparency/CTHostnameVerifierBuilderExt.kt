@@ -24,9 +24,9 @@ import javax.net.ssl.HostnameVerifier
  * @property init Block to execute as a [CTHostnameVerifierBuilder]
  */
 @JvmSynthetic
-fun certificateTransparencyHostnameVerifier(
+public fun certificateTransparencyHostnameVerifier(
     delegate: HostnameVerifier,
     init: CTHostnameVerifierBuilder.() -> Unit = {}
-) = CTHostnameVerifierBuilder(delegate)
+): HostnameVerifier = CTHostnameVerifierBuilder(delegate)
     .apply(init)
     .build()

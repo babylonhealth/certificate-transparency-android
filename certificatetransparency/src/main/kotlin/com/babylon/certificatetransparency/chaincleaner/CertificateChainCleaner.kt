@@ -14,10 +14,10 @@ import javax.net.ssl.X509TrustManager
  * the TLS handshake and to extract the trusted CA certificate for the benefit of certificate
  * pinning.
  */
-interface CertificateChainCleaner {
-    fun clean(chain: List<X509Certificate>, hostname: String): List<X509Certificate>
+public interface CertificateChainCleaner {
+    public fun clean(chain: List<X509Certificate>, hostname: String): List<X509Certificate>
 
-    companion object {
+    public companion object {
         private val androidCertificateChainCleanerFactory by lazy {
             try {
                 Class.forName("com.babylon.certificatetransparency.chaincleaner.AndroidCertificateChainCleaner\$Factory")
@@ -27,7 +27,7 @@ interface CertificateChainCleaner {
             }
         }
 
-        fun get(trustManager: X509TrustManager): CertificateChainCleaner {
+        public fun get(trustManager: X509TrustManager): CertificateChainCleaner {
             return androidCertificateChainCleanerFactory?.get(trustManager) ?: BasicCertificateChainCleaner(trustManager)
         }
     }

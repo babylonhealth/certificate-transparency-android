@@ -32,7 +32,7 @@ import javax.net.ssl.X509TrustManager
  * certificate transparency
  */
 @Suppress("TooManyFunctions")
-class CTInterceptorBuilder {
+public class CTInterceptorBuilder {
     private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
     private var logListDataSource: DataSource<LogListResult>? = null
@@ -44,9 +44,7 @@ class CTInterceptorBuilder {
      * closed on errors
      * Default: true
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var failOnError: Boolean = true
+    public var failOnError: Boolean = true
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -54,9 +52,7 @@ class CTInterceptorBuilder {
      * [CTLogger] which will be called with all results
      * Default: none
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var logger: CTLogger? = null
+    public var logger: CTLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -64,9 +60,7 @@ class CTInterceptorBuilder {
      * [CTPolicy] which will verify correct number of SCTs are present
      * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var policy: CTPolicy? = null
+    public var policy: CTPolicy? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -74,9 +68,7 @@ class CTInterceptorBuilder {
      * [DiskCache] which will cache the log list
      * Default: none
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var diskCache: DiskCache? = null
+    public var diskCache: DiskCache? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -85,7 +77,7 @@ class CTInterceptorBuilder {
      * Default: null
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+    public fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory): CTInterceptorBuilder =
         apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
 
     /**
@@ -94,7 +86,7 @@ class CTInterceptorBuilder {
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+    public fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
         setCertificateChainCleanerFactory(init())
     }
 
@@ -103,7 +95,7 @@ class CTInterceptorBuilder {
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setTrustManager(trustManager: X509TrustManager) =
+    public fun setTrustManager(trustManager: X509TrustManager): CTInterceptorBuilder =
         apply { this.trustManager = trustManager }
 
     /**
@@ -112,7 +104,7 @@ class CTInterceptorBuilder {
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun trustManager(init: () -> X509TrustManager) {
+    public fun trustManager(init: () -> X509TrustManager) {
         setTrustManager(init())
     }
 
@@ -121,7 +113,7 @@ class CTInterceptorBuilder {
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setLogListDataSource(logListDataSource: DataSource<LogListResult>) =
+    public fun setLogListDataSource(logListDataSource: DataSource<LogListResult>): CTInterceptorBuilder =
         apply {
             this.logListDataSource = logListDataSource
         }
@@ -132,7 +124,7 @@ class CTInterceptorBuilder {
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun logListDataSource(init: () -> DataSource<LogListResult>) {
+    public fun logListDataSource(init: () -> DataSource<LogListResult>) {
         setLogListDataSource(init())
     }
 
@@ -142,28 +134,28 @@ class CTInterceptorBuilder {
      * Default: true
      */
     @Suppress("unused")
-    fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
+    public fun setFailOnError(failOnError: Boolean): CTInterceptorBuilder = apply { this.failOnError = failOnError }
 
     /**
      * [CTLogger] which will be called with all results
      * Default: none
      */
     @Suppress("unused")
-    fun setLogger(logger: CTLogger) = apply { this.logger = logger }
+    public fun setLogger(logger: CTLogger): CTInterceptorBuilder = apply { this.logger = logger }
 
     /**
      * [CTPolicy] which will verify correct number of SCTs are present
      * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
      */
     @Suppress("unused")
-    fun setPolicy(policy: CTPolicy) = apply { this.policy = policy }
+    public fun setPolicy(policy: CTPolicy): CTInterceptorBuilder = apply { this.policy = policy }
 
     /**
      * [DiskCache] which will cache the log list
      * Default: none
      */
     @Suppress("unused")
-    fun setDiskCache(diskCache: DiskCache) = apply { this.diskCache = diskCache }
+    public fun setDiskCache(diskCache: DiskCache): CTInterceptorBuilder = apply { this.diskCache = diskCache }
 
     /**
      * Verify certificate transparency for hosts that match [pattern].
@@ -171,7 +163,7 @@ class CTInterceptorBuilder {
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun includeHost(pattern: String) = apply {
+    public fun includeHost(pattern: String): CTInterceptorBuilder = apply {
         includeHosts.add(Host(pattern))
     }
 
@@ -181,7 +173,7 @@ class CTInterceptorBuilder {
      * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun String.unaryPlus() {
+    public operator fun String.unaryPlus() {
         includeHost(this)
     }
 
@@ -191,7 +183,7 @@ class CTInterceptorBuilder {
      * @receiver [List] of lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun List<String>.unaryPlus() {
+    public operator fun List<String>.unaryPlus() {
         forEach { includeHost(it) }
     }
 
@@ -201,7 +193,7 @@ class CTInterceptorBuilder {
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun excludeHost(vararg pattern: String) = apply {
+    public fun excludeHost(vararg pattern: String): CTInterceptorBuilder = apply {
         pattern.forEach { excludeHosts.add(Host(it)) }
     }
 
@@ -211,7 +203,7 @@ class CTInterceptorBuilder {
      * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun String.unaryMinus() {
+    public operator fun String.unaryMinus() {
         excludeHost(this)
     }
 
@@ -221,14 +213,14 @@ class CTInterceptorBuilder {
      * @receiver [List] of lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun List<String>.unaryMinus() {
+    public operator fun List<String>.unaryMinus() {
         forEach { excludeHost(it) }
     }
 
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateTransparencyInterceptor(
+    public fun build(): Interceptor = CertificateTransparencyInterceptor(
         includeHosts.toSet(),
         excludeHosts.toSet(),
         certificateChainCleanerFactory,

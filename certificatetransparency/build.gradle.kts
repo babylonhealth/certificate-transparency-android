@@ -44,6 +44,10 @@ tasks.withType(KotlinCompile::class.java).all {
     }
 }
 
+kotlin {
+    explicitApi()
+}
+
 dependencyCheck {
     failBuildOnCVSS = 0f
 

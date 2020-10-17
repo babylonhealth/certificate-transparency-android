@@ -30,8 +30,8 @@ import javax.security.auth.x500.X500Principal
  * Builder to create a [HostnameVerifier] that will reject cert chains containing revoked certificates
  * @property delegate [HostnameVerifier] to delegate to before performing certificate revocation checks
  */
-class CRHostnameVerifierBuilder(
-    @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
+public class CRHostnameVerifierBuilder(
+    @Suppress("MemberVisibilityCanBePrivate") public val delegate: HostnameVerifier
 ) {
     private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
@@ -42,9 +42,7 @@ class CRHostnameVerifierBuilder(
      * closed on errors
      * Default: true
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var failOnError: Boolean = true
+    public var failOnError: Boolean = true
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -52,9 +50,7 @@ class CRHostnameVerifierBuilder(
      * [CRLogger] which will be called with all results
      * Default: none
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var logger: CRLogger? = null
+    public var logger: CRLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -63,7 +59,7 @@ class CRHostnameVerifierBuilder(
      * Default: null
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+    public fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory): CRHostnameVerifierBuilder =
         apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
 
     /**
@@ -72,7 +68,7 @@ class CRHostnameVerifierBuilder(
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+    public fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
         setCertificateChainCleanerFactory(init())
     }
 
@@ -81,7 +77,7 @@ class CRHostnameVerifierBuilder(
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setTrustManager(trustManager: X509TrustManager) =
+    public fun setTrustManager(trustManager: X509TrustManager): CRHostnameVerifierBuilder =
         apply { this.trustManager = trustManager }
 
     /**
@@ -90,7 +86,7 @@ class CRHostnameVerifierBuilder(
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun trustManager(init: () -> X509TrustManager) {
+    public fun trustManager(init: () -> X509TrustManager) {
         setTrustManager(init())
     }
 
@@ -100,22 +96,21 @@ class CRHostnameVerifierBuilder(
      * Default: true
      */
     @Suppress("unused")
-    fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
+    public fun setFailOnError(failOnError: Boolean): CRHostnameVerifierBuilder = apply { this.failOnError = failOnError }
 
     /**
      * [CRLogger] which will be called with all results
      * Default: none
      */
     @Suppress("unused")
-    fun setLogger(logger: CRLogger) = apply { this.logger = logger }
+    public fun setLogger(logger: CRLogger): CRHostnameVerifierBuilder = apply { this.logger = logger }
 
     /**
      * Verify certificate revocation for certificates that match [issuerDistinguishedName] and [serialNumbers].
      *
      * @property issuerDistinguishedName lower-case host name or wildcard pattern such as `*.example.com`.
      */
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun addCrl(issuerDistinguishedName: String, serialNumbers: List<String>) = apply {
+    public fun addCrl(issuerDistinguishedName: String, serialNumbers: List<String>): CRHostnameVerifierBuilder = apply {
         val decodedIssuerDistinguishedName = X500Principal(Base64.decode(issuerDistinguishedName))
         val decodedSerialNumbers = serialNumbers.map { BigInteger(Base64.decode(it)) }
 
@@ -125,7 +120,7 @@ class CRHostnameVerifierBuilder(
     /**
      * Build the [HostnameVerifier]
      */
-    fun build(): HostnameVerifier = CertificateRevocationHostnameVerifier(
+    public fun build(): HostnameVerifier = CertificateRevocationHostnameVerifier(
         delegate = delegate,
         crlSet = crlSet.toSet(),
         certificateChainCleanerFactory = certificateChainCleanerFactory,

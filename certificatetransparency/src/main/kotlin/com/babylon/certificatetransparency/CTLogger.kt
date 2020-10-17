@@ -19,9 +19,9 @@ package com.babylon.certificatetransparency
 /**
  * A [CTLogger] object is used to log the results of performing certificate transparency for a particular host
  */
-interface CTLogger {
+public interface CTLogger {
     /**
      * Log a [host] and its [result] from performing certificate transparency
      */
-    fun log(host: String, result: VerificationResult) = Unit
+    public fun log(host: String, result: VerificationResult): Unit = Unit
 }

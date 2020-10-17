@@ -23,77 +23,77 @@ import java.io.IOException
 /**
  * Abstract class providing the results of performing certificate transparency checks
  */
-sealed class VerificationResult {
+public sealed class VerificationResult {
     /**
      * Abstract class representing certificate transparency checks passed
      */
-    sealed class Success : VerificationResult() {
+    public sealed class Success : VerificationResult() {
 
         /**
          * Certificate transparency checks passed as [host] is not being verified
          * @property host The host certificate transparency is not enabled for
          */
-        data class DisabledForHost(val host: String) : Success() {
+        public data class DisabledForHost(val host: String) : Success() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Success: SCT not enabled for $host"
+            override fun toString(): String = "Success: SCT not enabled for $host"
         }
 
         /**
          * Certificate transparency checks passed with the provided [scts]
          * @property scts Map of logIds to [SctVerificationResult] showing the results of checking each Signed Certificate Timestamp
          */
-        data class Trusted(val scts: Map<String, SctVerificationResult>) : Success() {
+        public data class Trusted(val scts: Map<String, SctVerificationResult>) : Success() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Success: SCT trusted logs $scts"
+            override fun toString(): String = "Success: SCT trusted logs $scts"
         }
 
-        data class InsecureConnection(val host: String) : Success() {
+        public data class InsecureConnection(val host: String) : Success() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Success: SCT not enabled for insecure connection to $host"
+            override fun toString(): String = "Success: SCT not enabled for insecure connection to $host"
         }
     }
 
     /**
      * Abstract class representing certificate transparency checks failed
      */
-    sealed class Failure : VerificationResult() {
+    public sealed class Failure : VerificationResult() {
 
         /**
          * Certificate transparency checks failed as no certificates are present
          */
-        object NoCertificates : Failure() {
+        public object NoCertificates : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: No certificates"
+            override fun toString(): String = "Failure: No certificates"
         }
 
         /**
          * Certificate transparency checks failed as couldn't load list of [LogServer]. This can occur if there are network problems loading
          * the log-list.json or log-list.sig file along with issues with the signature
          */
-        data class LogServersFailed(val logListResult: LogListResult.Invalid) : Failure() {
+        public data class LogServersFailed(val logListResult: LogListResult.Invalid) : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: Unable to load log servers with $logListResult"
+            override fun toString(): String = "Failure: Unable to load log servers with $logListResult"
         }
 
         /**
          * Certificate transparency checks failed as no Signed Certificate Timestamps have been found in the X.509 extensions. This can occur
          * if your server relies on providing SCTs through TLS extensions or OCSP stapling instead.
          */
-        object NoScts : Failure() {
+        public object NoScts : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: This certificate does not have any Signed Certificate Timestamps in it."
+            override fun toString(): String = "Failure: This certificate does not have any Signed Certificate Timestamps in it."
         }
 
         /**
@@ -101,11 +101,11 @@ sealed class VerificationResult {
          * @property scts Map of logIds to [SctVerificationResult] stating which SCTs passed or failed checks
          * @property minSctCount The number of valid SCTs required for trust to be established
          */
-        data class TooFewSctsTrusted(val scts: Map<String, SctVerificationResult>, val minSctCount: Int) : Failure() {
+        public data class TooFewSctsTrusted(val scts: Map<String, SctVerificationResult>, val minSctCount: Int) : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() =
+            override fun toString(): String =
                 "Failure: Too few trusted SCTs, required $minSctCount, found ${scts.count { it.value is SctVerificationResult.Valid }} in $scts"
         }
 
@@ -113,11 +113,11 @@ sealed class VerificationResult {
          * Certificate transparency checks failed due to an unknown [IOException]
          * @property ioException The [IOException] that occurred
          */
-        data class UnknownIoException(val ioException: IOException) : Failure() {
+        public data class UnknownIoException(val ioException: IOException) : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: IOException $ioException"
+            override fun toString(): String = "Failure: IOException $ioException"
         }
     }
 }

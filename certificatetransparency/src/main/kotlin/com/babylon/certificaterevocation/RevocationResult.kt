@@ -6,67 +6,67 @@ import java.security.cert.X509Certificate
 /**
  * Abstract class providing the results of performing certificate revocation checks
  */
-sealed class RevocationResult {
+public sealed class RevocationResult {
     /**
      * Abstract class representing certificate revocation checks passed
      */
-    sealed class Success : RevocationResult() {
+    public sealed class Success : RevocationResult() {
 
         /**
          * Certificate revocation checks passed
          */
-        object Trusted : Success() {
+        public object Trusted : Success() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Success: Certificates not in revocation list"
+            override fun toString(): String = "Success: Certificates not in revocation list"
         }
 
         /**
          * Insecure connection so no certificate to check revocation
          */
-        object InsecureConnection : Success() {
+        public object InsecureConnection : Success() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Success: Revocation not enabled for insecure connection"
+            override fun toString(): String = "Success: Revocation not enabled for insecure connection"
         }
     }
 
     /**
      * Abstract class representing certificate revocation checks failed
      */
-    sealed class Failure : RevocationResult() {
+    public sealed class Failure : RevocationResult() {
 
         /**
          * Certificate revocation checks failed as no certificates are present
          */
-        object NoCertificates : Failure() {
+        public object NoCertificates : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: No certificates"
+            override fun toString(): String = "Failure: No certificates"
         }
 
         /**
          * Certificate revocation checks failed as server not trusted
          */
-        data class CertificateRevoked(val certificate: X509Certificate) : Failure() {
+        public data class CertificateRevoked(val certificate: X509Certificate) : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: Certificate is revoked"
+            override fun toString(): String = "Failure: Certificate is revoked"
         }
 
         /**
          * Certificate revocation checks failed due to an unknown [IOException]
          * @property ioException The [IOException] that occurred
          */
-        data class UnknownIoException(val ioException: IOException) : Failure() {
+        public data class UnknownIoException(val ioException: IOException) : Failure() {
             /**
              * Returns a string representation of the object.
              */
-            override fun toString() = "Failure: IOException $ioException"
+            override fun toString(): String = "Failure: IOException $ioException"
         }
     }
 }

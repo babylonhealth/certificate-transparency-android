@@ -33,8 +33,8 @@ import javax.net.ssl.X509TrustManager
  * @property delegate [HostnameVerifier] to delegate to before performing certificate transparency checks
  */
 @Suppress("TooManyFunctions")
-class CTHostnameVerifierBuilder(
-    @Suppress("MemberVisibilityCanBePrivate") val delegate: HostnameVerifier
+public class CTHostnameVerifierBuilder(
+    @Suppress("MemberVisibilityCanBePrivate") public val delegate: HostnameVerifier
 ) {
     private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
@@ -47,9 +47,7 @@ class CTHostnameVerifierBuilder(
      * closed on errors
      * Default: true
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var failOnError: Boolean = true
+    public var failOnError: Boolean = true
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -57,9 +55,7 @@ class CTHostnameVerifierBuilder(
      * [CTLogger] which will be called with all results
      * Default: none
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var logger: CTLogger? = null
+    public var logger: CTLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -67,9 +63,7 @@ class CTHostnameVerifierBuilder(
      * [CTPolicy] which will verify correct number of SCTs are present
      * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var policy: CTPolicy? = null
+    public var policy: CTPolicy? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -77,9 +71,7 @@ class CTHostnameVerifierBuilder(
      * [DiskCache] which will cache the log list
      * Default: none
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var diskCache: DiskCache? = null
+    public var diskCache: DiskCache? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -88,7 +80,7 @@ class CTHostnameVerifierBuilder(
      * Default: null
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+    public fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory): CTHostnameVerifierBuilder =
         apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
 
     /**
@@ -97,7 +89,7 @@ class CTHostnameVerifierBuilder(
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+    public fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
         setCertificateChainCleanerFactory(init())
     }
 
@@ -106,7 +98,7 @@ class CTHostnameVerifierBuilder(
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setTrustManager(trustManager: X509TrustManager) =
+    public fun setTrustManager(trustManager: X509TrustManager): CTHostnameVerifierBuilder =
         apply { this.trustManager = trustManager }
 
     /**
@@ -115,7 +107,7 @@ class CTHostnameVerifierBuilder(
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun trustManager(init: () -> X509TrustManager) {
+    public fun trustManager(init: () -> X509TrustManager) {
         setTrustManager(init())
     }
 
@@ -124,7 +116,7 @@ class CTHostnameVerifierBuilder(
      * Default: In memory cached log list loaded from https://www.gstatic.com/ct/log_list/log_list.json
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setLogListDataSource(logListDataSource: DataSource<LogListResult>) =
+    public fun setLogListDataSource(logListDataSource: DataSource<LogListResult>): CTHostnameVerifierBuilder =
         apply {
             this.logListDataSource = logListDataSource
         }
@@ -135,7 +127,7 @@ class CTHostnameVerifierBuilder(
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun logListDataSource(init: () -> DataSource<LogListResult>) {
+    public fun logListDataSource(init: () -> DataSource<LogListResult>) {
         setLogListDataSource(init())
     }
 
@@ -145,28 +137,28 @@ class CTHostnameVerifierBuilder(
      * Default: true
      */
     @Suppress("unused")
-    fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
+    public fun setFailOnError(failOnError: Boolean): CTHostnameVerifierBuilder = apply { this.failOnError = failOnError }
 
     /**
      * [CTLogger] which will be called with all results
      * Default: none
      */
     @Suppress("unused")
-    fun setLogger(logger: CTLogger) = apply { this.logger = logger }
+    public fun setLogger(logger: CTLogger): CTHostnameVerifierBuilder = apply { this.logger = logger }
 
     /**
      * [CTPolicy] which will verify correct number of SCTs are present
      * Default: [CTPolicy] which follows rules of https://github.com/chromium/ct-policy/blob/master/ct_policy.md
      */
     @Suppress("unused")
-    fun setPolicy(policy: CTPolicy) = apply { this.policy = policy }
+    public fun setPolicy(policy: CTPolicy): CTHostnameVerifierBuilder = apply { this.policy = policy }
 
     /**
      * [DiskCache] which will cache the log list
      * Default: none
      */
     @Suppress("unused")
-    fun setDiskCache(diskCache: DiskCache) = apply { this.diskCache = diskCache }
+    public fun setDiskCache(diskCache: DiskCache): CTHostnameVerifierBuilder = apply { this.diskCache = diskCache }
 
     /**
      * Verify certificate transparency for hosts that match [pattern].
@@ -174,7 +166,7 @@ class CTHostnameVerifierBuilder(
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun includeHost(vararg pattern: String) = apply {
+    public fun includeHost(vararg pattern: String): CTHostnameVerifierBuilder = apply {
         pattern.forEach { includeHosts.add(Host(it)) }
     }
 
@@ -184,7 +176,7 @@ class CTHostnameVerifierBuilder(
      * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun String.unaryPlus() {
+    public operator fun String.unaryPlus() {
         includeHost(this)
     }
 
@@ -194,7 +186,7 @@ class CTHostnameVerifierBuilder(
      * @receiver [List] of lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun List<String>.unaryPlus() {
+    public operator fun List<String>.unaryPlus() {
         forEach { includeHost(it) }
     }
 
@@ -204,7 +196,7 @@ class CTHostnameVerifierBuilder(
      * @property pattern lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun excludeHost(vararg pattern: String) = apply {
+    public fun excludeHost(vararg pattern: String): CTHostnameVerifierBuilder = apply {
         pattern.forEach { excludeHosts.add(Host(it)) }
     }
 
@@ -214,7 +206,7 @@ class CTHostnameVerifierBuilder(
      * @receiver lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun String.unaryMinus() {
+    public operator fun String.unaryMinus() {
         excludeHost(this)
     }
 
@@ -224,14 +216,14 @@ class CTHostnameVerifierBuilder(
      * @receiver [List] of lower-case host name or wildcard pattern such as `*.example.com`.
      */
     @JvmSynthetic
-    operator fun List<String>.unaryMinus() {
+    public operator fun List<String>.unaryMinus() {
         forEach { excludeHost(it) }
     }
 
     /**
      * Build the [HostnameVerifier]
      */
-    fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(
+    public fun build(): HostnameVerifier = CertificateTransparencyHostnameVerifier(
         delegate,
         includeHosts.toSet(),
         excludeHosts.toSet(),
