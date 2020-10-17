@@ -29,7 +29,7 @@ import javax.security.auth.x500.X500Principal
 /**
  * Builder to create an OkHttp network interceptor that will reject cert chains containing revoked certificates
  */
-class CRInterceptorBuilder {
+public class CRInterceptorBuilder {
     private var certificateChainCleanerFactory: CertificateChainCleanerFactory? = null
     private var trustManager: X509TrustManager? = null
     private val crlSet = mutableSetOf<CrlItem>()
@@ -39,9 +39,7 @@ class CRInterceptorBuilder {
      * closed on errors
      * Default: true
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var failOnError: Boolean = true
+    public var failOnError: Boolean = true
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -49,9 +47,7 @@ class CRInterceptorBuilder {
      * [CRLogger] which will be called with all results
      * Default: none
      */
-    // public for access in DSL
-    @Suppress("MemberVisibilityCanBePrivate")
-    var logger: CRLogger? = null
+    public var logger: CRLogger? = null
         @JvmSynthetic get
         @JvmSynthetic set
 
@@ -60,7 +56,7 @@ class CRInterceptorBuilder {
      * Default: null
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory) =
+    public fun setCertificateChainCleanerFactory(certificateChainCleanerFactory: CertificateChainCleanerFactory): CRInterceptorBuilder =
         apply { this.certificateChainCleanerFactory = certificateChainCleanerFactory }
 
     /**
@@ -69,7 +65,7 @@ class CRInterceptorBuilder {
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
+    public fun certificateChainCleanerFactory(init: () -> CertificateChainCleanerFactory) {
         setCertificateChainCleanerFactory(init())
     }
 
@@ -78,7 +74,7 @@ class CRInterceptorBuilder {
      * Default: Platform default [X509TrustManager] created through [TrustManagerFactory]
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun setTrustManager(trustManager: X509TrustManager) =
+    public fun setTrustManager(trustManager: X509TrustManager): CRInterceptorBuilder =
         apply { this.trustManager = trustManager }
 
     /**
@@ -87,7 +83,7 @@ class CRInterceptorBuilder {
      */
     @JvmSynthetic
     @Suppress("unused")
-    fun trustManager(init: () -> X509TrustManager) {
+    public fun trustManager(init: () -> X509TrustManager) {
         setTrustManager(init())
     }
 
@@ -97,22 +93,21 @@ class CRInterceptorBuilder {
      * Default: true
      */
     @Suppress("unused")
-    fun setFailOnError(failOnError: Boolean) = apply { this.failOnError = failOnError }
+    public fun setFailOnError(failOnError: Boolean): CRInterceptorBuilder = apply { this.failOnError = failOnError }
 
     /**
      * [CRLogger] which will be called with all results
      * Default: none
      */
     @Suppress("unused")
-    fun setLogger(logger: CRLogger) = apply { this.logger = logger }
+    public fun setLogger(logger: CRLogger): CRInterceptorBuilder = apply { this.logger = logger }
 
     /**
      * Verify certificate revocation for certificates that match [issuerDistinguishedName] and [serialNumbers].
      *
      * @property issuerDistinguishedName lower-case host name or wildcard pattern such as `*.example.com`.
      */
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun addCrl(issuerDistinguishedName: String, serialNumbers: List<String>) = apply {
+    public fun addCrl(issuerDistinguishedName: String, serialNumbers: List<String>): CRInterceptorBuilder = apply {
         val decodedIssuerDistinguishedName = X500Principal(Base64.decode(issuerDistinguishedName))
         val decodedSerialNumbers = serialNumbers.map { BigInteger(Base64.decode(it)) }
 
@@ -122,7 +117,7 @@ class CRInterceptorBuilder {
     /**
      * Build the network [Interceptor]
      */
-    fun build(): Interceptor = CertificateRevocationInterceptor(
+    public fun build(): Interceptor = CertificateRevocationInterceptor(
         crlSet = crlSet.toSet(),
         certificateChainCleanerFactory = certificateChainCleanerFactory,
         trustManager = trustManager,

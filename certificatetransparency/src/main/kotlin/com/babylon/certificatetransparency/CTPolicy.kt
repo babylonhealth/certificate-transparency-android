@@ -18,6 +18,6 @@ package com.babylon.certificatetransparency
 
 import java.security.cert.X509Certificate
 
-interface CTPolicy {
-    fun policyVerificationResult(leafCertificate: X509Certificate, sctResults: Map<String, SctVerificationResult>): VerificationResult
+public interface CTPolicy {
+    public fun policyVerificationResult(leafCertificate: X509Certificate, sctResults: Map<String, SctVerificationResult>): VerificationResult
 }

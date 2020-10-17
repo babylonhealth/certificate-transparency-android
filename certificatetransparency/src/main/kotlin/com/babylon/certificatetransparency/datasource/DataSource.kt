@@ -29,25 +29,25 @@ import kotlinx.coroutines.launch
  *
  * @param Value The data type this data source accesses
  */
-interface DataSource<Value : Any> : CoroutineScope {
+public interface DataSource<Value : Any> : CoroutineScope {
 
     /**
      * Return the value associated with this data source or null if not present
      */
-    suspend fun get(): Value?
+    public suspend fun get(): Value?
 
     /**
      * Save the [value] to this data source
      */
-    suspend fun set(value: Value)
+    public suspend fun set(value: Value)
 
-    suspend fun isValid(value: Value?): Boolean = value != null
+    public suspend fun isValid(value: Value?): Boolean = value != null
 
     /**
      * Compose the current data source with [b]. Try to fetch from the first data source and, failing that, request the data from data source
      * [b]. After being retrieved from data source [b], the data is saved to the first data source for future retrieval.
      */
-    fun compose(b: DataSource<Value>): DataSource<Value> {
+    public fun compose(b: DataSource<Value>): DataSource<Value> {
         return object : DataSource<Value> {
             override suspend fun get(): Value? {
                 val result = this@DataSource.get()
@@ -73,12 +73,12 @@ interface DataSource<Value : Any> : CoroutineScope {
      * Compose the current data source with [b]. Try to fetch from the first data source and, failing that, request the data from data source
      * [b]. After being retrieved from data source [b], the data is saved to the first data source for future retrieval.
      */
-    operator fun plus(b: DataSource<Value>) = compose(b)
+    public operator fun plus(b: DataSource<Value>): DataSource<Value> = compose(b)
 
     /**
      * If a get call is already in flight then this ensures the original request is returned
      */
-    fun reuseInflight(): DataSource<Value> {
+    public fun reuseInflight(): DataSource<Value> {
         return object : DataSource<Value> {
             private var job: Deferred<Value?>? = null
 
@@ -107,7 +107,7 @@ interface DataSource<Value : Any> : CoroutineScope {
      *
      * @param MappedValue The data type this data source is being mapped to
      */
-    fun <MappedValue : Any> oneWayTransform(transform: (Value) -> MappedValue): DataSource<MappedValue> {
+    public fun <MappedValue : Any> oneWayTransform(transform: (Value) -> MappedValue): DataSource<MappedValue> {
         return object : DataSource<MappedValue> {
             override suspend fun get(): MappedValue? {
                 return this@DataSource.get()?.run(transform)

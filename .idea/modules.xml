@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/certificate-transparency-android.iml" filepath="$PROJECT_DIR$/certificate-transparency-android.iml" group="certificate-transparency-android" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lib/certificatetransparency.iml" filepath="$PROJECT_DIR$/.idea/modules/lib/certificatetransparency.iml" group="certificate-transparency-android/certificatetransparency" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/certificatetransparency-android.iml" filepath="$PROJECT_DIR$/.idea/modules/android/certificatetransparency-android.iml" group="certificate-transparency-android/certificatetransparency-android" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sampleapp/sampleapp.iml" filepath="$PROJECT_DIR$/.idea/modules/sampleapp/sampleapp.iml" group="certificate-transparency-android/sampleapp" />
+      <module fileurl="file://$PROJECT_DIR$/certificate-transparency-android.iml" filepath="$PROJECT_DIR$/certificate-transparency-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/certificatetransparency/certificate-transparency-android.certificatetransparency.iml" filepath="$PROJECT_DIR$/.idea/modules/certificatetransparency/certificate-transparency-android.certificatetransparency.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/certificatetransparency-android/certificate-transparency-android.certificatetransparency-android.iml" filepath="$PROJECT_DIR$/.idea/modules/certificatetransparency-android/certificate-transparency-android.certificatetransparency-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sampleapp/certificate-transparency-android.sampleapp.iml" filepath="$PROJECT_DIR$/.idea/modules/sampleapp/certificate-transparency-android.sampleapp.iml" />
     </modules>
   </component>
 </project>

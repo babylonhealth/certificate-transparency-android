@@ -24,8 +24,8 @@ import okhttp3.Interceptor
  * @property init Block to execute as a [CTInterceptorBuilder]
  */
 @JvmSynthetic
-fun certificateTransparencyInterceptor(
+public fun certificateTransparencyInterceptor(
     init: CTInterceptorBuilder.() -> Unit = {}
-) = CTInterceptorBuilder()
+): Interceptor = CTInterceptorBuilder()
     .apply(init)
     .build()

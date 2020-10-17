@@ -19,12 +19,12 @@ package com.babylon.certificatetransparency.loglist
 /**
  * Class representing the raw log list data
  */
-sealed class RawLogListResult {
+public sealed class RawLogListResult {
 
     /**
      * Class representing raw log list data loading successfully
      */
-    data class Success(
+    public data class Success(
         val logList: ByteArray,
         val signature: ByteArray
     ) : RawLogListResult() {
@@ -51,5 +51,5 @@ sealed class RawLogListResult {
     /**
      * Class representing raw log list data loading failed
      */
-    abstract class Failure : RawLogListResult()
+    public abstract class Failure : RawLogListResult()
 }

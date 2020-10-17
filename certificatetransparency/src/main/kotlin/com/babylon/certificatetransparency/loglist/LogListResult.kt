@@ -16,14 +16,14 @@
 
 package com.babylon.certificatetransparency.loglist
 
-sealed class LogListResult {
+public sealed class LogListResult {
     /**
      * Class representing log list loading successful
      */
-    data class Valid(val servers: List<LogServer>) : LogListResult()
+    public data class Valid(val servers: List<LogServer>) : LogListResult()
 
     /**
      * Abstract class representing log list loading failed
      */
-    abstract class Invalid : LogListResult()
+    public abstract class Invalid : LogListResult()
 }
